@@ -51,6 +51,11 @@
     "decider_no_credit": "Kredit SERV habis: semakan baharu tidak dapat memutus dan memulangkan ASK; resit tersimpan masih berfungsi. Pemilik memutuskan sama ada menambah kredit."
   },
   "receipt": {
+    "fetched": {
+      "robots_only": "robots.txt sahaja",
+      "pages": "robots.txt dan halaman laman itu",
+      "none": "tiada (laman tidak diambil)"
+    },
     "disclaimer": "Izin memetik dokumen dan isyarat mesin laman itu sendiri untuk satu tindakan. Ia tidak memberi nasihat. Baca sumber yang dipautkan sebelum bertindak.",
     "ai_input_no": "laman memberi isyarat ai-input=no",
     "nothing_read": "tiada dokumen polisi dapat dibaca sepenuhnya",

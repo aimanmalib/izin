@@ -86,6 +86,20 @@
     "boilerplate_markers": ["following content signals", "Content-Signal = yes"],
     "policy_url_pattern": "terms|legal|policy|policies|conditions|agreement"
   },
+  "robots_stop": {
+    "directive_actions": ["crawl"],
+    "prohibition": ["\\b(strictly |expressly )?(prohibited|forbidden)\\b", "\\bnot (permitted|allowed|authori[sz]ed)\\b", "\\bstrictly for humans?\\b", "\\bfor human (users|use|visitors) only\\b"],
+    "automation": ["\\b(automat\\w*|bots?|crawl\\w*|scrap\\w*|spider\\w*|agents?|agentic|AI|LLMs?)\\b", "\\bhumans?\\b"],
+    "any_action": ["\\bwithout (the )?(our )?(prior |express |explicit |advance )*(written )?(permission|consent|authori[sz]ation)\\b", "\\b(any|all) automated (access|use|means)\\b"],
+    "action_terms": {
+      "read_page": [],
+      "crawl": ["\\b(crawl\\w*|scrap\\w*|spider\\w*|harvest\\w*|index\\w*)\\b"],
+      "train": ["\\b(train\\w*|machine learning|datasets?)\\b"],
+      "account": ["\\b(accounts?|sign[- ]?(up|ups|in)|log[- ]?in|registr\\w*)\\b"],
+      "purchase": ["\\b(checkouts?|buy\\w*|purchas\\w*|orders?|payments?|carts?|bookings?)\\b"],
+      "post": ["\\b(post\\w*|comments?|reviews?|messag\\w*|publish\\w*|listings?)\\b"]
+    }
+  },
   "limits": {
     "fetch_ports": [80, 443],
     "requests_per_check": 8,

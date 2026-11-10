@@ -1,6 +1,7 @@
 // Shapes produced by the collector and consumed by the reader, ceilings and receipt.
 import type { FetchState } from "./fetch.js";
 import type { ContentSignals } from "./robots.js";
+import type { RobotsStop } from "./stop.js";
 
 export type FetchKind = "robots" | "input" | "home" | "policy";
 export type LedgerState =
@@ -65,5 +66,7 @@ export interface Collected {
     blocked: { url: string; kind: FetchKind; status: number }[];
     ai_input_no: boolean;
     do_not_fetch: boolean;
+    /** robots.txt itself forbids the action for automated clients: nothing else was fetched. */
+    robots_stop: RobotsStop | null;
   };
 }

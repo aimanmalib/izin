@@ -75,6 +75,9 @@ export function buildSignals(c: Collected, docs: (DocRef & { id: string })[], re
     const doc = docs.find((d) => d.id === r.doc_id);
     if (doc) unreadable.push({ url: doc.url, why: r.status === "skipped" ? (r.skip_reason ?? "skipped") : "reader_failed" });
   }
+  // Stopped at robots.txt: the site's pages were deliberately not read, so the verdict cannot be GO
+  // on silence (S5 caps it at ASK); a quoted prohibition can still make it NO_GO.
+  if (c.signals.robots_stop) unreadable.push({ url: c.input_url, why: "stopped_at_robots_txt" });
   return {
     robots: {
       fetched: c.robots?.state === "ok",

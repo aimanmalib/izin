@@ -1,11 +1,12 @@
 // The collector: robots.txt, the input page, the home page and up to N policy pages, all within
 // one request budget, recorded in a ledger. It never decides; it reports what it could read.
-import type { IzinConfig } from "../config.js";
+import type { Action, IzinConfig } from "../config.js";
 import { isPolicyPath, registrableDomain, scoreAnchors } from "./discover.js";
 import { decodeBody, type FetchResult } from "./fetch.js";
 import { extractAnchors, extractText, type Anchor } from "./extract.js";
 import { FETCHER_TOKEN, Session } from "./session.js";
 import { defaultPolicy, type NetPolicy } from "./ssrf.js";
+import { robotsStop, type RobotsStop } from "./stop.js";
 import type { Collected, LedgerEntry, LedgerState, PolicyDoc, RobotsSummary } from "./types.js";
 
 export interface CollectInput {
@@ -16,6 +17,8 @@ export interface CollectInput {
   agent?: string;
   /** Known policy URLs for a gallery entry; they replace anchor scoring and common paths. */
   policy_hints?: string[];
+  /** The action being checked; robots.txt rules against it end collection at robots.txt. */
+  action?: Action;
 }
 
 export interface CollectDeps {
@@ -94,6 +97,7 @@ export async function collect(input: CollectInput, deps: CollectDeps): Promise<C
   const doNotFetch = session.refused(url.hostname);
   let robots: RobotsSummary | null = null;
   let aiInputNo = false;
+  let stop: RobotsStop | null = null;
 
   const pasted = input.terms_text?.slice(0, cfg.limits.terms_text_max_chars);
   if (pasted) docs.push({ kind: "pasted", url: url.href, text: pasted, state: "ok", to_model: true, origin_verified: false });
@@ -111,8 +115,10 @@ export async function collect(input: CollectInput, deps: CollectDeps): Promise<C
         docs.push({ kind: "robots_comments", url: load.url, text: c.text, state: "ok", to_model: !aiInputNo, origin_verified: true });
       }
     }
-    // Paste mode reads robots.txt only; ai-input=no means no page text is gathered for a model.
-    if (!pasted && !aiInputNo && load.parsed) {
+    // Paste mode reads robots.txt only; ai-input=no means no page text is gathered for a model;
+    // a robots.txt that forbids the action itself is the whole answer.
+    if (!pasted && load.parsed) stop = robotsStop(load.parsed, robots, input.action, cfg);
+    if (!pasted && !aiInputNo && !stop && load.parsed) {
       await discoverAndFetch(session, url, input, load.parsed.comments.flatMap((c) => c.urls), site, docs, blocked, policyEntries);
     }
   }
@@ -135,6 +141,7 @@ export async function collect(input: CollectInput, deps: CollectDeps): Promise<C
       blocked,
       ai_input_no: aiInputNo,
       do_not_fetch: doNotFetch,
+      robots_stop: stop,
     },
   };
 }

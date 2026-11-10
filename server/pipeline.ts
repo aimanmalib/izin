@@ -10,7 +10,7 @@ import { checkEvidence, numberDocs } from "./semak/check.js";
 import { buildSignals, deciderInput, relevantClauses } from "./putus/message.js";
 import { decide, type DeciderDeps, type DeciderResult } from "./putus/serv.js";
 import { applyCeilings, type CeilingTexts } from "./putus/siling.js";
-import { buildReceipt, newReceiptId, type Receipt } from "./resit/receipt.js";
+import { buildReceipt, newReceiptId, type FetchedLabels, type Receipt } from "./resit/receipt.js";
 import type { CheckSource, ReceiptStore } from "./resit/store.js";
 
 export interface CheckInput extends CollectInput {
@@ -36,16 +36,17 @@ export interface PipelineTexts {
   ceilings: CeilingTexts;
   disclaimer: string;
   action_labels: Record<Action, string>;
+  fetched: FetchedLabels;
 }
 
 /** Receipt texts come from the English language file: the receipt JSON is the API's language. */
 export function pipelineTexts(langDir: string = LANG_DIR): PipelineTexts {
   const en = JSON.parse(readFileSync(`${langDir}en.json`, "utf8")) as {
     actions: Record<Action, string>;
-    receipt: CeilingTexts & { disclaimer: string };
+    receipt: CeilingTexts & { disclaimer: string; fetched: FetchedLabels };
   };
-  const { disclaimer, ...ceilings } = en.receipt;
-  return { ceilings, disclaimer, action_labels: en.actions };
+  const { disclaimer, fetched, ...ceilings } = en.receipt;
+  return { ceilings, disclaimer, fetched, action_labels: en.actions };
 }
 
 export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<Receipt> {
@@ -55,7 +56,7 @@ export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<R
   const created_at = now().toISOString();
   const detail = input.detail?.trim().slice(0, cfg.limits.detail_max_chars) || null;
 
-  const collectInput: CollectInput = { url: input.url };
+  const collectInput: CollectInput = { url: input.url, action: input.action };
   if (input.terms_text !== undefined) collectInput.terms_text = input.terms_text;
   if (input.agent !== undefined) collectInput.agent = input.agent;
   if (input.policy_hints !== undefined) collectInput.policy_hints = input.policy_hints;
@@ -109,6 +110,7 @@ export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<R
     rules_applied: decider?.decision?.rules_applied ?? [],
     ms_total: now().getTime() - t0,
     disclaimer: deps.texts.disclaimer,
+    fetched_labels: deps.texts.fetched,
   });
   if (deps.store) {
     deps.store.saveDocs(collected.docs, created_at);

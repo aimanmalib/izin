@@ -77,6 +77,16 @@ export const configSchema = z
         policy_url_pattern: regexSource,
       })
       .strict(),
+    // When robots.txt itself forbids the action for automated clients, the collector stops there.
+    robots_stop: z
+      .object({
+        directive_actions: z.array(z.enum(ACTIONS)),
+        prohibition: z.array(regexSource).min(1),
+        automation: z.array(regexSource).min(1),
+        any_action: z.array(regexSource).min(1),
+        action_terms: z.record(z.enum(ACTIONS), z.array(regexSource)),
+      })
+      .strict(),
     limits: z
       .object({
         fetch_ports: z.array(z.number().int().min(1).max(65535)).min(1),

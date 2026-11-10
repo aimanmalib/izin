@@ -64,7 +64,13 @@ export interface Receipt {
   decided_by: { serv_verdict: Verdict | null; ceilings: CeilingCode[]; final: Verdict; flags: Flag[] };
   clauses: ReceiptClause[];
   quarantined: { doc: string; text: string }[];
-  signals: DeciderSignals & { mode: Collected["mode"]; ai_input_no: boolean; do_not_fetch: boolean };
+  signals: DeciderSignals & {
+    mode: Collected["mode"];
+    ai_input_no: boolean;
+    do_not_fetch: boolean;
+    robots_stop: Collected["signals"]["robots_stop"];
+  };
+  fetched: { scope: FetchScope; label: string };
   fetch_ledger: { url: string; status: number; bytes: number; sha256: string | null; fetched_at: string; kind: FetchKind; state: LedgerState }[];
   reader: {
     provider: string | null;
@@ -110,6 +116,16 @@ export interface ReceiptParts {
   rules_applied: string[];
   ms_total: number;
   disclaimer: string;
+  fetched_labels: FetchedLabels;
+}
+
+export type FetchScope = "robots_only" | "pages" | "none";
+export type FetchedLabels = Record<FetchScope, string>;
+
+/** What Izin fetched from the site, from the ledger: nothing, robots.txt only, or pages too. */
+export function fetchScope(c: Collected): FetchScope {
+  if (!c.ledger.length) return "none";
+  return c.ledger.every((e) => e.kind === "robots") ? "robots_only" : "pages";
 }
 
 function readerSummary(cfg: IzinConfig, readings: DocReading[]): Receipt["reader"] {
@@ -135,6 +151,7 @@ export function buildReceipt(cfg: IzinConfig, p: ReceiptParts): Receipt {
   const decisive = new Set(o.decisive_clause_ids);
   const reader = readerSummary(cfg, p.readings);
   const deciderCost = d ? d.cost_usd_estimated : 0;
+  const scope = fetchScope(c);
   const body: Omit<Receipt, "receipt_sha256"> = {
     id: p.id,
     created_at: p.created_at,
@@ -161,7 +178,14 @@ export function buildReceipt(cfg: IzinConfig, p: ReceiptParts): Receipt {
       decisive: decisive.has(k.id),
     })),
     quarantined: p.evidence.quarantined.map((q) => ({ doc: q.doc_id, text: q.text })),
-    signals: { ...p.signals, mode: c.mode, ai_input_no: c.signals.ai_input_no, do_not_fetch: c.signals.do_not_fetch },
+    signals: {
+      ...p.signals,
+      mode: c.mode,
+      ai_input_no: c.signals.ai_input_no,
+      do_not_fetch: c.signals.do_not_fetch,
+      robots_stop: c.signals.robots_stop,
+    },
+    fetched: { scope, label: p.fetched_labels[scope] },
     fetch_ledger: c.ledger.map((e) => ({ url: e.url, status: e.status, bytes: e.bytes, sha256: e.sha256, fetched_at: e.at, kind: e.kind, state: e.state })),
     reader,
     decider: {

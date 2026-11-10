@@ -51,6 +51,11 @@
     "decider_no_credit": "SERV credit is used up: new checks cannot reach a verdict and return ASK; saved receipts still work. The owner decides whether to add credit."
   },
   "receipt": {
+    "fetched": {
+      "robots_only": "robots.txt only",
+      "pages": "robots.txt and the site's pages",
+      "none": "nothing (the site was not fetched)"
+    },
     "disclaimer": "Izin quotes the site's own documents and machine-readable signals for one action. It gives no advice. Read the linked source before you act.",
     "ai_input_no": "the site signals ai-input=no",
     "nothing_read": "no policy document could be read in full",
