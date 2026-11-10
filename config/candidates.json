@@ -1,0 +1,251 @@
+{
+  "_comment": "Candidate sites for the reader readability run (scripts/readability.ts). Order is gallery priority: buying, booking, accounts and posting first. One collector pass per site, IzinBot only; hosts in do_not_fetch_hosts are never fetched.",
+  "gallery_size": 24,
+  "concurrency": 4,
+  "sites": [
+    {
+      "host": "ebay.com",
+      "group": "shopping"
+    },
+    {
+      "host": "shop.app",
+      "group": "shopping"
+    },
+    {
+      "host": "booking.com",
+      "group": "travel"
+    },
+    {
+      "host": "airbnb.com",
+      "group": "travel"
+    },
+    {
+      "host": "ryanair.com",
+      "group": "travel"
+    },
+    {
+      "host": "amazon.com",
+      "group": "shopping"
+    },
+    {
+      "host": "etsy.com",
+      "group": "shopping"
+    },
+    {
+      "host": "walmart.com",
+      "group": "shopping"
+    },
+    {
+      "host": "target.com",
+      "group": "shopping"
+    },
+    {
+      "host": "ikea.com",
+      "group": "shopping"
+    },
+    {
+      "host": "expedia.com",
+      "group": "travel"
+    },
+    {
+      "host": "shopify.com",
+      "group": "shopping"
+    },
+    {
+      "host": "stripe.com",
+      "group": "developer"
+    },
+    {
+      "host": "x.com",
+      "group": "social"
+    },
+    {
+      "host": "reddit.com",
+      "group": "social"
+    },
+    {
+      "host": "linkedin.com",
+      "group": "social"
+    },
+    {
+      "host": "github.com",
+      "group": "developer"
+    },
+    {
+      "host": "wikipedia.org",
+      "group": "social"
+    },
+    {
+      "host": "craigslist.org",
+      "group": "social"
+    },
+    {
+      "host": "openserv.ai",
+      "group": "developer"
+    },
+    {
+      "host": "dphn.ai",
+      "group": "developer"
+    },
+    {
+      "host": "opentable.com",
+      "group": "travel"
+    },
+    {
+      "host": "ticketmaster.com",
+      "group": "travel"
+    },
+    {
+      "host": "bestbuy.com",
+      "group": "shopping"
+    },
+    {
+      "host": "costco.com",
+      "group": "shopping"
+    },
+    {
+      "host": "homedepot.com",
+      "group": "shopping"
+    },
+    {
+      "host": "aliexpress.com",
+      "group": "shopping"
+    },
+    {
+      "host": "temu.com",
+      "group": "shopping"
+    },
+    {
+      "host": "zalando.com",
+      "group": "shopping"
+    },
+    {
+      "host": "asos.com",
+      "group": "shopping"
+    },
+    {
+      "host": "wayfair.com",
+      "group": "shopping"
+    },
+    {
+      "host": "newegg.com",
+      "group": "shopping"
+    },
+    {
+      "host": "nike.com",
+      "group": "shopping"
+    },
+    {
+      "host": "instacart.com",
+      "group": "shopping"
+    },
+    {
+      "host": "lazada.com.my",
+      "group": "shopping"
+    },
+    {
+      "host": "shopee.com.my",
+      "group": "shopping"
+    },
+    {
+      "host": "kayak.com",
+      "group": "travel"
+    },
+    {
+      "host": "skyscanner.net",
+      "group": "travel"
+    },
+    {
+      "host": "agoda.com",
+      "group": "travel"
+    },
+    {
+      "host": "trip.com",
+      "group": "travel"
+    },
+    {
+      "host": "airasia.com",
+      "group": "travel"
+    },
+    {
+      "host": "tripadvisor.com",
+      "group": "travel"
+    },
+    {
+      "host": "eventbrite.com",
+      "group": "travel"
+    },
+    {
+      "host": "stubhub.com",
+      "group": "travel"
+    },
+    {
+      "host": "uber.com",
+      "group": "travel"
+    },
+    {
+      "host": "pinterest.com",
+      "group": "social"
+    },
+    {
+      "host": "medium.com",
+      "group": "social"
+    },
+    {
+      "host": "quora.com",
+      "group": "social"
+    },
+    {
+      "host": "tumblr.com",
+      "group": "social"
+    },
+    {
+      "host": "bsky.app",
+      "group": "social"
+    },
+    {
+      "host": "mastodon.social",
+      "group": "social"
+    },
+    {
+      "host": "youtube.com",
+      "group": "social"
+    },
+    {
+      "host": "discord.com",
+      "group": "social"
+    },
+    {
+      "host": "gokite.ai",
+      "group": "developer"
+    },
+    {
+      "host": "reppo.xyz",
+      "group": "developer"
+    },
+    {
+      "host": "gitlab.com",
+      "group": "developer"
+    },
+    {
+      "host": "stackoverflow.com",
+      "group": "developer"
+    },
+    {
+      "host": "npmjs.com",
+      "group": "developer"
+    },
+    {
+      "host": "huggingface.co",
+      "group": "developer"
+    },
+    {
+      "host": "vercel.com",
+      "group": "developer"
+    },
+    {
+      "host": "paypal.com",
+      "group": "developer"
+    }
+  ]
+}
