@@ -48,7 +48,9 @@
   },
   "alerts": {
     "reader_no_credit": "Dolphin credit is used up: the owner should redeem a coupon at app.dphn.ai; Izin is using the fallback reader.",
-    "decider_no_credit": "SERV credit is used up: new checks cannot reach a verdict and return ASK; saved receipts still work. The owner decides whether to add credit."
+    "decider_no_credit": "SERV credit is used up: new checks cannot reach a verdict and return ASK; saved receipts still work. The owner decides whether to add credit.",
+    "budget_cap": "Izin reached a spending cap from config: new checks are paused and saved receipts are still served. Raise the cap in config only if credit allows; otherwise nothing to do until the next UTC day.",
+    "unhealthy": "The Izin container failed its health check twice in a row: check the container logs and restart it with the deploy script."
   },
   "receipt": {
     "fetched": {
@@ -64,5 +66,26 @@
     "reason_guard_tripped": "The decision step refused the request as a possible prompt injection, so the verdict cannot be GO.",
     "reason_robots": "The site's robots.txt disallows this URL for automated agents.",
     "reason_ai_train": "The site's robots.txt signals ai-train=no."
+  },
+  "mcp": {
+    "check_title": "Check one agent action on one site",
+    "check_description": "Reads the site's robots.txt and terms and answers GO, ASK or NO_GO for one action, with the deciding clauses quoted exactly and a receipt link. Waits up to {wait} seconds; a longer check returns its id for izin_receipt.",
+    "receipt_title": "Fetch a receipt",
+    "receipt_description": "Returns the status of a check and, when it is done, its verdict, deciding clauses and receipt link.",
+    "arg_url": "Page on the site where the agent wants to act (http or https).",
+    "arg_action": "The action to check.",
+    "arg_detail": "Optional, up to 280 characters, about what the agent will do. Do not include personal data.",
+    "arg_agent": "Optional user-agent token of your agent, evaluated against robots.txt.",
+    "arg_id": "Receipt id returned by izin_check.",
+    "verdict_line": "Verdict: {verdict}. {reason}",
+    "clauses_head": "Deciding clauses:",
+    "receipt_line": "Receipt: {url}",
+    "running": "The check is still running. Call izin_receipt with id {id} in about {retry} seconds.",
+    "failed": "The check did not finish. No verdict was reached; treat the action as ASK.",
+    "not_found": "No check has id {id}.",
+    "invalid": "The request was refused: {code}.",
+    "rate_limited": "Too many new checks; try again in {retry} seconds. Saved receipts are not limited.",
+    "budget": "New checks are paused because a spending cap was reached.",
+    "budget_cached": "New checks are paused because a spending cap was reached. A recent receipt for this site and action: {url}"
   }
 }

@@ -12,9 +12,10 @@ const SCHEMA = `
 CREATE TABLE IF NOT EXISTS checks (
   id TEXT PRIMARY KEY, created_at TEXT NOT NULL, site TEXT NOT NULL, url TEXT NOT NULL, action TEXT NOT NULL,
   detail TEXT, source TEXT NOT NULL, status TEXT NOT NULL, verdict TEXT, receipt_json TEXT, receipt_sha256 TEXT,
-  cost_usd REAL, ms_total INTEGER
+  cost_usd REAL, ms_total INTEGER, origin TEXT, agent TEXT, pasted INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS checks_lookup ON checks (site, url, action, created_at);
+CREATE INDEX IF NOT EXISTS checks_origin ON checks (origin, action, created_at);
 CREATE TABLE IF NOT EXISTS docs (
   sha256 TEXT PRIMARY KEY, url TEXT NOT NULL, fetched_at TEXT NOT NULL, status TEXT NOT NULL, bytes INTEGER NOT NULL,
   kind TEXT NOT NULL, text TEXT NOT NULL
@@ -39,13 +40,19 @@ export class ReceiptStore {
     db.exec(SCHEMA);
   }
 
-  saveCheck(r: Receipt, source: CheckSource): void {
+  /** Stores a finished receipt; a row queued earlier under the same id keeps its source and agent. */
+  saveCheck(r: Receipt, source: CheckSource, agent: string | null = null): void {
     this.db
       .prepare(
-        `INSERT OR REPLACE INTO checks (id, created_at, site, url, action, detail, source, status, verdict, receipt_json, receipt_sha256, cost_usd, ms_total)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 'done', ?, ?, ?, ?, ?)`,
+        `INSERT INTO checks (id, created_at, site, url, action, detail, source, status, verdict, receipt_json, receipt_sha256, cost_usd, ms_total, origin, agent, pasted)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'done', ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(id) DO UPDATE SET status = 'done', verdict = excluded.verdict, receipt_json = excluded.receipt_json,
+           receipt_sha256 = excluded.receipt_sha256, cost_usd = excluded.cost_usd, ms_total = excluded.ms_total`,
       )
-      .run(r.id, r.created_at, r.site, r.url, r.action, r.detail, source, r.verdict, JSON.stringify(r), r.receipt_sha256, r.totals.cost_usd_estimated, r.totals.ms);
+      .run(
+        r.id, r.created_at, r.site, r.url, r.action, r.detail, source, r.verdict, JSON.stringify(r), r.receipt_sha256,
+        r.totals.cost_usd_estimated, r.totals.ms, new URL(r.url).origin.toLowerCase(), agent, r.signals.mode === "paste" ? 1 : 0,
+      );
   }
 
   /** The stored receipt, or null. A receipt whose hash no longer matches its JSON is not served. */

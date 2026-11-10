@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 import { LANG_DIR, type Action, type IzinConfig } from "./config.js";
 import type { Alert } from "./belanja/alerts.js";
+import { spendOf, type Spend } from "./belanja/guard.js";
 import { readAll, type ReaderDeps } from "./baca/reader.js";
 import { collect, type CollectInput } from "./kumpul/collect.js";
 import type { NetPolicy } from "./kumpul/ssrf.js";
@@ -30,6 +31,8 @@ export interface PipelineDeps {
   source?: CheckSource;
   now?: () => Date;
   newId?: () => string;
+  /** Called once per check with what it cost on each provider (before the receipt is built). */
+  onSpend?: (spend: Spend) => void;
 }
 
 export interface PipelineTexts {
@@ -82,6 +85,7 @@ export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<R
     decider = await decide({ ...deps.decider, cfg }, JSON.stringify(message));
     if (decider.failure === "no_credit") await deps.alert("decider_no_credit");
   }
+  deps.onSpend?.(spendOf(cfg, readings, decider));
   const outcome = applyCeilings(
     {
       action: input.action,
@@ -115,7 +119,7 @@ export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<R
   if (deps.store) {
     deps.store.saveDocs(collected.docs, created_at);
     deps.store.saveExtractions(docs, readings, cfg.reader.prompt);
-    deps.store.saveCheck(receipt, deps.source ?? "api");
+    deps.store.saveCheck(receipt, deps.source ?? "api", input.agent ?? null);
   }
   return receipt;
 }

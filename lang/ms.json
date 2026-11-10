@@ -48,7 +48,9 @@
   },
   "alerts": {
     "reader_no_credit": "Kredit Dolphin habis: pemilik tebus kupon di app.dphn.ai; Izin memakai pembaca sandaran.",
-    "decider_no_credit": "Kredit SERV habis: semakan baharu tidak dapat memutus dan memulangkan ASK; resit tersimpan masih berfungsi. Pemilik memutuskan sama ada menambah kredit."
+    "decider_no_credit": "Kredit SERV habis: semakan baharu tidak dapat memutus dan memulangkan ASK; resit tersimpan masih berfungsi. Pemilik memutuskan sama ada menambah kredit.",
+    "budget_cap": "Izin mencapai had belanja dalam config: semakan baharu dihentikan dan resit tersimpan masih dilayan. Naikkan had dalam config hanya jika kredit mencukupi; jika tidak, tiada tindakan hingga hari UTC berikutnya.",
+    "unhealthy": "Kontena Izin gagal semakan kesihatan dua kali berturut: semak log kontena dan mulakan semula dengan skrip deploy."
   },
   "receipt": {
     "fetched": {
@@ -64,5 +66,26 @@
     "reason_guard_tripped": "Langkah keputusan menolak permintaan sebagai kemungkinan suntikan prompt, jadi keputusan tidak boleh GO.",
     "reason_robots": "robots.txt laman ini melarang URL ini untuk ejen automatik.",
     "reason_ai_train": "robots.txt laman ini memberi isyarat ai-train=no."
+  },
+  "mcp": {
+    "check_title": "Semak satu tindakan ejen di satu laman",
+    "check_description": "Membaca robots.txt dan terma laman lalu menjawab GO, ASK atau NO_GO untuk satu tindakan, dengan klausa penentu dipetik tepat dan pautan resit. Menunggu hingga {wait} saat; semakan yang lebih lama memulangkan id untuk izin_receipt.",
+    "receipt_title": "Dapatkan resit",
+    "receipt_description": "Memulangkan status semakan dan, bila siap, keputusan, klausa penentu dan pautan resitnya.",
+    "arg_url": "Halaman di laman tempat ejen mahu bertindak (http atau https).",
+    "arg_action": "Tindakan yang disemak.",
+    "arg_detail": "Pilihan, hingga 280 aksara, tentang apa yang ejen akan buat. Jangan masukkan data peribadi.",
+    "arg_agent": "Pilihan: token user-agent ejen anda, dinilai terhadap robots.txt.",
+    "arg_id": "Id resit yang dipulangkan oleh izin_check.",
+    "verdict_line": "Keputusan: {verdict}. {reason}",
+    "clauses_head": "Klausa penentu:",
+    "receipt_line": "Resit: {url}",
+    "running": "Semakan masih berjalan. Panggil izin_receipt dengan id {id} dalam kira-kira {retry} saat.",
+    "failed": "Semakan tidak selesai. Tiada keputusan dicapai; anggap tindakan itu ASK.",
+    "not_found": "Tiada semakan dengan id {id}.",
+    "invalid": "Permintaan ditolak: {code}.",
+    "rate_limited": "Terlalu banyak semakan baharu; cuba lagi dalam {retry} saat. Resit tersimpan tidak dihadkan.",
+    "budget": "Semakan baharu dihentikan kerana had belanja dicapai.",
+    "budget_cached": "Semakan baharu dihentikan kerana had belanja dicapai. Resit terkini untuk laman dan tindakan ini: {url}"
   }
 }

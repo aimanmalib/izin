@@ -15,6 +15,7 @@ export type Verdict = (typeof VERDICTS)[number];
 const price = z.object({ input: z.number().nonnegative(), output: z.number().nonnegative() }).strict();
 const positiveInt = z.number().int().positive();
 const regexSource = z.string().min(2);
+const cidr = z.string().regex(/^[0-9a-f.:]+\/\d{1,3}$/i);
 
 const readerProvider = z
   .object({
@@ -54,6 +55,8 @@ export const configSchema = z
         dolphin_usd_per_day: z.number().positive(),
         dolphin_usd_total: z.number().positive(),
         serv_cost_factor: z.number().min(1),
+        // Build scripts: counted against the totals, not the daily caps.
+        daily_exempt_sources: z.array(z.enum(["web", "api", "mcp", "gallery", "bench", "cli"])),
       })
       .strict(),
     do_not_fetch_hosts: z.array(z.string().regex(/^[a-z0-9.-]+\.[a-z]{2,}$/)),
@@ -87,6 +90,21 @@ export const configSchema = z
         action_terms: z.record(z.enum(ACTIONS), z.array(regexSource)),
       })
       .strict(),
+    network: z
+      .object({
+        // Peers whose X-Forwarded-For is believed (the reverse proxy in front of the server).
+        trusted_proxy_cidrs: z.array(cidr).min(1),
+        cloudflare_source_url: z.url(),
+        // cf-connecting-ip is believed only when the proxy says the request came from one of these.
+        cloudflare_cidrs: z.array(cidr).min(1),
+      })
+      .strict(),
+    privacy: z
+      .object({
+        // Patterns removed from the optional detail before it is stored or sent to a model.
+        detail_redact: z.array(z.object({ pattern: z.string().min(3), label: z.string().min(1) }).strict()).min(1),
+      })
+      .strict(),
     limits: z
       .object({
         fetch_ports: z.array(z.number().int().min(1).max(65535)).min(1),
@@ -107,6 +125,7 @@ export const configSchema = z
         check_timeout_s: positiveInt,
         server_timeout_s: positiveInt,
         mcp_wait_s: positiveInt,
+        mcp_retry_after_s: positiveInt,
         queue_concurrency: positiveInt,
         cache_hours: positiveInt,
         cached_receipt_days: positiveInt,
@@ -187,6 +206,7 @@ export const configSchema = z
       ["discovery.anchor_exclude_pattern", c.discovery.anchor_exclude_pattern],
       ...c.discovery.anchor_scores.map((a, i): [string, string] => [`discovery.anchor_scores.${i}`, a.pattern]),
       ["robots_comments.policy_url_pattern", c.robots_comments.policy_url_pattern],
+      ...c.privacy.detail_redact.map((r, i): [string, string] => [`privacy.detail_redact.${i}`, r.pattern]),
     ];
     for (const [where, p] of patterns) {
       try {
@@ -213,6 +233,8 @@ export type IzinConfig = z.infer<typeof configSchema>;
 export const CONFIG_PATH = fileURLToPath(new URL("../config/izin.json", import.meta.url));
 export const PROMPTS_DIR = fileURLToPath(new URL("../prompts/", import.meta.url));
 export const LANG_DIR = fileURLToPath(new URL("../lang/", import.meta.url));
+export const GALLERY_PATH = fileURLToPath(new URL("../config/gallery.json", import.meta.url));
+export const BENCH_DIR = fileURLToPath(new URL("../bench/", import.meta.url));
 export const FIXTURES_DIR = fileURLToPath(new URL("../fixtures/", import.meta.url));
 
 export function parseConfig(raw: unknown): IzinConfig {
