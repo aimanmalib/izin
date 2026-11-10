@@ -22,7 +22,8 @@
     "gate": "bash scripts/gerbang-ujian.sh",
     "check": "tsx scripts/check.ts",
     "readability": "tsx scripts/readability.ts",
-    "ukur": "tsx scripts/ukur.ts"
+    "ukur": "tsx scripts/ukur.ts",
+    "g1": "tsx scripts/g1.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

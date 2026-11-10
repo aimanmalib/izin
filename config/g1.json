@@ -1,0 +1,28 @@
+{
+  "_comment": "G1 measurement run (scripts/g1.ts): which real sites give the five real policy pages, the pass thresholds, and the spending caps for this run. The script reads these; nothing here is in code.",
+  "real_sites": ["booking.com", "walmart.com", "target.com", "stripe.com", "github.com"],
+  "real_docs": 5,
+  "normal_payloads": 20,
+  "guard_normal_payloads": 10,
+  "thresholds": {
+    "g1c_json_ok_min": 9,
+    "g1d_quotes_pass_min": 0.85,
+    "g1e_median_ms_max": 45000,
+    "g1e_doc_tokens_max": 60000,
+    "g1f_schema_ok_min": 20,
+    "g1g_traps_refused_min": 1,
+    "g1g_false_positive_per_10_max": 1
+  },
+  "estimate": {
+    "chars_per_token": 4,
+    "real_doc_tokens_assumed": 40000,
+    "decider_output_tokens_assumed": 2500,
+    "decider_calls_per_payload_assumed": 2
+  },
+  "caps_usd": {
+    "serv": 0.5,
+    "dolphin": 0.05
+  },
+  "raw_out": "data/g1/raw.json",
+  "report_out": "docs/UKUR-G1.md"
+}
