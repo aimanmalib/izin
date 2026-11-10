@@ -75,6 +75,8 @@ export interface DeciderResult {
   ms: number;
   request_id: string | null;
   shadow_exhausted: boolean;
+  /** Whether serv_prompt_guard was declared on this check's requests. */
+  prompt_guard: boolean;
 }
 
 export interface DeciderDeps {
@@ -102,11 +104,11 @@ export function estimateCost(cfg: IzinConfig, model: string, inTok: number, outT
   return ((inTok * price.input + outTok * price.output) / 1_000_000) * cfg.budget.serv_cost_factor;
 }
 
-export function requestFor(cfg: IzinConfig, prompt: Prompt, userJson: string, rung: Rung): ChatCompletionCreateParamsNonStreaming {
+export function requestFor(cfg: IzinConfig, prompt: Prompt, userJson: string, rung: Rung, guard = true): ChatCompletionCreateParamsNonStreaming {
   const d = cfg.decider;
   const level = RUNGS.indexOf(rung);
   const model = level >= 2 ? baseModel(cfg) : d.model;
-  const tools: ChatCompletionCreateParamsNonStreaming["tools"] = [{ type: "function", function: { name: "serv_prompt_guard" } }];
+  const tools: NonNullable<ChatCompletionCreateParamsNonStreaming["tools"]> = guard ? [{ type: "function", function: { name: "serv_prompt_guard" } }] : [];
   if (level === 0) {
     tools.push({
       type: "function",
@@ -130,7 +132,7 @@ export function requestFor(cfg: IzinConfig, prompt: Prompt, userJson: string, ru
       { role: "system", content: prompt.text },
       { role: "user", content: level === 3 ? `${userJson}\n\n${d.json_prompt_note}` : userJson },
     ],
-    tools,
+    ...(tools.length ? { tools } : {}),
     ...(level < 3 ? { response_format: { type: "json_schema" as const, json_schema: decisionSchema(cfg) } } : {}),
   };
 }
@@ -146,7 +148,8 @@ function shadowExhausted(cfg: IzinConfig, r: RawReply): boolean {
   return /shadow/.test(r.extras) && cfg.decider.shadow_exhausted_markers.some((m) => r.extras.includes(m.toLowerCase()));
 }
 
-export async function decide(deps: DeciderDeps, userJson: string): Promise<DeciderResult> {
+export async function decide(deps: DeciderDeps, userJson: string, opts: { guard?: boolean } = {}): Promise<DeciderResult> {
+  const guard = opts.guard ?? true;
   const { cfg, prompt, transport } = deps;
   const d = cfg.decider;
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
@@ -162,7 +165,7 @@ export async function decide(deps: DeciderDeps, userJson: string): Promise<Decid
 
   while (level < RUNGS.length && attempts.length < d.max_calls) {
     const rung = RUNGS[level]!;
-    const body = requestFor(cfg, prompt, userJson, rung);
+    const body = requestFor(cfg, prompt, userJson, rung, guard);
     try {
       const r = await transport(body);
       last = r;
@@ -209,6 +212,7 @@ export async function decide(deps: DeciderDeps, userJson: string): Promise<Decid
     ms: attempts.reduce((s, a) => s + a.ms, 0),
     request_id: last?.request_id ?? null,
     shadow_exhausted: exhausted,
+    prompt_guard: guard,
   };
 }
 
@@ -263,7 +267,8 @@ export function servTransport(cfg: IzinConfig, opts: { env?: NodeJS.ProcessEnv; 
         ms: now() - t0,
       };
     } catch (err) {
-      throw classify(err, timedOut);
+      // The provider's error text (no request data) is kept for measurement runs and logs.
+      throw Object.assign(classify(err, timedOut), { detail: err instanceof APIError ? err.message.slice(0, 300) : undefined });
     } finally {
       clearTimeout(timer);
     }

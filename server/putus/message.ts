@@ -7,6 +7,7 @@ import type { ContentSignals, SignalValue } from "../kumpul/robots.js";
 import type { Collected, DocKind } from "../kumpul/types.js";
 import type { CheckedEvidence } from "../semak/check.js";
 import type { VerifiedClause } from "../semak/quotes.js";
+import { compilePatterns } from "../semak/quarantine.js";
 
 export interface DocRef {
   id: string;
@@ -115,4 +116,12 @@ export function deciderInput(
     signals,
     clauses: clauses.map((c) => ({ id: c.id, doc: c.doc_id, section: c.section, category: c.category, stance: c.stance, quote: c.quote })),
   };
+}
+
+/** Whether Prompt Guard is declared: always, or only when the code filter flags the detail or a clause. */
+export function guardFor(cfg: IzinConfig, input: DeciderInput): boolean {
+  if (cfg.decider.guard === "always") return true;
+  const patterns = compilePatterns(cfg);
+  const texts = [input.detail ?? "", ...input.clauses.map((c) => c.quote)];
+  return texts.some((t) => patterns.some((p) => p.test(t)));
 }

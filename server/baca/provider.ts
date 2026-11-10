@@ -114,6 +114,7 @@ export function makeOpenAiCall(deps: CallDeps): ModelCall {
       messages,
       temperature: r.temperature,
       max_tokens: r.max_tokens,
+      ...(p.reasoning_effort ? { reasoning_effort: p.reasoning_effort } : {}),
       ...(jsonModeOff.has(p.provider) ? {} : { response_format: { type: "json_object" as const } }),
     };
     try {

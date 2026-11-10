@@ -8,7 +8,7 @@ import { readAll, type ReaderDeps } from "./baca/reader.js";
 import { collect, type CollectInput } from "./kumpul/collect.js";
 import type { NetPolicy } from "./kumpul/ssrf.js";
 import { checkEvidence, numberDocs } from "./semak/check.js";
-import { buildSignals, deciderInput, relevantClauses } from "./putus/message.js";
+import { buildSignals, deciderInput, guardFor, relevantClauses } from "./putus/message.js";
 import { decide, type DeciderDeps, type DeciderResult } from "./putus/serv.js";
 import { applyCeilings, type CeilingTexts } from "./putus/siling.js";
 import { buildReceipt, newReceiptId, type FetchedLabels, type Receipt } from "./resit/receipt.js";
@@ -82,7 +82,7 @@ export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<R
   const skip = signals.docs_read === 0 && relevant.length === 0;
   let decider: DeciderResult | null = null;
   if (!skip) {
-    decider = await decide({ ...deps.decider, cfg }, JSON.stringify(message));
+    decider = await decide({ ...deps.decider, cfg }, JSON.stringify(message), { guard: guardFor(cfg, message) });
     if (decider.failure === "no_credit") await deps.alert("decider_no_credit");
   }
   deps.onSpend?.(spendOf(cfg, readings, decider));

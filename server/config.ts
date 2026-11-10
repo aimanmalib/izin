@@ -24,6 +24,8 @@ const readerProvider = z
     model: z.string().min(1),
     key_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
     stream: z.boolean(),
+    // Sent as reasoning_effort when set; "none" turns a reasoning model's thinking off (measured at G1).
+    reasoning_effort: z.enum(["none", "low", "medium", "high"]).optional(),
   })
   .strict();
 
@@ -163,6 +165,9 @@ export const configSchema = z
         retries: z.number().int().min(0).max(3),
         retry_backoff_ms: z.number().int().nonnegative(),
         start_rung: z.enum(["a", "b", "c", "d"]),
+        // "always": Prompt Guard on every request. "flagged": only when the code filter flags the
+        // detail or a clause (the fallback for too many guard refusals of normal payloads, G1g).
+        guard: z.enum(["always", "flagged"]),
         max_calls: positiveInt,
         shadow_hint: z.string().min(20),
         shadow_max_iterations: positiveInt,

@@ -86,6 +86,7 @@ export interface Receipt {
   decider: {
     model: string | null;
     config_rung: Rung | null;
+    prompt_guard: boolean | null;
     prompt_version: string;
     tokens_in: number;
     tokens_out: number;
@@ -191,6 +192,7 @@ export function buildReceipt(cfg: IzinConfig, p: ReceiptParts): Receipt {
     decider: {
       model: d?.model ?? null,
       config_rung: d?.rung ?? null,
+      prompt_guard: d?.prompt_guard ?? null,
       prompt_version: d?.prompt_version ?? cfg.decider.prompt,
       tokens_in: d?.tokens_in ?? 0,
       tokens_out: d?.tokens_out ?? 0,
