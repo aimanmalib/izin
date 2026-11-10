@@ -21,6 +21,9 @@ DC="docker compose -f compose.yaml"
 URL="https://$IZIN_DOMAIN"
 HOLDER=izin-undur
 
+# Certificates use the HTTP-01 challenge: a name that does not resolve fails it and burns the CA's retry budget.
+dns_ok() { getent ahosts "$IZIN_DOMAIN" >/dev/null; }
+
 health_code() { curl -s -m 20 -o /dev/null -w '%{http_code}' "$URL/api/health" || true; }
 
 hold_previous() {  # $1 = image ID the replaced container ran: keep it by ID in a stopped container
@@ -42,6 +45,7 @@ case "${1:-}" in
     docker inspect -f 'rollback holder: {{index .Config.Labels "izin.tag"}}' "$HOLDER" 2>/dev/null || echo "rollback holder: none"
     echo "public /api/health $(health_code)"; exit 0 ;;
   --rollback)
+    dns_ok || { echo "$IZIN_DOMAIN does not resolve, nothing was changed"; exit 1; }
     TAG=$(cat PREVIOUS_TAG 2>/dev/null) || { echo "no PREVIOUS_TAG"; exit 1; }
     if ! docker image inspect "izin:$TAG" >/dev/null 2>&1; then
       id=$(docker inspect -f '{{.Image}}' "$HOLDER" 2>/dev/null) || { echo "image izin:$TAG is gone"; exit 1; }
@@ -50,6 +54,7 @@ case "${1:-}" in
     [ -r CURRENT_TAG ] && cp CURRENT_TAG PREVIOUS_TAG ;;
   ""|--seed-db)
     if [ "${1:-}" = --seed-db ]; then seed=$(realpath "${2:?--seed-db needs a file}"); [ -r "$seed" ] || { echo "cannot read $seed"; exit 1; }; fi
+    dns_ok || { echo "$IZIN_DOMAIN does not resolve: create the DNS record first, nothing was changed"; exit 1; }
     [ -z "$(git -C .. status --porcelain)" ] || { echo "working tree not clean: commit first (the image is built from HEAD)"; exit 1; }
     free=$(df -BG --output=avail / | tail -1 | tr -dc 0-9)
     [ "$free" -ge "$MIN_FREE_GB" ] || { echo "less than ${MIN_FREE_GB} GB free on /, stopping"; exit 1; }
@@ -63,8 +68,8 @@ esac
 
 old_id=$(docker inspect -f '{{.Image}}' izin 2>/dev/null || true)
 
+docker volume create izin-data >/dev/null   # external in compose.yaml: `compose down -v` never deletes the data
 if [ -n "$seed" ]; then
-  docker volume create izin-data >/dev/null
   docker run --rm --network none --user node -v izin-data:/app/data -v "$seed:/seed.db:ro" --entrypoint sh "izin:$TAG" \
     -c '[ -e /app/data/izin.db ] && echo "volume already has a database: seed skipped" || { cp /seed.db /app/data/izin.db && echo "database seeded"; }'
 fi

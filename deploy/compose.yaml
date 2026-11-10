@@ -22,6 +22,7 @@ services:
 volumes:
   izin-data:
     name: izin-data
+    external: true
 
 networks:
   proxy:
