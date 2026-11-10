@@ -1,0 +1,43 @@
+{
+  "app": {
+    "name": "Izin",
+    "tagline": "Ask the site before your agent acts.",
+    "lang_toggle": "BM"
+  },
+  "actions": {
+    "read_page": "Read one page",
+    "crawl": "Crawl or scrape",
+    "train": "Train AI on content",
+    "account": "Create an account or log in",
+    "purchase": "Buy or book",
+    "post": "Post or submit"
+  },
+  "verdicts": {
+    "GO": { "label": "GO", "definition": "No restriction on this action was found in the documents we could read in full." },
+    "ASK": {
+      "label": "ASK",
+      "definition": "A condition applies, the evidence conflicts, permission is needed but not granted, or something could not be read. A human or the site should confirm."
+    },
+    "NO_GO": { "label": "NO-GO", "definition": "A quoted clause or a machine-readable signal forbids this action." }
+  },
+  "categories": {
+    "automated_access": "Automated access",
+    "data_collection": "Data collection",
+    "ai_training": "AI training",
+    "account_automation": "Account automation",
+    "purchase_automation": "Purchase automation",
+    "posting_automation": "Posting automation",
+    "api_required": "API required",
+    "rate_limit": "Rate limit",
+    "agent_identification": "Agent identification",
+    "permission_grant": "Permission granted",
+    "other": "Other"
+  },
+  "stances": {
+    "prohibits": "Prohibits",
+    "restricts": "Restricts",
+    "requires": "Requires",
+    "permits": "Permits",
+    "unclear": "Unclear"
+  }
+}

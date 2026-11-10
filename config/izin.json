@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "user_agent": "IzinBot/0.1 (+https://izin.sasateguh.com/bot)",
+  "public_origin": "https://izin.sasateguh.com",
+  "actions": ["read_page", "crawl", "train", "account", "purchase", "post"],
+  "categories": [
+    "automated_access",
+    "data_collection",
+    "ai_training",
+    "account_automation",
+    "purchase_automation",
+    "posting_automation",
+    "api_required",
+    "rate_limit",
+    "agent_identification",
+    "permission_grant",
+    "other"
+  ],
+  "stances": ["prohibits", "restricts", "requires", "permits", "unclear"],
+  "verdicts": ["NO_GO", "ASK", "GO"],
+  "relevance": {
+    "read_page": ["automated_access", "rate_limit", "agent_identification", "permission_grant"],
+    "crawl": ["automated_access", "data_collection", "api_required", "rate_limit", "agent_identification", "permission_grant"],
+    "train": ["ai_training", "data_collection", "permission_grant"],
+    "account": ["account_automation", "automated_access", "agent_identification", "permission_grant"],
+    "purchase": ["purchase_automation", "automated_access", "account_automation", "agent_identification", "permission_grant"],
+    "post": ["posting_automation", "automated_access", "account_automation", "api_required", "agent_identification", "permission_grant"]
+  },
+  "prices_usd_per_mtok": {
+    "serv": {
+      "gpt-6-luna": { "input": 0.13, "output": 0.65 },
+      "gpt-5.4-nano": { "input": 0.25, "output": 1.6 },
+      "gemini-3.1-flash-lite": { "input": 0.3, "output": 1.8 }
+    },
+    "dolphin": {
+      "deepseek-ai/DeepSeek-V4.1-Flash": { "input": 0.01, "output": 0.07 }
+    }
+  },
+  "budget": {
+    "serv_usd_per_day": 0.6,
+    "serv_usd_total": 4.0,
+    "dolphin_usd_per_day": 0.1,
+    "dolphin_usd_total": 0.85,
+    "serv_cost_factor": 3.0
+  },
+  "do_not_fetch_hosts": [
+    "devpost.com",
+    "hacks.elevenlabs.io",
+    "pentas.app",
+    "kaggle.com",
+    "dev.to",
+    "eventsize.com"
+  ],
+  "challenge_markers": [
+    "Just a moment...",
+    "Performing security verification",
+    "cf-chl-",
+    "challenge-platform",
+    "Attention Required! | Cloudflare"
+  ],
+  "blocked_statuses": [401, 403, 429, 503],
+  "injection_patterns": [
+    "ignore (all |any |the )?(previous|prior|above) (instructions|rules|terms)",
+    "disregard .{0,40}(instructions|rules|terms)",
+    "(you are|as) an? (ai|llm|language model|assistant)",
+    "system prompt",
+    "(ai|llm) (agents?|systems?|models?)\\b.{0,40}(must|should|shall) (report|state|say|respond)",
+    "report that .{0,80}(permitted|allowed|authorized)"
+  ],
+  "limits": {
+    "requests_per_check": 8,
+    "policy_docs_max": 4,
+    "common_path_attempts_max": 2,
+    "fetch_timeout_ms": 20000,
+    "response_max_bytes": 3145728,
+    "redirects_max": 5,
+    "host_interval_ms": 1000,
+    "doc_text_min_chars": 800,
+    "doc_text_max_chars": 600000,
+    "terms_text_max_chars": 400000,
+    "detail_max_chars": 280,
+    "quote_min_chars": 40,
+    "quote_max_chars": 600,
+    "check_timeout_s": 90,
+    "server_timeout_s": 95,
+    "mcp_wait_s": 25,
+    "queue_concurrency": 2,
+    "cache_hours": 24,
+    "cached_receipt_days": 7,
+    "no_refetch_blocked_days": 7,
+    "rate_new_checks_per_ip_hour": 6,
+    "rate_new_checks_per_day": 300
+  }
+}

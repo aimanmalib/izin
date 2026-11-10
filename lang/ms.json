@@ -1,0 +1,43 @@
+{
+  "app": {
+    "name": "Izin",
+    "tagline": "Tanya laman itu dahulu sebelum ejen anda bertindak.",
+    "lang_toggle": "EN"
+  },
+  "actions": {
+    "read_page": "Baca satu halaman",
+    "crawl": "Kikis secara sistematik",
+    "train": "Latih AI dengan kandungan",
+    "account": "Buka akaun atau log masuk",
+    "purchase": "Beli atau tempah",
+    "post": "Siar atau hantar"
+  },
+  "verdicts": {
+    "GO": { "label": "GO", "definition": "Tiada sekatan ke atas tindakan ini ditemui dalam dokumen yang dapat kami baca sepenuhnya." },
+    "ASK": {
+      "label": "ASK",
+      "definition": "Ada syarat, bukti bercanggah, kebenaran diperlukan tetapi tidak diberi, atau ada yang tidak dapat dibaca. Manusia atau laman itu perlu mengesahkan."
+    },
+    "NO_GO": { "label": "NO-GO", "definition": "Klausa yang dipetik atau isyarat boleh dibaca mesin melarang tindakan ini." }
+  },
+  "categories": {
+    "automated_access": "Akses automatik",
+    "data_collection": "Pengumpulan data",
+    "ai_training": "Latihan AI",
+    "account_automation": "Akaun automatik",
+    "purchase_automation": "Pembelian automatik",
+    "posting_automation": "Siaran automatik",
+    "api_required": "API diwajibkan",
+    "rate_limit": "Had kadar",
+    "agent_identification": "Pengenalan ejen",
+    "permission_grant": "Kebenaran diberi",
+    "other": "Lain-lain"
+  },
+  "stances": {
+    "prohibits": "Melarang",
+    "restricts": "Mengehadkan",
+    "requires": "Mewajibkan",
+    "permits": "Membenarkan",
+    "unclear": "Tidak jelas"
+  }
+}
