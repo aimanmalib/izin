@@ -111,5 +111,32 @@
     "no_refetch_blocked_days": 7,
     "rate_new_checks_per_ip_hour": 6,
     "rate_new_checks_per_day": 300
-  }
+  },
+  "reader": {
+    "primary": {
+      "provider": "dolphin",
+      "base_url": "https://lighthouse.dphn.ai/run/text-v/v1",
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "key_env": "DOLPHIN_API_KEY",
+      "stream": true
+    },
+    "fallback": {
+      "provider": "serv",
+      "base_url": "https://inference-api.openserv.ai/v1",
+      "model": "gpt-6-luna",
+      "key_env": "SERV_API_KEY",
+      "stream": false
+    },
+    "prompt": "reader.v1",
+    "temperature": 0,
+    "max_tokens": 6000,
+    "timeout_ms": 120000,
+    "retry_after_max_s": 20,
+    "json_retry_note": "Return the JSON object only.",
+    "fallback_suspect_markers": ["openrouter"],
+    "max_clauses": 25,
+    "fragment_words": 8,
+    "quarantine_max_chars": 600
+  },
+  "alerts": { "command_env": "IZIN_NOTIFY_CMD", "language": "ms", "level": "warn" }
 }

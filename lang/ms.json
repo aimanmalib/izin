@@ -39,5 +39,8 @@
     "requires": "Mewajibkan",
     "permits": "Membenarkan",
     "unclear": "Tidak jelas"
+  },
+  "alerts": {
+    "reader_no_credit": "Kredit Dolphin habis: pemilik tebus kupon di app.dphn.ai; Izin memakai pembaca sandaran."
   }
 }

@@ -16,6 +16,16 @@ const price = z.object({ input: z.number().nonnegative(), output: z.number().non
 const positiveInt = z.number().int().positive();
 const regexSource = z.string().min(2);
 
+const readerProvider = z
+  .object({
+    provider: z.enum(["dolphin", "serv"]),
+    base_url: z.url(),
+    model: z.string().min(1),
+    key_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+    stream: z.boolean(),
+  })
+  .strict();
+
 export const configSchema = z
   .object({
     version: z.literal(1),
@@ -95,6 +105,29 @@ export const configSchema = z
         rate_new_checks_per_day: positiveInt,
       })
       .strict(),
+    reader: z
+      .object({
+        primary: readerProvider,
+        fallback: readerProvider,
+        prompt: z.string().regex(/^[a-z]+\.v\d+$/),
+        temperature: z.number().min(0).max(2),
+        max_tokens: positiveInt,
+        timeout_ms: positiveInt,
+        retry_after_max_s: positiveInt,
+        json_retry_note: z.string().min(5),
+        fallback_suspect_markers: z.array(z.string().min(3)),
+        max_clauses: positiveInt,
+        fragment_words: positiveInt,
+        quarantine_max_chars: positiveInt,
+      })
+      .strict(),
+    alerts: z
+      .object({
+        command_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+        language: z.enum(["en", "ms"]),
+        level: z.enum(["info", "warn", "critical"]),
+      })
+      .strict(),
   })
   .strict()
   .superRefine((c, ctx) => {
@@ -131,7 +164,11 @@ export const configSchema = z
 
 export type IzinConfig = z.infer<typeof configSchema>;
 
+// Paths resolve the same way from server/ (tsx) and from the bundled dist/ file.
 export const CONFIG_PATH = fileURLToPath(new URL("../config/izin.json", import.meta.url));
+export const PROMPTS_DIR = fileURLToPath(new URL("../prompts/", import.meta.url));
+export const LANG_DIR = fileURLToPath(new URL("../lang/", import.meta.url));
+export const FIXTURES_DIR = fileURLToPath(new URL("../fixtures/", import.meta.url));
 
 export function parseConfig(raw: unknown): IzinConfig {
   return configSchema.parse(raw);

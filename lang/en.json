@@ -39,5 +39,8 @@
     "requires": "Requires",
     "permits": "Permits",
     "unclear": "Unclear"
+  },
+  "alerts": {
+    "reader_no_credit": "Dolphin credit is used up: the owner should redeem a coupon at app.dphn.ai; Izin is using the fallback reader."
   }
 }
