@@ -6,7 +6,10 @@ import type { Receipt } from "../resit/receipt.js";
 
 export type RobotsOnly = "allowed" | "disallowed" | "no_robots";
 
-export type BaselineReceipt = Pick<Receipt, "verdict" | "clauses"> & { signals: Pick<Receipt["signals"], "robots"> };
+export type BaselineReceipt = Pick<Receipt, "verdict" | "clauses"> & {
+  decided_by: Pick<Receipt["decided_by"], "serv_verdict" | "ceilings">;
+  signals: Pick<Receipt["signals"], "robots">;
+};
 
 /**
  * The parser's answer for the checked URL, for the IzinBot, "*" and optional agent groups together:
@@ -19,12 +22,15 @@ export function robotsOnly(r: BaselineReceipt): RobotsOnly {
 }
 
 /**
- * True when the parser allows the URL, the verdict is ASK or NO-GO, and a decisive quoted clause
- * (from a robots.txt comment or the terms) has a restricting stance. An ASK that comes only from a
- * failure (blocked, unreadable, decider unavailable) has no decisive clause and does not count.
+ * True when the parser allows the URL, the final verdict is ASK or NO-GO, the decider itself
+ * answered ASK or NO-GO, and a decisive quoted clause (from a robots.txt comment or the terms) has
+ * a restricting stance. A GO lowered to ASK by a code ceiling (S5 unreadable, S6 evidence, S8 ...)
+ * does not count, nor does an ASK with no decider verdict at all (blocked, decider unavailable).
  */
 export function wordsRestrict(r: BaselineReceipt, restricting: readonly Stance[]): boolean {
   if (robotsOnly(r) !== "allowed" || r.verdict === "GO") return false;
+  const serv = r.decided_by.serv_verdict;
+  if (serv !== "ASK" && serv !== "NO_GO") return false;
   return r.clauses.some((c) => c.decisive && (restricting as readonly string[]).includes(c.stance));
 }
 

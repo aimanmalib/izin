@@ -6,15 +6,24 @@ import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import { benchView, galleryView } from "../server/api/views.js";
 import type { Stance, Verdict } from "../server/config.js";
+import type { CeilingCode } from "../server/putus/siling.js";
 import { baselineCell, baselineCounts, robotsOnly, wordsRestrict, type BaselineReceipt } from "../server/galeri/baseline.js";
 import { baselineSection, replaceSection } from "../server/galeri/ukur.js";
 import { openDb, ReceiptStore } from "../server/resit/store.js";
 
 const RESTRICT: Stance[] = ["prohibits", "restricts", "requires"];
 
-function receipt(o: { fetched?: boolean; disallowed?: boolean; verdict: Verdict; clauses?: [string, boolean][] }): BaselineReceipt {
+function receipt(o: {
+  fetched?: boolean;
+  disallowed?: boolean;
+  verdict: Verdict;
+  serv?: Verdict | null;
+  ceilings?: CeilingCode[];
+  clauses?: [string, boolean][];
+}): BaselineReceipt {
   return {
     verdict: o.verdict,
+    decided_by: { serv_verdict: o.serv === undefined ? o.verdict : o.serv, ceilings: o.ceilings ?? [] },
     signals: { robots: { fetched: o.fetched ?? true, disallow_for_agent: o.disallowed ?? false, crawl_delay: null, content_signal: {} } },
     clauses: (o.clauses ?? []).map(([stance, decisive], i) => ({
       id: `c${i}`,
@@ -49,6 +58,20 @@ describe("headline count: robots allows, the site's words restrict", () => {
   it("does not count an ASK that comes from a failure (no decisive clause)", () => {
     expect(wordsRestrict(receipt({ verdict: "ASK" }), RESTRICT)).toBe(false);
     expect(wordsRestrict(receipt({ verdict: "ASK", clauses: [["prohibits", false]] }), RESTRICT)).toBe(false);
+  });
+  it("does not count a failure ASK even when it carries a decisive restricting clause", () => {
+    // Decider unavailable or guard tripped: no decider verdict, the code caps at ASK.
+    expect(wordsRestrict(receipt({ verdict: "ASK", serv: null, ceilings: ["S8"], clauses: [["requires", true]] }), RESTRICT)).toBe(false);
+  });
+  it("does not count a decider GO lowered to ASK by a code ceiling (S5, S6)", () => {
+    const lowered = (c: CeilingCode, stance: string) =>
+      wordsRestrict(receipt({ verdict: "ASK", serv: "GO", ceilings: [c], clauses: [[stance, true]] }), RESTRICT);
+    expect(lowered("S5", "requires")).toBe(false);
+    expect(lowered("S5", "restricts")).toBe(false);
+    expect(lowered("S6", "prohibits")).toBe(false);
+  });
+  it("counts a decider NO-GO that a ceiling turned into ASK, when it rests on a restricting clause", () => {
+    expect(wordsRestrict(receipt({ verdict: "ASK", serv: "NO_GO", ceilings: ["S7"], clauses: [["restricts", true]] }), RESTRICT)).toBe(true);
   });
   it("does not count a pair robots.txt disallows, or one with no robots.txt", () => {
     expect(wordsRestrict(receipt({ verdict: "NO_GO", disallowed: true, clauses: [["prohibits", true]] }), RESTRICT)).toBe(false);

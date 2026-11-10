@@ -277,8 +277,10 @@
       "words_restrict": "The site's own words restrict this",
       "baseline_head": "robots.txt alone, against the site's own words",
       "baseline_line": "In {count} of {allowed} pairs where robots.txt allows the page, a quoted clause from the site restricts or forbids the action, and Izin answered ASK or NO-GO on that clause.",
+      "baseline_line_one": "robots.txt allows the page in {allowed} pair. In {count} of {allowed}, a quoted clause from the site restricts or forbids the action, and Izin answered ASK or NO-GO on that clause.",
       "baseline_split": "A robots.txt parser alone, over {pairs} pairs: allows {allowed}, disallows {disallowed}, no robots.txt {no_robots}.",
-      "baseline_note": "Marked cells are those pairs. An ASK that comes only from a block or a page that could not be read is not counted."
+      "baseline_split_one": "A robots.txt parser alone, for {pairs} pair: allows {allowed}, disallows {disallowed}, no robots.txt {no_robots}.",
+      "baseline_note": "Marked cells are those pairs. An ASK that comes only from a block, a page that could not be read, or a code check that lowered a GO is not counted."
     },
     "bench": {
       "h1": "Benchmark",

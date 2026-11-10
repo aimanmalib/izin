@@ -20,11 +20,14 @@ alone would answer next to Izin's verdict, and count where the two differ for a 
 - The headline count `robots_allowed_words_restrict` is the number of pairs where all of these hold:
   - `robots_only` is `allowed`;
   - the final verdict is ASK or NO-GO;
+  - the decision step's own verdict (`decided_by.serv_verdict`) is ASK or NO-GO, so the
+    restriction comes from the decider reading the site's words, not from a code ceiling;
   - at least one decisive quoted clause (from a robots.txt comment or the site's terms) has a
     restricting stance. The stances that count are listed in `config/izin.json` under
     `baseline.restricting_stances` (`prohibits`, `restricts`, `requires`).
 - An ASK that comes only from a failure (a block, a page that could not be read, the decision step
-  unavailable) has no decisive clause and is not counted. Clause quotes on a receipt have already
+  unavailable) is not counted, even when the receipt lists a decisive clause: there is no decider
+  verdict, or the decider answered GO and a ceiling lowered it. Clause quotes on a receipt have already
   been checked against the fetched text by code, so the count only rests on verified quotes.
 - `/api/gallery` adds `robots_only` and `words_restrict` to each finished cell and a `baseline`
   object with the counts; `/api/bench` carries the same counts once a pair has a receipt. The

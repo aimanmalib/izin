@@ -14,8 +14,8 @@ export function BaselineSummary({ baseline, marked }: { baseline: GalleryView["b
         <span className="baseline-num">{baseline.robots_allowed_words_restrict}</span>
         <span className="baseline-of">/ {baseline.allowed}</span>
       </p>
-      <p>{fmt(g.baseline_line, { count: baseline.robots_allowed_words_restrict, allowed: baseline.allowed })}</p>
-      <p className="hint">{fmt(g.baseline_split, { ...baseline })}</p>
+      <p>{fmt(baseline.allowed === 1 ? g.baseline_line_one : g.baseline_line, { count: baseline.robots_allowed_words_restrict, allowed: baseline.allowed })}</p>
+      <p className="hint">{fmt(baseline.pairs === 1 ? g.baseline_split_one : g.baseline_split, { ...baseline })}</p>
       {marked ? <p className="hint">{g.baseline_note}</p> : null}
     </section>
   );

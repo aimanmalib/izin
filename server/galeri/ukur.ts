@@ -36,7 +36,7 @@ export function baselineSection(g: GallerySlice, origin: string, at: string): st
     "",
     `Pairs where robots.txt allows the URL but a quoted clause from the site (a robots.txt comment or the terms) restricts or forbids the action, and Izin answered ASK or NO-GO on that clause: **${b.robots_allowed_words_restrict} of ${b.allowed}**.`,
     "",
-    "An ASK that comes only from a block, an unreadable page or an unavailable decision step is not counted.",
+    "An ASK that comes only from a block, an unreadable page, an unavailable decision step, or a code ceiling that lowered the decision step's GO is not counted.",
   );
   const counted = g.sites.flatMap((s) =>
     Object.entries(s.checks)
