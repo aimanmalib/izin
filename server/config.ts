@@ -182,6 +182,25 @@ export const configSchema = z
         version: z.string().regex(/^\d+\.\d+\.\d+$/),
       })
       .strict(),
+    web: z
+      .object({
+        repo_url: z.url(),
+        // Order of the action chips on the check form and the gallery excerpt.
+        action_order: z.array(z.enum(ACTIONS)).length(ACTIONS.length),
+        gallery_excerpt_rows: positiveInt,
+        gallery_excerpt_actions: z.array(z.enum(ACTIONS)).min(1),
+        poll_ms: z.number().int().min(250).max(10_000),
+        // Rough time each live step is shown for while a check runs; the receipt decides when it ends.
+        step_ms: z.array(z.number().int().positive()).length(5),
+        tiers: z
+          .object({
+            agent_usd_per_check: z.number().positive(),
+            watch_usd_per_month: z.number().positive(),
+            watch_sites: positiveInt,
+          })
+          .strict(),
+      })
+      .strict(),
     alerts: z
       .object({
         command_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
@@ -218,6 +237,7 @@ export const configSchema = z
     for (const s of STANCES) {
       if (c.decider.stance_priority[s] === undefined) ctx.addIssue({ code: "custom", path: ["decider", "stance_priority", s], message: "missing stance" });
     }
+    if (new Set(c.web.action_order).size !== ACTIONS.length) ctx.addIssue({ code: "custom", path: ["web", "action_order"], message: "each action once" });
     const l = c.limits;
     if (l.quote_min_chars >= l.quote_max_chars) ctx.addIssue({ code: "custom", path: ["limits"], message: "quote range" });
     if (l.check_timeout_s >= l.server_timeout_s) ctx.addIssue({ code: "custom", path: ["limits"], message: "check must end before server timeout" });
@@ -235,6 +255,8 @@ export const PROMPTS_DIR = fileURLToPath(new URL("../prompts/", import.meta.url)
 export const LANG_DIR = fileURLToPath(new URL("../lang/", import.meta.url));
 export const GALLERY_PATH = fileURLToPath(new URL("../config/gallery.json", import.meta.url));
 export const BENCH_DIR = fileURLToPath(new URL("../bench/", import.meta.url));
+export const EXAMPLES_PATH = fileURLToPath(new URL("../config/examples.json", import.meta.url));
+export const WEB_DIST = fileURLToPath(new URL("../web/dist/", import.meta.url));
 export const FIXTURES_DIR = fileURLToPath(new URL("../fixtures/", import.meta.url));
 
 export function parseConfig(raw: unknown): IzinConfig {

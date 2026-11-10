@@ -1,15 +1,24 @@
-// HTTP surface: the check API under /api/ and MCP at /mcp. The web pages join later.
+// HTTP surface: the check API under /api/, MCP at /mcp and the web app (web/dist) for every page.
 import Fastify, { type FastifyInstance } from "fastify";
-import type { IzinConfig } from "./config.js";
+import { WEB_DIST, type IzinConfig } from "./config.js";
 import { makeClientIp, type ClientIp } from "./api/clientip.js";
 import { registerApi } from "./api/routes.js";
 import { benchView, dolphinShare, galleryView } from "./api/views.js";
 import { mcpTexts, registerMcp } from "./mcp/server.js";
 import { createRuntime, type Runtime } from "./runtime.js";
+import { loadExamples, siteView } from "./web/site.js";
+import { registerStatic } from "./web/static.js";
 
 export const VERSION = "0.1.0";
 
-export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config), opts: { clientIp?: ClientIp } = {}): FastifyInstance {
+export interface AppOpts {
+  clientIp?: ClientIp;
+  /** Folder of the built web app; defaults to web/dist. */
+  webDir?: string;
+  examplesPath?: string;
+}
+
+export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config), opts: AppOpts = {}): FastifyInstance {
   const app = Fastify({
     logger: process.env.NODE_ENV === "test" ? false : { level: process.env.LOG_LEVEL ?? "info" },
     connectionTimeout: config.limits.server_timeout_s * 1000,
@@ -34,6 +43,14 @@ export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config)
     },
     gallery: () => galleryView(rt.db),
     bench: () => benchView(),
+  });
+  // Read on each request so a new receipt id in config/examples.json needs no code change.
+  app.get("/api/site", async () => siteView(config, rt.db, loadExamples(opts.examplesPath)));
+  registerStatic(app, opts.webDir ?? WEB_DIST, {
+    receipt: (id) => {
+      const r = rt.service.result(id);
+      return r?.status === "done" ? r.receipt : null;
+    },
   });
   registerMcp(app, { cfg: config, service: rt.service, texts: mcpTexts(), clientIp, version: VERSION });
 

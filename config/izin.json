@@ -194,5 +194,14 @@
     "shadow_exhausted_markers": ["exhausted"]
   },
   "receipt": { "id_length": 10, "version": "0.1.0" },
+  "web": {
+    "repo_url": "https://github.com/aimanmalib/izin",
+    "action_order": ["purchase", "account", "post", "read_page", "crawl", "train"],
+    "gallery_excerpt_rows": 8,
+    "gallery_excerpt_actions": ["purchase", "account", "post"],
+    "poll_ms": 1200,
+    "step_ms": [2500, 9000, 1500, 4000, 800],
+    "tiers": { "agent_usd_per_check": 0.01, "watch_usd_per_month": 5, "watch_sites": 100 }
+  },
   "alerts": { "command_env": "IZIN_NOTIFY_CMD", "language": "ms", "level": "warn" }
 }
