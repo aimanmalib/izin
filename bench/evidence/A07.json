@@ -1,0 +1,113 @@
+{
+  "id": "A07",
+  "set": "A",
+  "site": "internshala.com",
+  "action": "crawl",
+  "expected": "NO_GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "internshala.com",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://internshala.com/terms/",
+          "kind": "policy",
+          "chars": 30227,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c1",
+        "doc": "d1",
+        "section": "Prohibition on Use of Website Data for AI and Machine Learning Model Training",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "You further agree not to archive, cache, compile into datasets, or otherwise share our data or content with any third parties for the aforementioned prohibited purposes."
+      },
+      {
+        "id": "c3",
+        "doc": "d1",
+        "section": "Using the Website",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "You are specifically prohibited from: (i) downloading, copying, or retransmitting any or all of the Site or the Content without, or in violation of, a written license or agreement with SEPL; (ii) using any data mining or similar data gathering or extraction methods;"
+      },
+      {
+        "id": "c7",
+        "doc": "d1",
+        "section": "Rights to Website and Contents thereof",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "Except for, as explicitly permitted under this, or other written license or agreement with SEPL, no portion or element of this Site or its content may be copied or retransmitted via any means."
+      },
+      {
+        "id": "c12",
+        "doc": "d1",
+        "section": "Applicant data usage T&Cs",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "You are strictly prohibited from transferring/selling/sharing Applicants' data, for free or for a fee, to any other entity."
+      },
+      {
+        "id": "c14",
+        "doc": "d1",
+        "section": "Most Important Terms & Conditions for Applicants",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "You are strictly prohibited from transferring/selling/sharing Employers' data (contact details etc.), for free or for a fee, with any other entity."
+      },
+      {
+        "id": "c5",
+        "doc": "d1",
+        "section": "Using the Website",
+        "category": "permission_grant",
+        "stance": "restricts",
+        "quote": "Any use of the Content, this Site or any of its functionality for a purpose not permitted by these Terms is grounds for the immediate revocation of any usernames, pass codes or other permissions that may have been granted by internshala.com on behalf of SEPL for use of this Site."
+      },
+      {
+        "id": "c10",
+        "doc": "d1",
+        "section": "Fair Usage Policy",
+        "category": "rate_limit",
+        "stance": "restricts",
+        "quote": "As per Internshala's Fair Usage Policy, Employers subscribed to our Premium Plans can post a maximum of 50 listings (Internships and Jobs combined) in 30 days on Internshala."
+      },
+      {
+        "id": "c11",
+        "doc": "d1",
+        "section": "Most Important Terms & Conditions for Employers",
+        "category": "rate_limit",
+        "stance": "restricts",
+        "quote": "Domestic employers (i.e. employers whose companies are based in India) can post 1 free internship or job listing in a month."
+      },
+      {
+        "id": "c13",
+        "doc": "d1",
+        "section": "Applicant data usage T&Cs",
+        "category": "data_collection",
+        "stance": "restricts",
+        "quote": "You can use the Applicants' data that you receive for your Job solely for the purpose of hiring. Any attempt to send any other communication (promotional content for example) to the Applicants or any other usage of the data is strictly prohibited."
+      }
+    ]
+  }
+}

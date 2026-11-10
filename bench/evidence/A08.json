@@ -1,0 +1,113 @@
+{
+  "id": "A08",
+  "set": "A",
+  "site": "eventbrite.com",
+  "action": "crawl",
+  "expected": "NO_GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "eventbrite.com",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://www.eventbrite.com/help/en-us/articles/251210/eventbrite-terms-of-service/",
+          "kind": "policy",
+          "chars": 69432,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c1",
+        "doc": "d1",
+        "section": "13. Scraping or Commercial Use of Site Content is Prohibited",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "You have no right to use, and you agree not to use, any Site Content for your own commercial purposes. You have no right to, and you agree not to, scrape, crawl, or employ any automated means to extract data from the Sites."
+      },
+      {
+        "id": "c5",
+        "doc": "d1",
+        "section": "10.2 License Restrictions",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "copy, modify, reproduce, translate, localize, port, or otherwise create derivatives of any part of the Services;"
+      },
+      {
+        "id": "c6",
+        "doc": "d1",
+        "section": "10.2 License Restrictions",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "reverse engineer, disassemble, decompile, or otherwise attempt to discover the source code or structure, sequence, and organization of all or any part of the Services;"
+      },
+      {
+        "id": "c8",
+        "doc": "d1",
+        "section": "10.2 License Restrictions",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "engage in any activity that interferes with or disrupts the Services."
+      },
+      {
+        "id": "c13",
+        "doc": "d1",
+        "section": "15.1 Do's and Dont's",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "You will not use the Services to collect any sensitive personal information, such as health information (including \"protected health information\" as defined in 45 C.F.R. §160.103), social security numbers, financial information, payment card numbers, driver's license numbers, and passport numbers, unless otherwise permitted by these Terms or we have consented to the collection of the information in writing."
+      },
+      {
+        "id": "c2",
+        "doc": "d1",
+        "section": "1.3 What else?",
+        "category": "api_required",
+        "stance": "requires",
+        "quote": "If you are a third party interacting with our Services not as an Organizer or a Consumer, the API Terms of Use and/or Trademark and Copyright Policy might be applicable to you."
+      },
+      {
+        "id": "c3",
+        "doc": "d1",
+        "section": "10.1 License to Services",
+        "category": "permission_grant",
+        "stance": "restricts",
+        "quote": "We grant you a limited, non-exclusive, non-transferable, non-sublicensable (except to sub-Users registered via the Services), revocable right to use our Services solely to:"
+      },
+      {
+        "id": "c4",
+        "doc": "d1",
+        "section": "10.1 License to Services",
+        "category": "permission_grant",
+        "stance": "permits",
+        "quote": "browse the Services and search for, view, register for, or purchase tickets or registrations to an event listed on the Services; and/or"
+      },
+      {
+        "id": "c14",
+        "doc": "d1",
+        "section": "3.2 Cookies",
+        "category": "data_collection",
+        "stance": "permits",
+        "quote": "We and our vendors use cookies, scripts, and other technologies to collect information on a real-time basis about how you use and navigate our Services."
+      }
+    ]
+  }
+}

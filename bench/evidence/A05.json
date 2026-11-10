@@ -1,0 +1,113 @@
+{
+  "id": "A05",
+  "set": "A",
+  "site": "zindi.africa",
+  "action": "crawl",
+  "expected": "GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "zindi.africa",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://zindi.world/terms",
+          "kind": "policy",
+          "chars": 16079,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c3",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "collect, access, or store personal information about other users of the Website;"
+      },
+      {
+        "id": "c4",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "\"hack\", or access without permission, our proprietary or confidential records, records of another user, or records of anyone else, nor \"hack\" or gain access to the Website in order to manipulate, or modify any content on the Website, including challenge leader boards and rankings posted on the Website;"
+      },
+      {
+        "id": "c6",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "remove, circumvent, disable, damage or otherwise interferes with security-related features, or features that enforce limitations on use of the Website;"
+      },
+      {
+        "id": "c8",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "attempt to gain unauthorised access to, interfere with, damage or disrupt any parts of the Website, the server on which the Website is stored, or any server, computer or database connected to the Website; or"
+      },
+      {
+        "id": "c9",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "attack the Website via a denial-of-service attack or a distributed denial-of-service attack."
+      },
+      {
+        "id": "c2",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "data_collection",
+        "stance": "restricts",
+        "quote": "use any manual process to monitor or replicate any of the material on the Website or for any other unauthorised purpose;"
+      },
+      {
+        "id": "c5",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "data_collection",
+        "stance": "restricts",
+        "quote": "decompile, reverse engineer, disassemble or otherwise attempts to derive source code from the Website, it being recorded that any content downloaded from the Website shall only be used for the legitimate purpose of building and submitting a Competition solution, and/or, where stipulated by Zindi, for educational purposes;"
+      },
+      {
+        "id": "c7",
+        "doc": "d1",
+        "section": "Standards of Use",
+        "category": "rate_limit",
+        "stance": "restricts",
+        "quote": "use the Website in any way that could restrict, overload, damage, or impair the Website;"
+      },
+      {
+        "id": "c12",
+        "doc": "d1",
+        "section": "Intellectual Property",
+        "category": "data_collection",
+        "stance": "restricts",
+        "quote": "You must not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store or transmit any of the material on our Website, except as allowed or required by these Terms of Use."
+      }
+    ]
+  }
+}

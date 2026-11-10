@@ -1,0 +1,40 @@
+{
+  "id": "A09",
+  "set": "A",
+  "site": "gdg.community.dev",
+  "action": "crawl",
+  "expected": "ASK",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "community.dev",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": 2,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://gdg.community.dev/participation-terms/",
+          "kind": "policy",
+          "chars": 4187,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": []
+  }
+}

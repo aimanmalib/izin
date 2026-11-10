@@ -1,0 +1,46 @@
+{
+  "id": "A06",
+  "set": "A",
+  "site": "taikai.network",
+  "action": "crawl",
+  "expected": "NO_GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": true,
+  "guard": false,
+  "blocked": [
+    {
+      "url": "https://taikai.network/terms",
+      "status": 200
+    }
+  ],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "taikai.network",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {
+          "search": "yes",
+          "ai-input": "yes",
+          "ai-train": "no"
+        }
+      },
+      "blocked_reader": true,
+      "docs_read": 0,
+      "docs": [],
+      "unreadable": [
+        {
+          "url": "https://taikai.network/terms",
+          "why": "blocked"
+        }
+      ],
+      "addressed_to_ai_found": false
+    },
+    "clauses": []
+  }
+}

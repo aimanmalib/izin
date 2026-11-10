@@ -1,0 +1,97 @@
+{
+  "id": "A03",
+  "set": "A",
+  "site": "hackerearth.com",
+  "action": "crawl",
+  "expected": "GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "hackerearth.com",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://www.hackerearth.com/terms-of-service",
+          "kind": "policy",
+          "chars": 31463,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c5",
+        "doc": "d1",
+        "section": "RESPONSIBILITIES OF AN USER",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "use the Software for timesharing or benchmarking;"
+      },
+      {
+        "id": "c6",
+        "doc": "d1",
+        "section": "RESPONSIBILITIES OF AN USER",
+        "category": "rate_limit",
+        "stance": "prohibits",
+        "quote": "allow the Software to be used for applications/instances, in excess of the Subscription;"
+      },
+      {
+        "id": "c7",
+        "doc": "d1",
+        "section": "RESPONSIBILITIES OF AN USER",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "use the Software to develop any competing or similar product;"
+      },
+      {
+        "id": "c11",
+        "doc": "d1",
+        "section": "RESPONSIBILITIES OF AN USER",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "copy, adapt, reverse engineer, decompile, disassemble or otherwise attempt to discover or reproduce\nthe\nsource code, object code or underlying structure, ideas or algorithms of the Software (provided that\nreverse\nengineering is prohibited only to the extent such prohibition is not contrary to applicable law);"
+      },
+      {
+        "id": "c12",
+        "doc": "d1",
+        "section": "RESPONSIBILITIES OF AN USER",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "modify, translate, or create derivative works based on the Software;"
+      },
+      {
+        "id": "c8",
+        "doc": "d1",
+        "section": "RESPONSIBILITIES OF AN USER",
+        "category": "automated_access",
+        "stance": "restricts",
+        "quote": "use the Software in any manner not recommended or authorised by the Company;"
+      },
+      {
+        "id": "c10",
+        "doc": "d1",
+        "section": "ACCOUNT INFORMATION AND SERVICE ACCESS",
+        "category": "automated_access",
+        "stance": "restricts",
+        "quote": "Except as expressly permitted by HackerEarth, You agree that the Services are to be accessed only\nfor You or\nyour company's own internal business purposes and not for resale or unauthorized distribution to any\nthird party."
+      }
+    ]
+  }
+}

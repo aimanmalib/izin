@@ -1,0 +1,61 @@
+{
+  "id": "A10",
+  "set": "A",
+  "site": "uninet.my",
+  "action": "crawl",
+  "expected": "GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "uninet.my",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 2,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://uninet.my/robots.txt",
+          "kind": "robots_comments",
+          "chars": 1565,
+          "truncated": false
+        },
+        {
+          "id": "d2",
+          "url": "https://uninet.my/robots.txt",
+          "kind": "robots_comments",
+          "chars": 347,
+          "truncated": false
+        }
+      ],
+      "unreadable": [
+        {
+          "url": "https://uninet.my/",
+          "why": "stopped_at_robots_txt"
+        }
+      ],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c1",
+        "doc": "d1",
+        "section": "",
+        "category": "automated_access",
+        "stance": "permits",
+        "quote": "Crawling and indexing are two different permissions, and this file only\ngrants the first."
+      }
+    ]
+  }
+}
