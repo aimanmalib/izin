@@ -4,12 +4,16 @@
 //   npm run ukur -- --gallery-json gallery.json    same, from a saved /api/gallery response
 //                    [--bench-json bench.json]     and the reading cost from a saved /api/bench response
 //   add --kering to print the sections and write nothing
+// The benchmark, gallery-run, H1 and reader sections are added when their run files exist:
+// bench/results.json, bench/runs/bench.json, bench/runs/gallery.json, bench/runs/h1.json.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import Database from "better-sqlite3";
-import { galleryView } from "../server/api/views.js";
+import { benchResultsSchema, galleryView } from "../server/api/views.js";
 import { readingCost, type ReadingCost } from "../server/belanja/kos.js";
-import { loadConfig } from "../server/config.js";
+import { BENCH_DIR, loadConfig } from "../server/config.js";
+import { loadSets } from "../server/bench/sets.js";
+import { benchSection, galleryRunSection, readerSection, type BenchReportFile, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
 import { baselineSection, readingCostSection, replaceSection, type GallerySlice } from "../server/galeri/ukur.js";
 
 const { values } = parseArgs({
@@ -43,6 +47,19 @@ const sections: [string, string][] = [
   ["robots-only-baseline", baselineSection(gallery, cfg.public_origin, at)],
   ["reading-cost", readingCostSection(cost, at)],
 ];
+const runFile = <T>(name: string): T | null => (existsSync(`${BENCH_DIR}${name}`) ? (JSON.parse(readFileSync(`${BENCH_DIR}${name}`, "utf8")) as T) : null);
+const report = runFile<BenchReportFile>("runs/bench.json");
+const results = runFile<unknown>("results.json");
+const galleryRun = runFile<GalleryRunFile>("runs/gallery.json");
+const h1 = runFile<H1File>("runs/h1.json");
+if (report && results) sections.push(["benchmark", benchSection(benchResultsSchema.parse(results), report, loadSets().manual, cfg.public_origin)]);
+if (galleryRun) sections.push(["gallery-run", galleryRunSection(galleryRun, h1)]);
+const readerRuns = [
+  ...(galleryRun ? [{ name: "Gallery", reader: galleryRun.reader }] : []),
+  ...(report ? [{ name: "Benchmark", reader: report.reader }] : []),
+  ...(h1 ? [{ name: "H1", reader: h1.reader }] : []),
+];
+if (readerRuns.length) sections.push(["reader", readerSection(readerRuns, new Date().toISOString())]);
 if (values.kering) {
   console.log(sections.map(([, s]) => s).join("\n\n"));
 } else {
