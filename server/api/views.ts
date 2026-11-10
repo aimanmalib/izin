@@ -2,11 +2,19 @@
 // files (config/gallery.json, bench/*.json) and the database; nothing is hard-coded here.
 import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
-import { BENCH_DIR, GALLERY_PATH } from "../config.js";
+import { z } from "zod";
+import { ACTIONS, BENCH_DIR, GALLERY_PATH, type Action, type Verdict } from "../config.js";
 
 interface GalleryFile {
   sites: { host: string; group: string }[];
   blocked_reader: { host: string; reason: string }[];
+}
+
+export interface GalleryCell {
+  verdict: Verdict | null;
+  receipt_id: string;
+  updated_at: string;
+  changed: boolean;
 }
 
 const readJson = <T>(path: string): T | null => (existsSync(path) ? (JSON.parse(readFileSync(path, "utf8")) as T) : null);
@@ -26,8 +34,8 @@ export function galleryView(db: Database.Database, path: string = GALLERY_PATH) 
       checks: Object.fromEntries(
         rows
           .filter((r) => r.site === s.host)
-          .map((r) => [r.action, { verdict: r.verdict, receipt_id: r.check_id, updated_at: r.updated_at, changed: r.changed === 1 }]),
-      ),
+          .map((r) => [r.action, { verdict: r.verdict as Verdict | null, receipt_id: r.check_id, updated_at: r.updated_at, changed: r.changed === 1 }]),
+      ) as Partial<Record<Action, GalleryCell>>,
     })),
     blocked_reader: file.blocked_reader,
   };
@@ -36,17 +44,53 @@ export function galleryView(db: Database.Database, path: string = GALLERY_PATH) 
 interface ReadabilityFile {
   run_at: string;
   user_agent: string;
-  counts: Record<string, unknown>;
+  counts: { sites: number; readable: number; unreadable: number };
 }
 
-/** Readability counts now; benchmark results join when their file exists. */
+const verdict = z.enum(["GO", "ASK", "NO_GO"]);
+const share = z.object({ pairs: z.number().int().nonnegative(), agree: z.number().int().nonnegative(), false_go: z.number().int().nonnegative(), false_no_go: z.number().int().nonnegative() });
+
+/** Shape of bench/results.json, written by the benchmark run. The /bench page renders exactly this. */
+export const benchResultsSchema = z.object({
+  run_at: z.string(),
+  total_cost_usd: z.number().nonnegative(),
+  set_a: z.array(
+    z.object({
+      site: z.string(),
+      action: z.enum(ACTIONS),
+      human_verdict: verdict,
+      izin_verdict: verdict.nullable(),
+      receipt_id: z.string().regex(/^[a-z2-7]{8,32}$/).nullable(),
+      note: z.string(),
+    }),
+  ),
+  set_b: share.extend({ owner_review: z.boolean() }),
+  variants: z.array(
+    share.extend({
+      id: z.string().regex(/^V\d$/),
+      model: z.string(),
+      cost_usd_per_decision: z.number().nonnegative(),
+      median_ms: z.number().nonnegative(),
+      shipped: z.boolean(),
+    }),
+  ),
+});
+
+export type BenchResults = z.infer<typeof benchResultsSchema>;
+
+/** Readability counts now; benchmark results join when their file exists and has the expected shape. */
 export function benchView(dir: string = BENCH_DIR) {
   const readability = readJson<ReadabilityFile>(`${dir}readability.json`);
+  const raw = readJson<unknown>(`${dir}results.json`);
+  const parsed = raw === null ? null : benchResultsSchema.safeParse(raw);
   return {
     readability: readability ? { run_at: readability.run_at, user_agent: readability.user_agent, counts: readability.counts } : null,
-    results: readJson<unknown>(`${dir}results.json`),
+    results: parsed?.success ? parsed.data : null,
   };
 }
+
+export type GalleryView = ReturnType<typeof galleryView>;
+export type BenchView = ReturnType<typeof benchView>;
 
 /** Share of reader tokens (in + out) that were read on Dolphin, from stored extractions; null before any. */
 export function dolphinShare(db: Database.Database): number | null {

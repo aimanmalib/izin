@@ -185,6 +185,8 @@ export const configSchema = z
     web: z
       .object({
         repo_url: z.url(),
+        // The test shop the /trap page checks (served by this process at /trap/ and /trap/terms).
+        trap_url: z.url(),
         // Order of the action chips on the check form and the gallery excerpt.
         action_order: z.array(z.enum(ACTIONS)).length(ACTIONS.length),
         gallery_excerpt_rows: positiveInt,

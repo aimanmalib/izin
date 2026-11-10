@@ -62,6 +62,22 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
     examples,
     cost: costView(db),
+    trap_url: w.trap_url,
+    // Numbers the /bot and /docs pages state, read from the same limits the code enforces.
+    bot: {
+      user_agent: cfg.user_agent,
+      requests_per_check: cfg.limits.requests_per_check,
+      policy_docs_max: cfg.limits.policy_docs_max,
+      host_interval_s: cfg.limits.host_interval_ms / 1000,
+      crawl_delay_max_s: cfg.limits.crawl_delay_max_ms / 1000,
+      fetch_timeout_s: cfg.limits.fetch_timeout_ms / 1000,
+      no_refetch_days: cfg.limits.no_refetch_blocked_days,
+    },
+    api: {
+      checks_per_day: cfg.limits.rate_new_checks_per_day,
+      cache_hours: cfg.limits.cache_hours,
+      mcp_wait_s: cfg.limits.mcp_wait_s,
+    },
   };
 }
 

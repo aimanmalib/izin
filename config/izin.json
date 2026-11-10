@@ -196,6 +196,7 @@
   "receipt": { "id_length": 10, "version": "0.1.0" },
   "web": {
     "repo_url": "https://github.com/aimanmalib/izin",
+    "trap_url": "https://izin.sasateguh.com/trap/",
     "action_order": ["purchase", "account", "post", "read_page", "crawl", "train"],
     "gallery_excerpt_rows": 8,
     "gallery_excerpt_actions": ["purchase", "account", "post"],

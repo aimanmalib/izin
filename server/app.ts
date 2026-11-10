@@ -1,6 +1,6 @@
 // HTTP surface: the check API under /api/, MCP at /mcp and the web app (web/dist) for every page.
 import Fastify, { type FastifyInstance } from "fastify";
-import { WEB_DIST, type IzinConfig } from "./config.js";
+import { FIXTURES_DIR, WEB_DIST, type IzinConfig } from "./config.js";
 import { makeClientIp, type ClientIp } from "./api/clientip.js";
 import { registerApi } from "./api/routes.js";
 import { benchView, dolphinShare, galleryView } from "./api/views.js";
@@ -51,6 +51,7 @@ export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config)
       const r = rt.service.result(id);
       return r?.status === "done" ? r.receipt : null;
     },
+    trapDir: `${FIXTURES_DIR}trap/`,
   });
   registerMcp(app, { cfg: config, service: rt.service, texts: mcpTexts(), clientIp, version: VERSION });
 
