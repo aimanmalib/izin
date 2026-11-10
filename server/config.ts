@@ -14,6 +14,7 @@ export type Verdict = (typeof VERDICTS)[number];
 
 const price = z.object({ input: z.number().nonnegative(), output: z.number().nonnegative() }).strict();
 const positiveInt = z.number().int().positive();
+const regexSource = z.string().min(2);
 
 export const configSchema = z
   .object({
@@ -49,8 +50,26 @@ export const configSchema = z
     challenge_markers: z.array(z.string().min(3)).min(1),
     blocked_statuses: z.array(z.number().int().min(400).max(599)).min(1),
     injection_patterns: z.array(z.string().min(3)).min(1),
+    discovery: z
+      .object({
+        input_path_pattern: regexSource,
+        anchor_scores: z.array(z.object({ pattern: regexSource, score: positiveInt }).strict()).min(1),
+        anchor_exclude_pattern: regexSource,
+        common_paths: z.array(z.string().regex(/^\/[a-z0-9/_-]*$/)).min(1),
+        multi_part_suffixes: z.array(z.string().regex(/^[a-z0-9-]+\.[a-z]{2,}$/)),
+      })
+      .strict(),
+    robots_comments: z
+      .object({
+        min_chars: positiveInt,
+        keywords: z.array(z.string().min(2)).min(1),
+        boilerplate_markers: z.array(z.string().min(5)),
+        policy_url_pattern: regexSource,
+      })
+      .strict(),
     limits: z
       .object({
+        fetch_ports: z.array(z.number().int().min(1).max(65535)).min(1),
         requests_per_check: positiveInt,
         policy_docs_max: positiveInt,
         common_path_attempts_max: positiveInt,
@@ -58,6 +77,7 @@ export const configSchema = z
         response_max_bytes: positiveInt,
         redirects_max: positiveInt,
         host_interval_ms: positiveInt,
+        crawl_delay_max_ms: positiveInt,
         doc_text_min_chars: positiveInt,
         doc_text_max_chars: positiveInt,
         terms_text_max_chars: positiveInt,
@@ -86,11 +106,18 @@ export const configSchema = z
         if (!known.has(cat)) ctx.addIssue({ code: "custom", path: ["relevance", action], message: `unknown category ${cat}` });
       }
     }
-    for (const [i, p] of c.injection_patterns.entries()) {
+    const patterns: [string, string][] = [
+      ...c.injection_patterns.map((p, i): [string, string] => [`injection_patterns.${i}`, p]),
+      ["discovery.input_path_pattern", c.discovery.input_path_pattern],
+      ["discovery.anchor_exclude_pattern", c.discovery.anchor_exclude_pattern],
+      ...c.discovery.anchor_scores.map((a, i): [string, string] => [`discovery.anchor_scores.${i}`, a.pattern]),
+      ["robots_comments.policy_url_pattern", c.robots_comments.policy_url_pattern],
+    ];
+    for (const [where, p] of patterns) {
       try {
         new RegExp(p, "iu");
       } catch {
-        ctx.addIssue({ code: "custom", path: ["injection_patterns", i], message: "invalid regular expression" });
+        ctx.addIssue({ code: "custom", path: where.split("."), message: "invalid regular expression" });
       }
     }
     const l = c.limits;

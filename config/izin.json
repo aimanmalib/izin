@@ -67,7 +67,27 @@
     "(ai|llm) (agents?|systems?|models?)\\b.{0,40}(must|should|shall) (report|state|say|respond)",
     "report that .{0,80}(permitted|allowed|authorized)"
   ],
+  "discovery": {
+    "input_path_pattern": "(terms|tos|legal|conditions|agreement|acceptable-use|policy|policies)",
+    "anchor_scores": [
+      { "pattern": "terms|conditions|user agreement|terms of (use|service)|legal", "score": 3 },
+      { "pattern": "acceptable use|api terms|developer (terms|policy|agreement)|robot|crawl|scrap|automated", "score": 3 }
+    ],
+    "anchor_exclude_pattern": "privacy|cookie",
+    "common_paths": ["/terms", "/terms-of-service", "/terms-of-use", "/tos", "/legal/terms", "/legal"],
+    "multi_part_suffixes": [
+      "co.uk", "org.uk", "ac.uk", "com.au", "net.au", "org.au", "com.my", "net.my", "org.my", "edu.my", "gov.my",
+      "co.jp", "co.nz", "co.id", "or.id", "co.in", "com.br", "com.sg", "com.cn", "co.kr"
+    ]
+  },
+  "robots_comments": {
+    "min_chars": 200,
+    "keywords": ["agent", "bot", "automated", "scrap", "checkout", "AI", "LLM", "permission", "prohibit"],
+    "boilerplate_markers": ["following content signals", "Content-Signal = yes"],
+    "policy_url_pattern": "terms|legal|policy|policies|conditions|agreement"
+  },
   "limits": {
+    "fetch_ports": [80, 443],
     "requests_per_check": 8,
     "policy_docs_max": 4,
     "common_path_attempts_max": 2,
@@ -75,6 +95,7 @@
     "response_max_bytes": 3145728,
     "redirects_max": 5,
     "host_interval_ms": 1000,
+    "crawl_delay_max_ms": 5000,
     "doc_text_min_chars": 800,
     "doc_text_max_chars": 600000,
     "terms_text_max_chars": 400000,
