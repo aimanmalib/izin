@@ -1,34 +1,15 @@
 // Browser checks of the front page and the receipt page on Chromium and WebKit (iPhone 13):
 // the check flow to a receipt, the trap sentence set aside, the language toggle, the one-click
 // examples, no horizontal scroll down to 320 px, and no console errors.
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import en from "../lang/en.json" with { type: "json" };
 import ms from "../lang/ms.json" with { type: "json" };
 import examples from "../config/examples.json" with { type: "json" };
+import { noSideScroll, shot, watchConsole } from "./helpers";
 import { SITES_PORT } from "./ports";
 
 const site = (host: string, path = "/") => `http://${host}:${SITES_PORT}${path}`;
-
-function watchConsole(page: Page): string[] {
-  const errors: string[] = [];
-  page.on("console", (m) => (m.type() === "error" ? errors.push(m.text()) : undefined));
-  page.on("pageerror", (e) => errors.push(e.message));
-  return errors;
-}
-
-async function noSideScroll(page: Page) {
-  const { sw, cw } = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
-  expect(sw, "page scrolls sideways").toBeLessThanOrEqual(cw);
-}
-
-async function shot(page: Page, name: string) {
-  const dir = process.env.AUTOPILOT_BUKTI_DIR;
-  if (!dir) return;
-  mkdirSync(dir, { recursive: true });
-  await page.screenshot({ path: join(dir, `izin-p7-${test.info().project.name}-${name}.png`), fullPage: true });
-}
+const shotP7 = (page: Page, name: string) => shot(page, `p7-${test.info().project.name}-${name}`);
 
 async function runCheck(page: Page, url: string, action: keyof typeof en.actions) {
   await page.goto("/");
@@ -47,7 +28,7 @@ test("front page reads well and has no console errors", async ({ page }) => {
   await noSideScroll(page);
   // Checked before the screenshot: Playwright injects a caret-hiding style the page's CSP refuses.
   expect(errors).toEqual([]);
-  await shot(page, "home");
+  await shotP7(page, "home");
 });
 
 test("a check runs to a receipt with the deciding clause quoted in a monospace font", async ({ page }) => {
@@ -63,7 +44,7 @@ test("a check runs to a receipt with the deciding clause quoted in a monospace f
   await expect(page.getByRole("link", { name: en.web.receipt_page.json })).toHaveAttribute("href", /\.json$/);
   await noSideScroll(page);
   expect(errors).toEqual([]);
-  await shot(page, "receipt");
+  await shotP7(page, "receipt");
 });
 
 test("the trap page's hidden sentence is set aside and shown on the receipt", async ({ page }) => {
@@ -82,7 +63,7 @@ test("the language toggle switches to Bahasa Melayu and stays after reload", asy
   await expect(page.locator("html")).toHaveAttribute("lang", "ms");
   await page.reload();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(ms.web.home.h1);
-  await expect(page.getByText(ms.actions.purchase, { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: ms.actions.purchase, exact: true })).toBeAttached();
   await noSideScroll(page);
 });
 
@@ -106,7 +87,7 @@ test("no page scrolls sideways at 320 px, with folds open", async ({ page }) => 
   for (const s of await page.locator("details summary").all()) await s.click();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await noSideScroll(page);
-  await shot(page, "receipt-320");
+  await shotP7(page, "receipt-320");
 });
 
 test("an unknown receipt shows not found", async ({ page }) => {

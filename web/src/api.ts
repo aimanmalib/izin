@@ -1,9 +1,10 @@
 // Calls to the Izin API. Types come from the server code so the page and the receipt agree.
 import type { Action } from "../../server/config";
 import type { Receipt } from "../../server/resit/receipt";
+import type { BenchView, GalleryView } from "../../server/api/views";
 import type { SiteView } from "../../server/web/site";
 
-export type { Action, Receipt, SiteView };
+export type { Action, BenchView, GalleryView, Receipt, SiteView };
 export type JobStatus = "queued" | "running" | "done" | "error";
 
 export interface CheckBody {
@@ -29,8 +30,8 @@ async function getJson<T>(url: string): Promise<T | null> {
 
 export const getSite = () => getJson<SiteView>("/api/site");
 export const getHealth = () => getJson<{ ok: boolean; cache_only: boolean }>("/api/health");
-export const getGallery = () =>
-  getJson<{ sites: { host: string; checks: Partial<Record<Action, { verdict: Receipt["verdict"] | null; receipt_id: string }>> }[] }>("/api/gallery");
+export const getGallery = () => getJson<GalleryView>("/api/gallery");
+export const getBench = () => getJson<BenchView>("/api/bench");
 
 export async function getReceipt(id: string): Promise<{ status: JobStatus; receipt?: Receipt } | "not_found" | null> {
   try {

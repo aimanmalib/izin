@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { getGallery, getHealth, type Action, type SiteView } from "../api";
 import { CheckForm } from "../components/CheckForm";
 import { CopyButton } from "../components/CopyButton";
+import { usd } from "../components/Page";
 import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT } from "../i18n";
 import { linkClick } from "../router";
 
 type GalleryRows = NonNullable<Awaited<ReturnType<typeof getGallery>>>["sites"];
 
-const usd = (n: number) => (n === 0 ? "0" : n < 0.001 ? n.toFixed(5) : n.toFixed(4));
 
 export function Home({ site }: { site: SiteView }) {
   const { t } = useT();
