@@ -19,7 +19,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "e2e": "playwright test",
-    "gate": "bash scripts/gerbang-ujian.sh"
+    "gate": "bash scripts/gerbang-ujian.sh",
+    "check": "tsx scripts/check.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
