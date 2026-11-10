@@ -1,0 +1,300 @@
+{
+  "_comment": "Picked by scripts/readability.ts from bench/readability.json: readable sites in candidate order; blocked_reader lists the sites the reader could not read.",
+  "sites": [
+    {
+      "host": "ebay.com",
+      "group": "shopping",
+      "policy_hints": []
+    },
+    {
+      "host": "shop.app",
+      "group": "shopping",
+      "policy_hints": []
+    },
+    {
+      "host": "booking.com",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.booking.com/content/terms.html"
+      ]
+    },
+    {
+      "host": "airbnb.com",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.airbnb.com/help/article/2908"
+      ]
+    },
+    {
+      "host": "walmart.com",
+      "group": "shopping",
+      "policy_hints": [
+        "https://www.walmart.com/help/article/walmart-com-terms-of-use/3b75080af40340d6bbd596f116fae5a0"
+      ]
+    },
+    {
+      "host": "target.com",
+      "group": "shopping",
+      "policy_hints": [
+        "https://www.target.com/c/terms-conditions/-/N-4sr7l"
+      ]
+    },
+    {
+      "host": "stripe.com",
+      "group": "developer",
+      "policy_hints": [
+        "https://stripe.com/en-my/legal/restricted-businesses"
+      ]
+    },
+    {
+      "host": "x.com",
+      "group": "social",
+      "policy_hints": []
+    },
+    {
+      "host": "linkedin.com",
+      "group": "social",
+      "policy_hints": []
+    },
+    {
+      "host": "github.com",
+      "group": "developer",
+      "policy_hints": [
+        "https://github.com/features/copilot",
+        "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service"
+      ]
+    },
+    {
+      "host": "wikipedia.org",
+      "group": "social",
+      "policy_hints": []
+    },
+    {
+      "host": "bestbuy.com",
+      "group": "shopping",
+      "policy_hints": []
+    },
+    {
+      "host": "aliexpress.com",
+      "group": "shopping",
+      "policy_hints": [
+        "https://campaign.aliexpress.com/wow/gcp-plus/ae/tupr?_immersiveMode=true&pha_manifest=upr&disableNav=YES&wh_pid=300000414/pt8AMcBikk"
+      ]
+    },
+    {
+      "host": "temu.com",
+      "group": "shopping",
+      "policy_hints": [
+        "https://www.temu.com/terms-of-use.html"
+      ]
+    },
+    {
+      "host": "wayfair.com",
+      "group": "shopping",
+      "policy_hints": [
+        "https://www.wayfair.com/terms"
+      ]
+    },
+    {
+      "host": "nike.com",
+      "group": "shopping",
+      "policy_hints": [
+        "https://agreementservice.svs.nike.com/my/en_gb/rest/agreement?agreementType=termsOfUse&uxId=com.nike&country=MY&language=en&requestType=redirect",
+        "https://www.nike.com/my/help/a/1111-gameon-terms-gs"
+      ]
+    },
+    {
+      "host": "lazada.com.my",
+      "group": "shopping",
+      "policy_hints": [
+        "https://pages.lazada.com.my/wow/gcp/route/lazada/my/upr_1000345_lazada/channel/my/upr-router/my?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/my/legal/terms-conditions",
+        "https://pages.lazada.com.my/wow/i/my/corp/campaign-terms-conditions?hybrid=1"
+      ]
+    },
+    {
+      "host": "kayak.com",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.kayak.com/terms-of-use"
+      ]
+    },
+    {
+      "host": "skyscanner.net",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.skyscanner.net/terms-of-service"
+      ]
+    },
+    {
+      "host": "trip.com",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.trip.com/contents/service-guideline/terms.html?locale=en-XX&curr=USD"
+      ]
+    },
+    {
+      "host": "eventbrite.com",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.eventbrite.com/corporate/legal/legalterms/"
+      ]
+    },
+    {
+      "host": "uber.com",
+      "group": "travel",
+      "policy_hints": [
+        "https://www.uber.com/us/en/legal/general-terms-of-use/"
+      ]
+    },
+    {
+      "host": "pinterest.com",
+      "group": "social",
+      "policy_hints": []
+    },
+    {
+      "host": "quora.com",
+      "group": "social",
+      "policy_hints": []
+    }
+  ],
+  "blocked_reader": [
+    {
+      "host": "ryanair.com",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "amazon.com",
+      "reason": "no_policy_found"
+    },
+    {
+      "host": "etsy.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "ikea.com",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "expedia.com",
+      "reason": "blocked",
+      "status": 429
+    },
+    {
+      "host": "shopify.com",
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "reddit.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "craigslist.org",
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "openserv.ai",
+      "reason": "blocked",
+      "status": 200
+    },
+    {
+      "host": "dphn.ai",
+      "reason": "blocked",
+      "status": 200
+    },
+    {
+      "host": "opentable.com",
+      "reason": "fetch_failed"
+    },
+    {
+      "host": "ticketmaster.com",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "costco.com",
+      "reason": "fetch_failed"
+    },
+    {
+      "host": "homedepot.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "zalando.com",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "asos.com",
+      "reason": "fetch_failed"
+    },
+    {
+      "host": "newegg.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "instacart.com",
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "shopee.com.my",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "agoda.com",
+      "reason": "no_policy_found"
+    },
+    {
+      "host": "airasia.com",
+      "reason": "blocked",
+      "status": 200
+    },
+    {
+      "host": "tripadvisor.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "stubhub.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "medium.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "bsky.app",
+      "reason": "no_policy_found"
+    },
+    {
+      "host": "mastodon.social",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "youtube.com",
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "discord.com",
+      "reason": "blocked",
+      "status": 200
+    },
+    {
+      "host": "reppo.xyz",
+      "reason": "needs_browser"
+    },
+    {
+      "host": "stackoverflow.com",
+      "reason": "blocked",
+      "status": 403
+    },
+    {
+      "host": "npmjs.com",
+      "reason": "blocked",
+      "status": 403
+    }
+  ]
+}

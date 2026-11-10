@@ -1,0 +1,752 @@
+{
+  "run_at": "2026-11-10T06:14:27.730Z",
+  "user_agent": "IzinBot/0.1 (+https://izin.sasateguh.com/bot)",
+  "note": "One collector pass per site: robots.txt, home page and up to the configured number of policy pages. No model was called. Sites that blocked the reader were not retried. Reasons were recomputed from these recorded counts after the rule changed to count policy comments in robots.txt as readable; no site was fetched again.",
+  "counts": {
+    "sites": 61,
+    "readable": 30,
+    "unreadable": 31
+  },
+  "sites": [
+    {
+      "host": "ebay.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 6,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "shop.app",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [],
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "booking.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 3,
+      "read_urls": [
+        "https://www.booking.com/content/terms.html"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "airbnb.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 4,
+      "read_urls": [
+        "https://www.airbnb.com/help/article/2908"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "ryanair.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "amazon.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "no_policy_found"
+    },
+    {
+      "host": "etsy.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "walmart.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.walmart.com/help/article/walmart-com-terms-of-use/3b75080af40340d6bbd596f116fae5a0"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "target.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 5,
+      "read_urls": [
+        "https://www.target.com/c/terms-conditions/-/N-4sr7l"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "ikea.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "expedia.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 429,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "shopify.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 3,
+      "read_urls": [],
+      "readable": false,
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "stripe.com",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [
+        "https://stripe.com/en-my/legal/restricted-businesses"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "x.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 1,
+      "read_urls": [],
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "reddit.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 3,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "linkedin.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [],
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "github.com",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 5,
+      "read_urls": [
+        "https://github.com/features/copilot",
+        "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "wikipedia.org",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 3,
+      "requests": 4,
+      "read_urls": [],
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "craigslist.org",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 7,
+      "read_urls": [],
+      "readable": false,
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "openserv.ai",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 200,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "dphn.ai",
+      "group": "developer",
+      "robots_status": "none",
+      "robots_http": 404,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 200,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "opentable.com",
+      "group": "travel",
+      "robots_status": "error",
+      "robots_http": 0,
+      "docs_read": 0,
+      "requests": 1,
+      "read_urls": [],
+      "readable": false,
+      "reason": "fetch_failed"
+    },
+    {
+      "host": "ticketmaster.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "bestbuy.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 6,
+      "requests": 4,
+      "read_urls": [],
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "costco.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "fetch_failed"
+    },
+    {
+      "host": "homedepot.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "aliexpress.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://campaign.aliexpress.com/wow/gcp-plus/ae/tupr?_immersiveMode=true&pha_manifest=upr&disableNav=YES&wh_pid=300000414/pt8AMcBikk"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "temu.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.temu.com/terms-of-use.html"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "zalando.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "asos.com",
+      "group": "shopping",
+      "robots_status": "error",
+      "robots_http": 0,
+      "docs_read": 0,
+      "requests": 1,
+      "read_urls": [],
+      "readable": false,
+      "reason": "fetch_failed"
+    },
+    {
+      "host": "wayfair.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [
+        "https://www.wayfair.com/terms"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "newegg.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "nike.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 6,
+      "read_urls": [
+        "https://agreementservice.svs.nike.com/my/en_gb/rest/agreement?agreementType=termsOfUse&uxId=com.nike&country=MY&language=en&requestType=redirect",
+        "https://www.nike.com/my/help/a/1111-gameon-terms-gs"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "instacart.com",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 2,
+      "read_urls": [],
+      "readable": false,
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "lazada.com.my",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 5,
+      "read_urls": [
+        "https://pages.lazada.com.my/wow/gcp/route/lazada/my/upr_1000345_lazada/channel/my/upr-router/my?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/my/legal/terms-conditions",
+        "https://pages.lazada.com.my/wow/i/my/corp/campaign-terms-conditions?hybrid=1"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "shopee.com.my",
+      "group": "shopping",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "kayak.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.kayak.com/terms-of-use"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "skyscanner.net",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.skyscanner.net/terms-of-service"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "agoda.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "no_policy_found"
+    },
+    {
+      "host": "trip.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.trip.com/contents/service-guideline/terms.html?locale=en-XX&curr=USD"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "airasia.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 200,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "tripadvisor.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "eventbrite.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.eventbrite.com/corporate/legal/legalterms/"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "stubhub.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "uber.com",
+      "group": "travel",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.uber.com/us/en/legal/general-terms-of-use/"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "pinterest.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 1,
+      "read_urls": [],
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "medium.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "quora.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 2,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": true,
+      "reason": "robots_comments"
+    },
+    {
+      "host": "tumblr.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 4,
+      "read_urls": [
+        "https://www.tumblr.com/policy/en/terms-of-service"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "bsky.app",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "no_policy_found"
+    },
+    {
+      "host": "mastodon.social",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "youtube.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 3,
+      "read_urls": [],
+      "readable": false,
+      "reason": "robots_disallow"
+    },
+    {
+      "host": "discord.com",
+      "group": "social",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "blocked_status": 200,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "gokite.ai",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [
+        "https://gokite.ai/terms"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "reppo.xyz",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 0,
+      "requests": 4,
+      "read_urls": [],
+      "readable": false,
+      "reason": "needs_browser"
+    },
+    {
+      "host": "gitlab.com",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 7,
+      "read_urls": [
+        "https://about.gitlab.com/solutions/automotive/",
+        "https://about.gitlab.com/terms/"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "stackoverflow.com",
+      "group": "developer",
+      "robots_status": "blocked",
+      "robots_http": 403,
+      "docs_read": 0,
+      "requests": 1,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "npmjs.com",
+      "group": "developer",
+      "robots_status": "blocked",
+      "robots_http": 403,
+      "docs_read": 0,
+      "requests": 1,
+      "read_urls": [],
+      "blocked_status": 403,
+      "readable": false,
+      "reason": "blocked"
+    },
+    {
+      "host": "huggingface.co",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 4,
+      "read_urls": [
+        "https://huggingface.co/docs/lerobot/index",
+        "https://huggingface.co/terms-of-service"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "vercel.com",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 4,
+      "requests": 6,
+      "read_urls": [
+        "https://vercel.com/legal/acceptable-use-policy",
+        "https://vercel.com/legal/terms",
+        "https://vercel.com/legal/dpa",
+        "https://vercel.com/legal"
+      ],
+      "readable": true,
+      "reason": "read"
+    },
+    {
+      "host": "paypal.com",
+      "group": "developer",
+      "robots_status": "ok",
+      "robots_http": 200,
+      "docs_read": 2,
+      "requests": 5,
+      "read_urls": [
+        "https://www.paypal.com/my/legalhub/paypal/home",
+        "https://www.paypal.com/my/legalhub/paypal/useragreement-full"
+      ],
+      "readable": true,
+      "reason": "read"
+    }
+  ]
+}
