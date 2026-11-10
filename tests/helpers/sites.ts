@@ -25,7 +25,7 @@ export interface Running {
 
 type UrlFn = (host: string, path?: string) => string;
 
-export async function startSites(def: Sites | ((url: UrlFn) => Sites), extraDns: Record<string, string[]> = {}): Promise<Running> {
+export async function startSites(def: Sites | ((url: UrlFn) => Sites), extraDns: Record<string, string[]> = {}, listenPort = 0): Promise<Running> {
   const hits: Running["hits"] = [];
   let sites: Sites = {};
   const server: Server = createServer((req, res) => {
@@ -41,7 +41,7 @@ export async function startSites(def: Sites | ((url: UrlFn) => Sites), extraDns:
     res.writeHead(route.status ?? 200, { "content-type": route.type ?? "text/html; charset=utf-8", ...route.headers });
     res.end(route.body ?? "");
   });
-  await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+  await new Promise<void>((r) => server.listen(listenPort, "127.0.0.1", r));
   const port = (server.address() as AddressInfo).port;
   const url: UrlFn = (host, path = "/") => `http://${host}:${port}${path}`;
   sites = typeof def === "function" ? def(url) : def;

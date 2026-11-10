@@ -17,5 +17,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["server", "web/src", "tests", "scripts", "*.config.ts"]
+  "include": ["server", "web/src", "tests", "scripts", "e2e", "*.config.ts"]
 }
