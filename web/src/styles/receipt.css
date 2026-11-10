@@ -1,0 +1,44 @@
+/* Receipt page */
+.receipt-head { padding-block: clamp(1.75rem, 5vw, 3rem); border-bottom: 1px solid var(--rule); }
+.tone-go { background: linear-gradient(180deg, var(--go-soft), var(--paper)); }
+.tone-ask { background: linear-gradient(180deg, var(--ask-soft), var(--paper)); }
+.tone-no_go { background: linear-gradient(180deg, var(--nogo-soft), var(--paper)); }
+.receipt-for { font: 600 0.82rem/1.3 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); overflow-wrap: anywhere; }
+.receipt-verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin: 0.25rem 0 1rem; }
+.receipt-def { margin: 0; flex: 1 1 16rem; min-width: 0; max-width: 32rem; color: var(--ink-soft); }
+.receipt-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; color: var(--ink-faint); font-size: 0.9rem; margin: 0; }
+.receipt-body { padding-top: 1.5rem; }
+.receipt-body section { margin-bottom: 2rem; }
+.receipt-body h2 { font-size: 1.25rem; }
+.reason { font-size: 1.1rem; }
+
+.quote {
+  margin: 0; padding: 0.9rem 1rem; background: var(--paper-raised); border: 1px solid var(--rule);
+  border-left: 3px solid var(--ink); border-radius: var(--radius-sm);
+}
+.quote p { font: 400 0.92rem/1.6 var(--mono); margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.quote cite { display: block; margin-top: 0.5rem; font: normal 0.8rem/1.3 var(--sans); color: var(--ink-faint); overflow-wrap: anywhere; }
+.clause { margin: 0 0 1.25rem; }
+.clause figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.75rem; margin-top: 0.5rem; font-size: 0.88rem; }
+.stance-prohibits .quote { border-left-color: var(--nogo); }
+.stance-restricts .quote, .stance-requires .quote { border-left-color: var(--ask); }
+.stance-permits .quote { border-left-color: var(--go); }
+.tag { font: 600 0.75rem/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid var(--rule-strong); border-radius: var(--pill); padding: 0.3rem 0.55rem; }
+.tag-quiet { border-color: var(--rule); color: var(--ink-soft); }
+
+.fold { border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 1.5rem; background: var(--paper-raised); }
+.fold summary { cursor: pointer; font-weight: 600; }
+.fold[open] summary { margin-bottom: 0.9rem; }
+.fold-warn { border-color: #e3cf9b; }
+.quote-quarantine { border-left-color: var(--ask); margin-top: 0.75rem; }
+
+.ledger { border-collapse: collapse; width: 100%; font-size: 0.82rem; margin-top: 0.75rem; }
+.ledger th, .ledger td { text-align: left; vertical-align: top; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--rule); }
+.ledger th { color: var(--ink-faint); font-weight: 600; font-family: var(--sans); white-space: nowrap; }
+.ledger td.break { min-width: 12rem; }
+
+.prov { border-top: 1px solid var(--rule); padding-top: 1.25rem; font-size: 0.95rem; }
+.hash { font-size: 0.85rem; color: var(--ink-faint); }
+.hash code { color: var(--ink-soft); }
+.receipt-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.disclaimer { font-size: 0.88rem; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 1rem; }

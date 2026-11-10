@@ -47,4 +47,14 @@ describe("lang parity", () => {
       expect(keys.sort()).toEqual([...ids].sort());
     }
   });
+
+  it("uses the same {slots} in English and Malay", () => {
+    const slots = (v: string) => [...v.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    for (const [k, v] of EN) expect(slots(MS.get(k) ?? ""), k).toEqual(slots(v));
+  });
+
+  it("keeps public web text free of exclamation marks, long dashes and absolute claims", () => {
+    const banned = /[!\u2014]|\b(guarantee[sd]?|lawful|compliant|seamless|revolutionary)\b/i;
+    for (const [k, v] of [...EN, ...MS]) if (k.startsWith("web.")) expect(v, k).not.toMatch(banned);
+  });
 });
