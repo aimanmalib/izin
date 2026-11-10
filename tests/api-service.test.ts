@@ -206,5 +206,6 @@ describe("GET /api/health, /api/gallery, /api/bench", () => {
     expect(body.blocked_reader[0]).toMatchObject({ host: expect.any(String), reason: expect.any(String) });
     const b = (await app!.inject({ method: "GET", url: "/api/bench" })).json();
     expect(b.readability.user_agent).toMatch(/^IzinBot\//);
+    expect(b).toHaveProperty("reading_cost", null);
   });
 });

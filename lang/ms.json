@@ -312,7 +312,13 @@
       "v_false_no_go": "NO-GO palsu",
       "v_cost": "USD setiap keputusan",
       "v_ms": "Median ms",
-      "v_shipped": "digunakan"
+      "v_shipped": "digunakan",
+      "reading_cost_head": "Kos bacaan",
+      "reading_cost_line": "Pembaca telah menggunakan {tokens} token di Dolphin bagi {readings} bacaan tersimpan ({tokens_in} masuk, {tokens_out} keluar). Bacaan itu berkos USD {usd}.",
+      "reading_cost_line_one": "Pembaca telah menggunakan {tokens} token di Dolphin bagi {readings} bacaan tersimpan ({tokens_in} masuk, {tokens_out} keluar). Bacaan itu berkos USD {usd}.",
+      "reading_cost_list": "Token yang sama pada harga senarai {model} akan berkos USD {list_usd}.",
+      "reading_cost_prices": "Senarai harga:",
+      "reading_cost_none": "Belum ada bacaan di Dolphin yang direkod. Angkanya dipaparkan di sini selepas semakan dijalankan."
     },
     "trap": {
       "h1": "Perangkap",

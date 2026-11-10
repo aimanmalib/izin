@@ -3,6 +3,7 @@
 import { getBench } from "../api";
 import { BaselineSummary } from "../components/Baseline";
 import { day, PageHead, usd, useView } from "../components/Page";
+import { ReadingCost } from "../components/ReadingCost";
 import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT } from "../i18n";
 import { linkClick } from "../router";
@@ -15,7 +16,7 @@ export function BenchPage() {
 
   if (bench === "failed") return <p className="wrap problem" role="alert">{t.web.errors.network}</p>;
   if (!bench) return <div className="wrap loading" aria-busy="true" />;
-  const { readability: rd, results: rs, baseline } = bench;
+  const { readability: rd, results: rs, baseline, reading_cost } = bench;
 
   return (
     <div className="wrap page">
@@ -32,6 +33,8 @@ export function BenchPage() {
       ) : null}
 
       <BaselineSummary baseline={baseline} />
+
+      <ReadingCost cost={reading_cost} head />
 
       {!rs ? (
         <p className="banner" role="status">{b.not_run}</p>

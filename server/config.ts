@@ -205,6 +205,13 @@ export const configSchema = z
       .strict(),
     // Robots-only baseline: which quoted stances count as "the site's words restrict" (ADR 0010).
     baseline: z.object({ restricting_stances: z.array(z.enum(STANCES)).min(1) }).strict(),
+    // Reading cost line: Dolphin tokens from the ledger priced again at a listed SERV model (ADR 0011).
+    reading_cost: z
+      .object({
+        compare_model: z.string().min(1),
+        price_sources: z.object({ serv: z.url(), dolphin: z.url() }).strict(),
+      })
+      .strict(),
     alerts: z
       .object({
         command_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
@@ -215,6 +222,9 @@ export const configSchema = z
   })
   .strict()
   .superRefine((c, ctx) => {
+    if (!c.prices_usd_per_mtok.serv[c.reading_cost.compare_model]) {
+      ctx.addIssue({ code: "custom", path: ["reading_cost", "compare_model"], message: "no listed SERV price for this model" });
+    }
     const known = new Set(c.categories);
     for (const action of ACTIONS) {
       const cats = c.relevance[action];

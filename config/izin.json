@@ -205,5 +205,9 @@
     "tiers": { "agent_usd_per_check": 0.01, "watch_usd_per_month": 5, "watch_sites": 100 }
   },
   "baseline": { "restricting_stances": ["prohibits", "restricts", "requires"] },
+  "reading_cost": {
+    "compare_model": "gpt-6-luna",
+    "price_sources": { "serv": "https://docs.openserv.ai/llms-full.txt", "dolphin": "https://dphn.ai/docs/dphn-api/" }
+  },
   "alerts": { "command_env": "IZIN_NOTIFY_CMD", "language": "ms", "level": "warn" }
 }

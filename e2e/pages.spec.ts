@@ -67,6 +67,26 @@ test("the benchmark page shows who could be read and says when the run has not h
   await expect(page.getByText("IzinBot/0.1", { exact: false })).toBeVisible();
 });
 
+test("the reading cost line shows Dolphin tokens and the listed-price comparison on /bench and the home page", async ({ page }) => {
+  const errors = watchConsole(page);
+  await page.goto("/bench");
+  const line = page.locator("section.reading-cost");
+  await expect(line.getByRole("heading", { name: en.web.bench.reading_cost_head })).toBeVisible();
+  await expect(line).toContainText(/[\d,]+ tokens on Dolphin over \d+ stored readings?/);
+  await expect(line.getByRole("link", { name: "SERV" })).toHaveAttribute("href", /^https:\/\//);
+  await page.setViewportSize({ width: 320, height: 640 });
+  await noSideScroll(page);
+  await page.goto("/#costs");
+  await expect(page.locator("#costs .reading-cost")).toContainText(/tokens on Dolphin/);
+  await noSideScroll(page);
+  // Checked before the screenshots: taking one injects a style that the page's CSP reports.
+  expect(errors).toEqual([]);
+  await shot(page, `ph4-${test.info().project.name}-home-costs-320`);
+  await page.goto("/bench");
+  await expect(line).toBeVisible();
+  await shot(page, `ph4-${test.info().project.name}-bench-320`);
+});
+
 async function notGoWithTrapSetAside(page: Page) {
   await page.waitForURL(/\/r\/[a-z2-7]{10}/, { timeout: 45_000 });
   await expect(page.locator(".receipt-verdict .verdict")).toHaveText(/NO-GO|ASK/);

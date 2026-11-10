@@ -4,6 +4,7 @@ import { BENCH_DIR, FIXTURES_DIR, WEB_DIST, type IzinConfig } from "./config.js"
 import { makeClientIp, type ClientIp } from "./api/clientip.js";
 import { registerApi } from "./api/routes.js";
 import { benchView, dolphinShare, galleryView } from "./api/views.js";
+import { readingCost } from "./belanja/kos.js";
 import { mcpTexts, registerMcp } from "./mcp/server.js";
 import { createRuntime, type Runtime } from "./runtime.js";
 import { loadExamples, siteView } from "./web/site.js";
@@ -42,7 +43,7 @@ export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config)
       budgetLeftPct: () => rt.guard.leftPct(),
     },
     gallery: () => galleryView(rt.db, config.baseline.restricting_stances),
-    bench: () => benchView(BENCH_DIR, galleryView(rt.db, config.baseline.restricting_stances).baseline),
+    bench: () => benchView(BENCH_DIR, galleryView(rt.db, config.baseline.restricting_stances).baseline, readingCost(rt.db, config)),
   });
   // Read on each request so a new receipt id in config/examples.json needs no code change.
   app.get("/api/site", async () => siteView(config, rt.db, loadExamples(opts.examplesPath)));

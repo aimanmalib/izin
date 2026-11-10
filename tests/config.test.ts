@@ -43,6 +43,12 @@ describe("config/izin.json", () => {
     expect(() => parseConfig(bad)).toThrow(/unknown category/);
   });
 
+  it("rejects a reading cost model that has no listed SERV price", () => {
+    const bad = clone();
+    bad.reading_cost.compare_model = "no-such-model";
+    expect(() => parseConfig(bad)).toThrow(/no listed SERV price/);
+  });
+
   it("rejects an invalid injection pattern", () => {
     const bad = clone();
     bad.injection_patterns = ["(unclosed"];

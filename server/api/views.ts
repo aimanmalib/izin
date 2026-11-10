@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { z } from "zod";
 import { ACTIONS, BENCH_DIR, GALLERY_PATH, type Action, type Stance, type Verdict } from "../config.js";
+import type { ReadingCost } from "../belanja/kos.js";
 import { baselineCell, baselineCounts, type BaselineCell, type BaselineCounts, type BaselineReceipt } from "../galeri/baseline.js";
 
 interface GalleryFile {
@@ -86,7 +87,7 @@ export type BenchResults = z.infer<typeof benchResultsSchema>;
  * Readability counts now; benchmark results join when their file exists and has the expected shape.
  * The robots-only baseline comes from the gallery (null until a gallery cell has a receipt).
  */
-export function benchView(dir: string = BENCH_DIR, baseline: BaselineCounts | null = null) {
+export function benchView(dir: string = BENCH_DIR, baseline: BaselineCounts | null = null, readingCost: ReadingCost | null = null) {
   const readability = readJson<ReadabilityFile>(`${dir}readability.json`);
   const raw = readJson<unknown>(`${dir}results.json`);
   const parsed = raw === null ? null : benchResultsSchema.safeParse(raw);
@@ -94,6 +95,7 @@ export function benchView(dir: string = BENCH_DIR, baseline: BaselineCounts | nu
     readability: readability ? { run_at: readability.run_at, user_agent: readability.user_agent, counts: readability.counts } : null,
     results: parsed?.success ? parsed.data : null,
     baseline: baseline && baseline.pairs > 0 ? baseline : null,
+    reading_cost: readingCost,
   };
 }
 

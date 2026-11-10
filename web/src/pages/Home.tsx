@@ -5,6 +5,7 @@ import { getGallery, getHealth, type Action, type SiteView } from "../api";
 import { CheckForm } from "../components/CheckForm";
 import { CopyButton } from "../components/CopyButton";
 import { usd } from "../components/Page";
+import { ReadingCost } from "../components/ReadingCost";
 import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT } from "../i18n";
 import { linkClick } from "../router";
@@ -123,6 +124,7 @@ export function Home({ site }: { site: SiteView }) {
                 ? fmt(h.costs_measured, { n: site.cost.checks, reader: usd(site.cost.reader_usd), decider: usd(site.cost.decider_usd) })
                 : h.costs_none}
             </p>
+            <ReadingCost cost={site.reading_cost} head={false} />
             <ul className="tiers">
               <li>{fmt(h.tier_free, { n: site.tiers.free_checks_per_hour })}</li>
               <li>{fmt(h.tier_agent, { usd: site.tiers.agent_usd_per_check })}</li>

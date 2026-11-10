@@ -3,6 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { z } from "zod";
+import { readingCost } from "../belanja/kos.js";
 import { ACTIONS, EXAMPLES_PATH, type IzinConfig } from "../config.js";
 
 const examplesSchema = z
@@ -62,6 +63,7 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
     examples,
     cost: costView(db),
+    reading_cost: readingCost(db, cfg),
     trap_url: w.trap_url,
     // Numbers the /bot and /docs pages state, read from the same limits the code enforces.
     bot: {

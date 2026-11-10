@@ -312,7 +312,13 @@
       "v_false_no_go": "False NO-GO",
       "v_cost": "USD a decision",
       "v_ms": "Median ms",
-      "v_shipped": "in use"
+      "v_shipped": "in use",
+      "reading_cost_head": "Reading cost",
+      "reading_cost_line": "The reader has used {tokens} tokens on Dolphin over {readings} stored readings ({tokens_in} in, {tokens_out} out). Those readings cost USD {usd}.",
+      "reading_cost_line_one": "The reader has used {tokens} tokens on Dolphin over {readings} stored reading ({tokens_in} in, {tokens_out} out). That reading cost USD {usd}.",
+      "reading_cost_list": "The same tokens at the listed price of {model} would cost USD {list_usd}.",
+      "reading_cost_prices": "Price lists:",
+      "reading_cost_none": "No reading on Dolphin has been recorded yet. The figures appear here once checks have run."
     },
     "trap": {
       "h1": "The trap",

@@ -3,6 +3,7 @@
 import type { Action } from "../config.js";
 import type { BaselineCounts } from "./baseline.js";
 import type { GalleryCell } from "../api/views.js";
+import type { ReadingCost } from "../belanja/kos.js";
 
 export interface GallerySlice {
   sites: { host: string; checks: Partial<Record<Action, GalleryCell>> }[];
@@ -44,5 +45,24 @@ export function baselineSection(g: GallerySlice, origin: string, at: string): st
       .map(([action, c]) => `- ${s.host}, ${action}: ${c!.verdict ?? "?"}, [receipt](${origin.replace(/\/$/, "")}/r/${c!.receipt_id})`),
   );
   if (counted.length) lines.push("", "Counted pairs:", "", ...counted);
+  return lines.join("\n");
+}
+
+const usd = (n: number) => n.toFixed(n > 0 && n < 0.01 ? 6 : 4);
+const count = (n: number) => n.toLocaleString("en-US");
+
+/** The "Reading cost" section: Dolphin tokens and cost from the ledger, the same tokens at a listed SERV price. */
+export function readingCostSection(c: ReadingCost | null, at: string): string {
+  const lines = ["## Reading cost", "", `Generated ${at} from the reader ledger. Definition: [ADR 0011](decisions/0011-reading-cost-line.md).`, ""];
+  if (!c) return [...lines, "No reading on Dolphin is in the ledger yet."].join("\n");
+  lines.push(
+    `Tokens read on Dolphin: ${count(c.tokens)} (${count(c.tokens_in)} in, ${count(c.tokens_out)} out) over ${c.readings} stored ${c.readings === 1 ? "reading" : "readings"}.`,
+    "",
+    `Cost of those readings on Dolphin: USD ${usd(c.cost_usd)}.`,
+    "",
+    `The same tokens at the listed price of \`${c.list.model}\` (USD ${c.list.input_usd_per_mtok} in, USD ${c.list.output_usd_per_mtok} out per million tokens): USD ${usd(c.list.cost_usd)}.`,
+    "",
+    `Price sources: [SERV](${c.price_sources.serv}), [Dolphin](${c.price_sources.dolphin}).`,
+  );
   return lines.join("\n");
 }
