@@ -22,7 +22,7 @@ deploy/hos.env
 /CLAUDE.local.md
 /.claude/
 /PELAN-*.md
-/PASTE-*.md
+/PASTE*.md
 /PRD-*.md
 /docs/PRD-*.md
 /docs/PELAN-*.md
