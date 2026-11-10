@@ -1,0 +1,168 @@
+{
+  "id": "S07",
+  "set": "spot",
+  "site": "github.com",
+  "action": "train",
+  "expected": "ASK",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "train",
+    "action_label": "Train AI on content",
+    "detail": null,
+    "site": "github.com",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 2,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://github.com/features/copilot",
+          "kind": "policy",
+          "chars": 34053,
+          "truncated": false
+        },
+        {
+          "id": "d2",
+          "url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+          "kind": "policy",
+          "chars": 46411,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c27",
+        "doc": "d2",
+        "section": "H. API Terms",
+        "category": "data_collection",
+        "stance": "prohibits",
+        "quote": "You may not use the API to download data or Content from GitHub for spamming purposes, including for the purposes of selling GitHub users' personal information, such as to recruiters, headhunters, and job boards."
+      },
+      {
+        "id": "c31",
+        "doc": "d2",
+        "section": "J.3 Development and Improvement Using Your Input and Output",
+        "category": "ai_training",
+        "stance": "restricts",
+        "quote": "This license does not, however, permit GitHub or its Affiliates to share your Inputs or Outputs with third-party AI model providers for their own independent model training purposes."
+      },
+      {
+        "id": "c32",
+        "doc": "d2",
+        "section": "J.3 Development and Improvement Using Your Input and Output",
+        "category": "ai_training",
+        "stance": "restricts",
+        "quote": "The opt-out right described in this section applies solely to the use of your Inputs and Outputs as described in this section, and does not apply to the license granted in Sections D.4-D.8 or to any Content that does not constitute Input or Output (including Content stored in public repositories)."
+      },
+      {
+        "id": "c1",
+        "doc": "d1",
+        "section": "What languages, IDEs, and surfaces does GitHub Copilot support?",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "GitHub Copilot is trained on all languages that appear in public repositories."
+      },
+      {
+        "id": "c2",
+        "doc": "d1",
+        "section": "How does GitHub use the Copilot data from Individual (Free/Pro/Pro+) Subscribers?",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "In addition, for Individual subscribers only: GitHub may use Copilot interaction data — including prompts (inputs), suggestions (outputs), and code snippets generated during Copilot sessions — to train and improve AI models."
+      },
+      {
+        "id": "c3",
+        "doc": "d1",
+        "section": "How does GitHub use the Copilot data from Individual (Free/Pro/Pro+) Subscribers?",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "Individual subscribers can opt out of having their data used for AI model training at any time through https://github.com/settings/copilot/features."
+      },
+      {
+        "id": "c4",
+        "doc": "d1",
+        "section": "What are the intellectual property considerations when using GitHub Copilot?",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "The model that powers Copilot is trained on a broad collection of publicly accessible code, which may include copyrighted code, and Copilot’s suggestions (in rare instances) may resemble the code its model was trained on."
+      },
+      {
+        "id": "c5",
+        "doc": "d1",
+        "section": "What are the intellectual property considerations when using GitHub Copilot?",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "GitHub Copilot’s AI model was trained with the use of code from GitHub’s public repositories—which are publicly accessible and within the scope of permissible copyright use."
+      },
+      {
+        "id": "c10",
+        "doc": "d1",
+        "section": "Connect your services",
+        "category": "data_collection",
+        "stance": "permits",
+        "quote": "Use Copilot Connectors to bring in data and tools from the services you already use."
+      },
+      {
+        "id": "c11",
+        "doc": "d1",
+        "section": "Start with your repository",
+        "category": "data_collection",
+        "stance": "permits",
+        "quote": "Use code, pull requests, issues, and search results to give Copilot context for the task."
+      },
+      {
+        "id": "c20",
+        "doc": "d2",
+        "section": "D.4 License Grant to Us",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "You grant GitHub and our Affiliates the right to store, host, archive, parse, display, and make copies of Your Content as necessary to provide, develop, and improve the Service, including by training AI Features, and for the purpose of training, developing, and improving artificial intelligence and machine learning models and technologies of our Affiliates."
+      },
+      {
+        "id": "c22",
+        "doc": "d2",
+        "section": "D.9 Access Reciprocity",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "This Section D.9 does not apply to Access solely for the purpose of academic research or if, on the date you Access the Content, the number of monthly active users of the products or services made available by you is less than 700 million in the preceding calendar month."
+      },
+      {
+        "id": "c23",
+        "doc": "d2",
+        "section": "D.8 Public Repositories and Lawful Access",
+        "category": "data_collection",
+        "stance": "permits",
+        "quote": "Unless specifically set forth herein, these Terms do not restrict lawful access to or use of the contents of public repositories by third parties, or by GitHub or its Affiliates."
+      },
+      {
+        "id": "c30",
+        "doc": "d2",
+        "section": "J.3 Development and Improvement Using Your Input and Output",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "You also grant GitHub and its Affiliates a license to collect and use your Inputs and Outputs to develop, train and improve artificial intelligence and machine learning models and technologies including those that power AI Features, unless (a) you opt out through your account settings, or (b) your use of the Service is governed by a GitHub Customer Agreement or volume licensing agreement."
+      },
+      {
+        "id": "c33",
+        "doc": "d2",
+        "section": "E.3 Access",
+        "category": "ai_training",
+        "stance": "permits",
+        "quote": "If you provide your private repository content as Input to AI Features, we may use that Input to provide, develop, train, and improve the Service, including AI Features."
+      }
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "S05",
+  "set": "spot",
+  "site": "linkedin.com",
+  "action": "crawl",
+  "expected": "NO_GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "linkedin.com",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": true,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://www.linkedin.com/robots.txt",
+          "kind": "robots_comments",
+          "chars": 624,
+          "truncated": false
+        }
+      ],
+      "unreadable": [
+        {
+          "url": "https://www.linkedin.com/",
+          "why": "stopped_at_robots_txt"
+        }
+      ],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c1",
+        "doc": "d1",
+        "section": "",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "Notice: The use of robots or other automated means to access LinkedIn without\nthe express permission of LinkedIn is strictly prohibited."
+      },
+      {
+        "id": "c3",
+        "doc": "d1",
+        "section": "",
+        "category": "automated_access",
+        "stance": "requires",
+        "quote": "If you would like to apply for permission to crawl LinkedIn, please email whitelist-crawl@linkedin.com."
+      },
+      {
+        "id": "c4",
+        "doc": "d1",
+        "section": "",
+        "category": "automated_access",
+        "stance": "restricts",
+        "quote": "Any and all permitted crawling of LinkedIn is subject to LinkedIn's Crawling Terms and Conditions."
+      },
+      {
+        "id": "c2",
+        "doc": "d1",
+        "section": "",
+        "category": "automated_access",
+        "stance": "permits",
+        "quote": "LinkedIn may, in its discretion, permit certain automated access to certain LinkedIn pages,\nfor the limited purpose of including content in approved publicly available search engines."
+      }
+    ]
+  }
+}

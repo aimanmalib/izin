@@ -1,0 +1,104 @@
+{
+  "id": "S04",
+  "set": "spot",
+  "site": "airbnb.com",
+  "action": "account",
+  "expected": "NO_GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "account",
+    "action_label": "Create an account or log in",
+    "detail": null,
+    "site": "airbnb.com",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 2,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://www.airbnb.com/robots.txt",
+          "kind": "robots_comments",
+          "chars": 1595,
+          "truncated": false
+        },
+        {
+          "id": "d2",
+          "url": "https://www.airbnb.com/help/article/2908",
+          "kind": "policy",
+          "chars": 257802,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": true
+    },
+    "clauses": [
+      {
+        "id": "c1",
+        "doc": "d2",
+        "section": "11.1 Rules",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "Do not use bots, crawlers, scrapers, or other automated means to access or collect data or other content from or otherwise interact with the Airbnb Platform."
+      },
+      {
+        "id": "c2",
+        "doc": "d2",
+        "section": "11.1 Rules",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "Do not hack, avoid, remove, impair, or otherwise attempt to circumvent any security or technological measure used to protect the Airbnb Platform or Content."
+      },
+      {
+        "id": "c5",
+        "doc": "d2",
+        "section": "11.1 Rules",
+        "category": "account_automation",
+        "stance": "prohibits",
+        "quote": "Do not attempt to evade enforcement of these Terms, our Additional Legal Terms, Policies, or our Standards, such as by creating a duplicate account or listings."
+      },
+      {
+        "id": "c10",
+        "doc": "d2",
+        "section": "16. Member Accounts",
+        "category": "account_automation",
+        "stance": "prohibits",
+        "quote": "You may not transfer your account to someone else."
+      },
+      {
+        "id": "c11",
+        "doc": "d2",
+        "section": "16. Member Accounts",
+        "category": "account_automation",
+        "stance": "prohibits",
+        "quote": "You are responsible for maintaining the confidentiality and security of your account credentials and may not disclose your credentials to any third party."
+      },
+      {
+        "id": "c12",
+        "doc": "d2",
+        "section": "12.5 Effect of Termination",
+        "category": "account_automation",
+        "stance": "prohibits",
+        "quote": "If your access to or use of the Airbnb Platform has been limited, or your Airbnb account has been suspended, or this agreement has been terminated by us, you may not register a new account or access or use the Airbnb Platform through an account of another Member."
+      },
+      {
+        "id": "c15",
+        "doc": "d2",
+        "section": "11.1 Rules",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "Do not use bots, crawlers, scrapers or other automated means to access or collect data or other content from or otherwise interact with the Airbnb Platform."
+      }
+    ]
+  }
+}

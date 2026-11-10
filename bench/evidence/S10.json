@@ -1,0 +1,54 @@
+{
+  "id": "S10",
+  "set": "spot",
+  "site": "wikipedia.org",
+  "action": "train",
+  "expected": "ASK",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "train",
+    "action_label": "Train AI on content",
+    "detail": null,
+    "site": "wikipedia.org",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 3,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "https://www.wikipedia.org/robots.txt",
+          "kind": "robots_comments",
+          "chars": 286,
+          "truncated": false
+        },
+        {
+          "id": "d2",
+          "url": "https://www.wikipedia.org/robots.txt",
+          "kind": "robots_comments",
+          "chars": 581,
+          "truncated": false
+        },
+        {
+          "id": "d3",
+          "url": "https://www.wikipedia.org/robots.txt",
+          "kind": "robots_comments",
+          "chars": 433,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": []
+  }
+}
