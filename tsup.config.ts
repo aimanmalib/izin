@@ -1,7 +1,8 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: { main: "server/main.ts" },
+  // The gallery and benchmark runs ship in the image so they can run next to the data volume.
+  entry: { main: "server/main.ts", gallery: "scripts/gallery.ts", bench: "scripts/bench.ts" },
   format: ["esm"],
   platform: "node",
   target: "node22",

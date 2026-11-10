@@ -1,0 +1,18 @@
+{
+  "_comment": "Benchmark and gallery run settings (PRD 4.11). Variants are decided on the same frozen evidence. 'provider' picks the endpoint and key from config/izin.json (serv = decider, dolphin = primary reader). 'estimate' is the upper bound a --kering run prints before any paid call.",
+  "concurrency": 3,
+  "gallery_concurrency": 3,
+  "variants": [
+    { "id": "V0", "label": "Dolphin only, no SERV", "provider": "dolphin", "model": "deepseek-ai/DeepSeek-V4.1-Flash", "suffix": "-serv-multipath", "start_rung": "c", "reasoning_effort": "none", "guard": false },
+    { "id": "V1", "label": "SERV gpt-6-luna", "provider": "serv", "model": "gpt-6-luna", "suffix": "-serv-multipath", "start_rung": "a", "reasoning_effort": "low", "guard": true },
+    { "id": "V2", "label": "SERV gpt-6-luna-serv-multipath", "provider": "serv", "model": "gpt-6-luna-serv-multipath", "suffix": "-serv-multipath", "start_rung": "a", "reasoning_effort": "low", "guard": true },
+    { "id": "V3", "label": "SERV gpt-6-luna-serv-kronos-multipath", "provider": "serv", "model": "gpt-6-luna-serv-kronos-multipath", "suffix": "-serv-kronos-multipath", "start_rung": "a", "reasoning_effort": "low", "guard": true }
+  ],
+  "tie_variant": "V2",
+  "estimate": { "decision_tokens_in": 2500, "decision_tokens_out": 600, "read_tokens_per_site": 60000, "read_out_tokens_per_site": 3000 },
+  "h1": {
+    "action": "read_page",
+    "max_ms": 90000,
+    "hosts": ["ebay.com", "github.com", "booking.com", "wikipedia.org", "stripe.com", "shop.app", "ryanair.com", "amazon.com", "etsy.com", "shopify.com"]
+  }
+}

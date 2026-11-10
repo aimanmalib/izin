@@ -160,7 +160,8 @@ export const configSchema = z
         suffix: z.string().regex(/^-[a-z-]+$/),
         key_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
         prompt: z.string().regex(/^[a-z]+\.v\d+$/),
-        reasoning_effort: z.enum(["low", "medium", "high"]),
+        // "none" is for a benchmark variant on a reasoning model (Dolphin); the shipped decider uses low.
+        reasoning_effort: z.enum(["none", "low", "medium", "high"]),
         timeout_ms: positiveInt,
         retries: z.number().int().min(0).max(3),
         retry_backoff_ms: z.number().int().nonnegative(),
@@ -273,6 +274,7 @@ export const CONFIG_PATH = fileURLToPath(new URL("../config/izin.json", import.m
 export const PROMPTS_DIR = fileURLToPath(new URL("../prompts/", import.meta.url));
 export const LANG_DIR = fileURLToPath(new URL("../lang/", import.meta.url));
 export const GALLERY_PATH = fileURLToPath(new URL("../config/gallery.json", import.meta.url));
+export const BENCH_CONFIG_PATH = fileURLToPath(new URL("../config/bench.json", import.meta.url));
 export const BENCH_DIR = fileURLToPath(new URL("../bench/", import.meta.url));
 export const EXAMPLES_PATH = fileURLToPath(new URL("../config/examples.json", import.meta.url));
 export const WEB_DIST = fileURLToPath(new URL("../web/dist/", import.meta.url));

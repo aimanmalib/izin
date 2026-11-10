@@ -8,7 +8,7 @@ import { readAll, type ReaderDeps } from "./baca/reader.js";
 import { collect, type CollectInput } from "./kumpul/collect.js";
 import type { NetPolicy } from "./kumpul/ssrf.js";
 import { checkEvidence, numberDocs } from "./semak/check.js";
-import { buildSignals, deciderInput, guardFor, relevantClauses } from "./putus/message.js";
+import { buildSignals, deciderInput, guardFor, relevantClauses, type DocRef } from "./putus/message.js";
 import { decide, type DeciderDeps, type DeciderResult } from "./putus/serv.js";
 import { applyCeilings, type CeilingTexts } from "./putus/siling.js";
 import { buildReceipt, newReceiptId, type FetchedLabels, type Receipt } from "./resit/receipt.js";
@@ -52,7 +52,27 @@ export function pipelineTexts(langDir: string = LANG_DIR): PipelineTexts {
   return { ceilings, disclaimer, fetched, action_labels: en.actions };
 }
 
-export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<Receipt> {
+/** Everything a check knows before the decider is asked: shared by every decider variant of a benchmark. */
+export interface PreparedCheck {
+  input: CheckInput;
+  t0: number;
+  created_at: string;
+  detail: string | null;
+  collected: Awaited<ReturnType<typeof collect>>;
+  docs: ReturnType<typeof numberDocs>;
+  docRefs: (DocRef & { id: string })[];
+  readings: Awaited<ReturnType<typeof readAll>>;
+  evidence: ReturnType<typeof checkEvidence>;
+  signals: ReturnType<typeof buildSignals>;
+  message: ReturnType<typeof deciderInput>;
+  /** With nothing read there is nothing to decide on: the ceilings already cap the verdict at ASK. */
+  skip: boolean;
+  /** Whether Prompt Guard is declared for this message (config guard mode). */
+  guard: boolean;
+}
+
+/** Collect, read, check quotes and build the decider's message. */
+export async function prepareCheck(input: CheckInput, deps: PipelineDeps): Promise<PreparedCheck> {
   const { cfg } = deps;
   const now = deps.now ?? (() => new Date());
   const t0 = now().getTime();
@@ -77,49 +97,69 @@ export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<R
   const signals = buildSignals(collected, docRefs, readings, evidence);
   const relevant = relevantClauses(cfg, input.action, evidence.clauses);
   const message = deciderInput({ action: input.action, action_label: deps.texts.action_labels[input.action], detail, site: collected.site }, signals, relevant);
-
-  // With nothing read there is nothing to decide on: the ceilings already cap the verdict at ASK.
   const skip = signals.docs_read === 0 && relevant.length === 0;
-  let decider: DeciderResult | null = null;
-  if (!skip) {
-    decider = await decide({ ...deps.decider, cfg }, JSON.stringify(message), { guard: guardFor(cfg, message) });
-    if (decider.failure === "no_credit") await deps.alert("decider_no_credit");
-  }
-  deps.onSpend?.(spendOf(cfg, readings, decider));
-  const outcome = applyCeilings(
+  return { input, t0, created_at, detail, collected, docs, docRefs, readings, evidence, signals, message, skip, guard: !skip && guardFor(cfg, message) };
+}
+
+/** The code ceilings over a decider result (null = not asked). */
+export function outcomeOf(p: PreparedCheck, decider: DeciderResult | null, texts: PipelineTexts) {
+  return applyCeilings(
     {
-      action: input.action,
-      signals,
-      blocked: collected.signals.blocked.map((b) => ({ url: b.url, status: b.status })),
-      clauses: message.clauses,
+      action: p.input.action,
+      signals: p.signals,
+      blocked: p.collected.signals.blocked.map((b) => ({ url: b.url, status: b.status })),
+      clauses: p.message.clauses,
       decision: decider?.decision ?? null,
-      decider: skip ? "skipped" : decider?.decision ? "ok" : decider?.failure === "guard_tripped" ? "guard_tripped" : "unavailable",
+      decider: p.skip ? "skipped" : decider?.decision ? "ok" : decider?.failure === "guard_tripped" ? "guard_tripped" : "unavailable",
       shadow_exhausted: decider?.shadow_exhausted ?? false,
     },
-    deps.texts.ceilings,
+    texts.ceilings,
   );
+}
 
+/** Ceilings, receipt, storage. `saveInputs: false` stores only the receipt (the reading was stored already). */
+export function finishCheck(p: PreparedCheck, decider: DeciderResult | null, deps: PipelineDeps, opts: { saveInputs?: boolean } = {}): Receipt {
+  const { cfg } = deps;
+  const now = deps.now ?? (() => new Date());
+  const outcome = outcomeOf(p, decider, deps.texts);
   const receipt = buildReceipt(cfg, {
     id: deps.newId?.() ?? newReceiptId(cfg.receipt.id_length),
-    created_at,
-    action: input.action,
-    detail,
-    collected,
-    docs: docRefs,
-    readings,
-    evidence,
-    signals,
+    created_at: p.created_at,
+    action: p.input.action,
+    detail: p.detail,
+    collected: p.collected,
+    docs: p.docRefs,
+    readings: p.readings,
+    evidence: p.evidence,
+    signals: p.signals,
     decider,
     outcome,
     rules_applied: decider?.decision?.rules_applied ?? [],
-    ms_total: now().getTime() - t0,
+    ms_total: now().getTime() - p.t0,
     disclaimer: deps.texts.disclaimer,
     fetched_labels: deps.texts.fetched,
   });
   if (deps.store) {
-    deps.store.saveDocs(collected.docs, created_at);
-    deps.store.saveExtractions(docs, readings, cfg.reader.prompt);
-    deps.store.saveCheck(receipt, deps.source ?? "api", input.agent ?? null);
+    if (opts.saveInputs !== false) {
+      deps.store.saveDocs(p.collected.docs, p.created_at);
+      deps.store.saveExtractions(p.docs, p.readings, cfg.reader.prompt);
+    }
+    deps.store.saveCheck(receipt, deps.source ?? "api", p.input.agent ?? null);
   }
   return receipt;
+}
+
+/** The shipped decider over a prepared check, then the receipt (what every live check does after reading). */
+export async function decideAndFinish(p: PreparedCheck, deps: PipelineDeps): Promise<Receipt> {
+  let decider: DeciderResult | null = null;
+  if (!p.skip) {
+    decider = await decide({ ...deps.decider, cfg: deps.cfg }, JSON.stringify(p.message), { guard: p.guard });
+    if (decider.failure === "no_credit") await deps.alert("decider_no_credit");
+  }
+  deps.onSpend?.(spendOf(deps.cfg, p.readings, decider));
+  return finishCheck(p, decider, deps);
+}
+
+export async function runCheck(input: CheckInput, deps: PipelineDeps): Promise<Receipt> {
+  return decideAndFinish(await prepareCheck(input, deps), deps);
 }

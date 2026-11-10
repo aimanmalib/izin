@@ -63,6 +63,22 @@ export class ReceiptStore {
     return receiptHash(r) === r.receipt_sha256 ? r : null;
   }
 
+  /** Points a gallery cell at a new receipt; `changed` marks a verdict that differs from the cell's previous one. */
+  saveGallery(site: string, action: string, checkId: string, at: string): { changed: boolean } {
+    const prev = this.db
+      .prepare<[string, string], { verdict: string | null }>("SELECT c.verdict FROM gallery g JOIN checks c ON c.id = g.check_id WHERE g.site = ? AND g.action = ?")
+      .get(site, action);
+    const now = this.db.prepare<[string], { verdict: string | null }>("SELECT verdict FROM checks WHERE id = ?").get(checkId);
+    const changed = Boolean(prev?.verdict && now?.verdict && prev.verdict !== now.verdict);
+    this.db
+      .prepare(
+        `INSERT INTO gallery (site, action, check_id, updated_at, changed) VALUES (?, ?, ?, ?, ?)
+         ON CONFLICT(site, action) DO UPDATE SET check_id = excluded.check_id, updated_at = excluded.updated_at, changed = excluded.changed`,
+      )
+      .run(site, action, checkId, at, changed ? 1 : 0);
+    return { changed };
+  }
+
   saveDocs(docs: PolicyDoc[], fetchedAt: string): void {
     const stmt = this.db.prepare("INSERT OR IGNORE INTO docs (sha256, url, fetched_at, status, bytes, kind, text) VALUES (?, ?, ?, ?, ?, ?, ?)");
     for (const d of docs) stmt.run(sha256(d.text), d.url, fetchedAt, d.state, Buffer.byteLength(d.text), d.kind, d.text);
