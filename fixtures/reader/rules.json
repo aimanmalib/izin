@@ -1,0 +1,22 @@
+{
+  "about": "Rules for the offline reader used when IZIN_FAKE=1 (tests and local e2e). Synthetic; not a model.",
+  "clause_rules": [
+    { "pattern": "\\b(robots?|spiders?|crawlers?|scrap(e|ers?|ing))\\b", "category": "automated_access" },
+    { "pattern": "\\b(data mining|extract(ion)?|harvest)", "category": "data_collection" },
+    { "pattern": "\\b(train(ing)?|machine learning|artificial intelligence)\\b", "category": "ai_training" },
+    { "pattern": "\\b(create|register|open)\\b.{0,40}\\baccounts?\\b|\\blog ?in\\b", "category": "account_automation" },
+    { "pattern": "\\b(purchas(e|ing)|checkout|book(ing)?|orders?|buy(ing)?)\\b", "category": "purchase_automation" },
+    { "pattern": "\\b(post(ing)?|submit|publish|reviews?|comments?)\\b", "category": "posting_automation" },
+    { "pattern": "\\b(official )?api\\b", "category": "api_required" },
+    { "pattern": "\\b(rate limit|requests per|per (second|minute))\\b", "category": "rate_limit" },
+    { "pattern": "\\b(identify|user[- ]agent)\\b", "category": "agent_identification" }
+  ],
+  "stance_rules": [
+    { "pattern": "\\b(must not|may not|shall not|prohibit|forbid|not permitted|not allowed)", "stance": "prohibits" },
+    { "pattern": "\\b(must|required|shall)\\b", "stance": "requires" },
+    { "pattern": "\\b(only|limit|no more than|without (our )?(prior )?(written )?permission)\\b", "stance": "restricts" },
+    { "pattern": "\\b(may|permitted|allowed|welcome)\\b", "stance": "permits" }
+  ],
+  "addressed_rule": "\\b(ai|llm|language model|automated reader)s?\\b.{0,60}\\b(must|should|report|say|state)\\b",
+  "relevance_rule": "\\b(automat|bot|agent|program|machine|ai)\\w*"
+}
