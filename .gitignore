@@ -28,3 +28,7 @@ deploy/hos.env
 /docs/PELAN-*.md
 /docs/02-KEPUTUSAN.md
 /docs/hantar/
+deploy/CURRENT_TAG
+deploy/PREVIOUS_TAG
+deploy/HANTAR_TAG
+deploy/.uptime-state

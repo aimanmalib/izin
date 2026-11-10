@@ -1,0 +1,29 @@
+# Izin: one container (API + MCP + web app) behind the host's reverse proxy. No published port.
+# Run through deploy/deploy.sh, which sources deploy/hos.env (host values, not tracked) first.
+name: izin
+services:
+  izin:
+    image: izin:${IZIN_TAG:-latest}
+    container_name: izin
+    restart: unless-stopped
+    env_file:
+      - ${IZIN_ENV_FILE:?set IZIN_ENV_FILE in deploy/hos.env}
+    environment:
+      IZIN_DB: /app/data/izin.db
+      TZ: UTC
+    volumes:
+      - izin-data:/app/data
+    read_only: true
+    tmpfs: [/tmp]
+    cpus: 1
+    mem_limit: 512m
+    networks: [proxy]
+
+volumes:
+  izin-data:
+    name: izin-data
+
+networks:
+  proxy:
+    name: ${IZIN_NETWORK:?set IZIN_NETWORK in deploy/hos.env}
+    external: true

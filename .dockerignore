@@ -1,0 +1,25 @@
+# Keys, state and local data never enter the build context.
+.env
+.env.*
+!.env.example
+data/
+state/
+*.db
+*.db-*
+deploy/hos.env
+deploy/*_TAG
+deploy/.uptime-state
+# Rebuilt inside the image or not needed at run time.
+node_modules
+dist
+web/dist
+test-results
+playwright-report
+coverage
+.git
+.depot
+.pagar
+docs
+e2e
+tests
+*.log

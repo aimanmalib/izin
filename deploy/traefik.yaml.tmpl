@@ -1,0 +1,33 @@
+# Route for the public host name to the izin container. deploy/deploy.sh fills the @…@ values from
+# deploy/hos.env and copies the result into the proxy's dynamic configuration folder.
+# HTML is sent with `Cache-Control: no-transform`, so a CDN in front does not compress it: the
+# `compress` middleware here does. Plain http redirects to https.
+http:
+  routers:
+    izin:
+      entryPoints: [https]
+      rule: Host(`@DOMAIN@`)
+      service: izin-svc
+      middlewares: [izin-compress]
+      tls:
+        certResolver: @CERT_RESOLVER@
+      priority: 100
+    izin-http:
+      entryPoints: [http]
+      rule: Host(`@DOMAIN@`)
+      service: izin-svc
+      middlewares: [izin-https]
+      priority: 100
+  middlewares:
+    izin-compress:
+      compress:
+        excludedContentTypes: [image/png, image/jpeg, image/webp, font/woff2]
+    izin-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+  services:
+    izin-svc:
+      loadBalancer:
+        servers:
+          - url: http://izin:8080
