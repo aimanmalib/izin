@@ -1,0 +1,37 @@
+{
+  "id": "B15",
+  "set": "B",
+  "site": "b15.example",
+  "action": "crawl",
+  "expected": "NO_GO",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": true,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "b15.example",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": true,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 0,
+      "docs": [],
+      "unreadable": [
+        {
+          "url": "http://b15.example:45163/",
+          "why": "stopped_at_robots_txt"
+        }
+      ],
+      "addressed_to_ai_found": false
+    },
+    "clauses": []
+  }
+}

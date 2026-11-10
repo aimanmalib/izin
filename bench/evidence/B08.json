@@ -1,0 +1,40 @@
+{
+  "id": "B08",
+  "set": "B",
+  "site": "b08.example",
+  "action": "train",
+  "expected": "ASK",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "train",
+    "action_label": "Train AI on content",
+    "detail": null,
+    "site": "b08.example",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "http://b08.example:45163/terms",
+          "kind": "policy",
+          "chars": 982,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": []
+  }
+}

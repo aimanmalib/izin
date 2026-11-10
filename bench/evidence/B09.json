@@ -1,0 +1,40 @@
+{
+  "id": "B09",
+  "set": "B",
+  "site": "b09.example",
+  "action": "read_page",
+  "expected": "ASK",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "read_page",
+    "action_label": "Read one page",
+    "detail": null,
+    "site": "b09.example",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "http://b09.example:45163/terms",
+          "kind": "policy",
+          "chars": 984,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": true
+    },
+    "clauses": []
+  }
+}

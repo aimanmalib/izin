@@ -1,0 +1,57 @@
+{
+  "id": "B05",
+  "set": "B",
+  "site": "b05.example",
+  "action": "crawl",
+  "expected": "ASK",
+  "also_acceptable": [],
+  "mode": "fetch",
+  "skip": false,
+  "guard": false,
+  "blocked": [],
+  "message": {
+    "action": "crawl",
+    "action_label": "Crawl or scrape",
+    "detail": null,
+    "site": "b05.example",
+    "signals": {
+      "robots": {
+        "fetched": true,
+        "disallow_for_agent": false,
+        "crawl_delay": null,
+        "content_signal": {}
+      },
+      "blocked_reader": false,
+      "docs_read": 1,
+      "docs": [
+        {
+          "id": "d1",
+          "url": "http://b05.example:45163/terms",
+          "kind": "policy",
+          "chars": 1108,
+          "truncated": false
+        }
+      ],
+      "unreadable": [],
+      "addressed_to_ai_found": false
+    },
+    "clauses": [
+      {
+        "id": "c1",
+        "doc": "d1",
+        "section": "Section 5. Automated access",
+        "category": "automated_access",
+        "stance": "prohibits",
+        "quote": "You may not use robots or other automated means to access the site."
+      },
+      {
+        "id": "c2",
+        "doc": "d1",
+        "section": "Section 6. Catalog API",
+        "category": "api_required",
+        "stance": "permits",
+        "quote": "Search engines and research crawlers may collect public product pages through our Catalog API, within the request limits published with it."
+      }
+    ]
+  }
+}
