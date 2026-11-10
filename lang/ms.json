@@ -13,12 +13,18 @@
     "post": "Siar atau hantar"
   },
   "verdicts": {
-    "GO": { "label": "GO", "definition": "Tiada sekatan ke atas tindakan ini ditemui dalam dokumen yang dapat kami baca sepenuhnya." },
+    "GO": {
+      "label": "GO",
+      "definition": "Tiada sekatan ke atas tindakan ini ditemui dalam dokumen yang dapat kami baca sepenuhnya."
+    },
     "ASK": {
       "label": "ASK",
       "definition": "Ada syarat, bukti bercanggah, kebenaran diperlukan tetapi tidak diberi, atau ada yang tidak dapat dibaca. Manusia atau laman itu perlu mengesahkan."
     },
-    "NO_GO": { "label": "NO-GO", "definition": "Klausa yang dipetik atau isyarat boleh dibaca mesin melarang tindakan ini." }
+    "NO_GO": {
+      "label": "NO-GO",
+      "definition": "Klausa yang dipetik atau isyarat boleh dibaca mesin melarang tindakan ini."
+    }
   },
   "categories": {
     "automated_access": "Akses automatik",
@@ -41,6 +47,17 @@
     "unclear": "Tidak jelas"
   },
   "alerts": {
-    "reader_no_credit": "Kredit Dolphin habis: pemilik tebus kupon di app.dphn.ai; Izin memakai pembaca sandaran."
+    "reader_no_credit": "Kredit Dolphin habis: pemilik tebus kupon di app.dphn.ai; Izin memakai pembaca sandaran.",
+    "decider_no_credit": "Kredit SERV habis: semakan baharu tidak dapat memutus dan memulangkan ASK; resit tersimpan masih berfungsi. Pemilik memutuskan sama ada menambah kredit."
+  },
+  "receipt": {
+    "disclaimer": "Izin memetik dokumen dan isyarat mesin laman itu sendiri untuk satu tindakan. Ia tidak memberi nasihat. Baca sumber yang dipautkan sebelum bertindak.",
+    "ai_input_no": "laman memberi isyarat ai-input=no",
+    "nothing_read": "tiada dokumen polisi dapat dibaca sepenuhnya",
+    "reason_decider_skipped": "Tiada dokumen polisi dapat dibaca, jadi keputusan tidak diminta dan keputusan bergantung pada isyarat mesin laman.",
+    "reason_decider_unavailable": "Langkah keputusan tidak memulangkan jawapan yang boleh dipakai, jadi keputusan tidak boleh GO. Bukti yang dikumpul dipaparkan di bawah.",
+    "reason_guard_tripped": "Langkah keputusan menolak permintaan sebagai kemungkinan suntikan prompt, jadi keputusan tidak boleh GO.",
+    "reason_robots": "robots.txt laman ini melarang URL ini untuk ejen automatik.",
+    "reason_ai_train": "robots.txt laman ini memberi isyarat ai-train=no."
   }
 }

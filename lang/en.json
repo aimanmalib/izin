@@ -13,12 +13,18 @@
     "post": "Post or submit"
   },
   "verdicts": {
-    "GO": { "label": "GO", "definition": "No restriction on this action was found in the documents we could read in full." },
+    "GO": {
+      "label": "GO",
+      "definition": "No restriction on this action was found in the documents we could read in full."
+    },
     "ASK": {
       "label": "ASK",
       "definition": "A condition applies, the evidence conflicts, permission is needed but not granted, or something could not be read. A human or the site should confirm."
     },
-    "NO_GO": { "label": "NO-GO", "definition": "A quoted clause or a machine-readable signal forbids this action." }
+    "NO_GO": {
+      "label": "NO-GO",
+      "definition": "A quoted clause or a machine-readable signal forbids this action."
+    }
   },
   "categories": {
     "automated_access": "Automated access",
@@ -41,6 +47,17 @@
     "unclear": "Unclear"
   },
   "alerts": {
-    "reader_no_credit": "Dolphin credit is used up: the owner should redeem a coupon at app.dphn.ai; Izin is using the fallback reader."
+    "reader_no_credit": "Dolphin credit is used up: the owner should redeem a coupon at app.dphn.ai; Izin is using the fallback reader.",
+    "decider_no_credit": "SERV credit is used up: new checks cannot reach a verdict and return ASK; saved receipts still work. The owner decides whether to add credit."
+  },
+  "receipt": {
+    "disclaimer": "Izin quotes the site's own documents and machine-readable signals for one action. It gives no advice. Read the linked source before you act.",
+    "ai_input_no": "the site signals ai-input=no",
+    "nothing_read": "no policy document could be read in full",
+    "reason_decider_skipped": "No policy document could be read, so no decision was requested and the verdict rests on the site's machine-readable signals.",
+    "reason_decider_unavailable": "The decision step did not return a usable answer, so the verdict cannot be GO. The evidence collected is shown below.",
+    "reason_guard_tripped": "The decision step refused the request as a possible prompt injection, so the verdict cannot be GO.",
+    "reason_robots": "The site's robots.txt disallows this URL for automated agents.",
+    "reason_ai_train": "The site's robots.txt signals ai-train=no."
   }
 }

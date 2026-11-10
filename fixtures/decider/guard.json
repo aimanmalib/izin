@@ -1,0 +1,8 @@
+{
+  "about": "Patterns the offline decider (IZIN_FAKE=1) treats as an injection attempt in the detail field, standing in for SERV Prompt Guard. Synthetic; not a model.",
+  "patterns": [
+    "\\b(ignore|disregard|forget)\\b.{0,30}\\b(rules|instructions|terms|prompt)\\b",
+    "\\breturn\\s+\"?GO\"?\\b",
+    "\\bsystem prompt\\b"
+  ]
+}

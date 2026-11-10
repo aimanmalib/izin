@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import type { IzinConfig } from "../config.js";
 import { LANG_DIR } from "../config.js";
 
-export type AlertKind = "reader_no_credit" | "budget_cap" | "unhealthy";
+export type AlertKind = "reader_no_credit" | "decider_no_credit" | "budget_cap" | "unhealthy";
 
 export type AlertSend = (message: string, level: string) => Promise<boolean>;
 export type Alert = (kind: AlertKind) => Promise<boolean>;

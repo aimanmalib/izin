@@ -49,7 +49,7 @@ describe("collect", () => {
     expect(out.docs.every((d) => d.to_model && d.origin_verified)).toBe(true);
     expect(out.signals).toMatchObject({ docs_read: 4, unreadable: [], blocked: [], ai_input_no: false, do_not_fetch: false });
     expect(out.robots?.content_signal.any).toEqual({ "ai-train": "no" });
-    expect(out.robots?.input_disallowed).toEqual({ izinbot: false, agent: false });
+    expect(out.robots?.input_disallowed).toEqual({ izinbot: false, any: false, agent: false });
     // The other domain's robots.txt is read before its page is fetched.
     expect(out.ledger.map((e) => e.kind)).toEqual(["robots", "input", "home", "robots", "policy", "policy", "policy"]);
     expect(out.requests_used).toBeLessThanOrEqual(cfg.limits.requests_per_check);
@@ -180,7 +180,14 @@ describe("collect", () => {
       url: rr.url("shop.example", "/p"),
       agent: "ClaudeBot",
     }));
-    expect(agent.out.robots?.input_disallowed).toEqual({ izinbot: false, agent: true });
+    expect(agent.out.robots?.input_disallowed).toEqual({ izinbot: false, any: false, agent: true });
+    await s?.close();
+
+    // IzinBot's own group allows the page, but the "*" group that other agents fall under does not.
+    const star = await run({ "shop.example": { "/robots.txt": txt("User-agent: IzinBot\nAllow: /\n\nUser-agent: *\nDisallow: /\n") } }, (rr) => ({
+      url: rr.url("shop.example", "/p"),
+    }));
+    expect(star.out.robots?.input_disallowed).toEqual({ izinbot: false, any: true });
   });
 
   it("never exceeds the request budget", async () => {

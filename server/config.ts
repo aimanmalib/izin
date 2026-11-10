@@ -121,6 +121,38 @@ export const configSchema = z
         quarantine_max_chars: positiveInt,
       })
       .strict(),
+    decider: z
+      .object({
+        base_url: z.url(),
+        model: z.string().min(1),
+        // Feature suffix on the model name; rung (c) of the fallback ladder drops it.
+        suffix: z.string().regex(/^-[a-z-]+$/),
+        key_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+        prompt: z.string().regex(/^[a-z]+\.v\d+$/),
+        reasoning_effort: z.enum(["low", "medium", "high"]),
+        timeout_ms: positiveInt,
+        retries: z.number().int().min(0).max(3),
+        retry_backoff_ms: z.number().int().nonnegative(),
+        start_rung: z.enum(["a", "b", "c", "d"]),
+        max_calls: positiveInt,
+        shadow_hint: z.string().min(20),
+        shadow_max_iterations: positiveInt,
+        json_prompt_note: z.string().min(20),
+        max_clauses: positiveInt,
+        stance_priority: z.record(z.enum(STANCES), z.number().int().nonnegative()),
+        max_decisive: positiveInt,
+        max_conditions: positiveInt,
+        max_missing: positiveInt,
+        guard_refusal_markers: z.array(z.string().min(3)),
+        shadow_exhausted_markers: z.array(z.string().min(3)),
+      })
+      .strict(),
+    receipt: z
+      .object({
+        id_length: z.number().int().min(8).max(32),
+        version: z.string().regex(/^\d+\.\d+\.\d+$/),
+      })
+      .strict(),
     alerts: z
       .object({
         command_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
@@ -152,6 +184,9 @@ export const configSchema = z
       } catch {
         ctx.addIssue({ code: "custom", path: where.split("."), message: "invalid regular expression" });
       }
+    }
+    for (const s of STANCES) {
+      if (c.decider.stance_priority[s] === undefined) ctx.addIssue({ code: "custom", path: ["decider", "stance_priority", s], message: "missing stance" });
     }
     const l = c.limits;
     if (l.quote_min_chars >= l.quote_max_chars) ctx.addIssue({ code: "custom", path: ["limits"], message: "quote range" });

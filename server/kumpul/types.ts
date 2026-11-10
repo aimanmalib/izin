@@ -41,8 +41,8 @@ export interface RobotsSummary {
   url: string;
   state: "ok" | "none" | LedgerState;
   crawl_delay_s?: number;
-  /** Whether robots.txt disallows the input URL for IzinBot and for the optional agent token. */
-  input_disallowed: { izinbot: boolean; agent?: boolean };
+  /** Whether robots.txt disallows the input URL for IzinBot, for the "*" group and for the optional agent token. */
+  input_disallowed: { izinbot: boolean; any: boolean; agent?: boolean };
   content_signal: { izinbot: ContentSignals; any: ContentSignals; agent?: ContentSignals };
   /** The standard Content Signals preamble was present (a template, not the site's stance). */
   boilerplate_found: boolean;

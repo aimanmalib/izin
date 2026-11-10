@@ -138,5 +138,29 @@
     "fragment_words": 8,
     "quarantine_max_chars": 600
   },
+  "decider": {
+    "base_url": "https://inference-api.openserv.ai/v1",
+    "model": "gpt-6-luna-serv-multipath",
+    "suffix": "-serv-multipath",
+    "key_env": "SERV_API_KEY",
+    "prompt": "decider.v1",
+    "reasoning_effort": "low",
+    "timeout_ms": 60000,
+    "retries": 1,
+    "retry_backoff_ms": 3000,
+    "start_rung": "a",
+    "max_calls": 5,
+    "shadow_hint": "The answer must be valid JSON for the schema. A NO_GO must cite at least one clause id whose stance is prohibits or name a machine-readable signal. An ASK must list at least one condition or one missing item. A GO must not cite any prohibiting clause. Every cited id must exist in the request.",
+    "shadow_max_iterations": 2,
+    "json_prompt_note": "Return one JSON object only, with exactly these keys: verdict (GO, ASK or NO_GO), decisive_clause_ids (array of clause ids, at most 4), reason (string), conditions (array of strings, at most 3), missing (array of strings, at most 3), confidence (high, medium or low), rules_applied (array of rule ids R1 to R10).",
+    "max_clauses": 20,
+    "stance_priority": { "prohibits": 0, "restricts": 1, "requires": 1, "permits": 2, "unclear": 3 },
+    "max_decisive": 4,
+    "max_conditions": 3,
+    "max_missing": 3,
+    "guard_refusal_markers": ["prompt injection", "injection attempt", "cannot help with that", "can't help with that", "unable to comply"],
+    "shadow_exhausted_markers": ["exhausted"]
+  },
+  "receipt": { "id_length": 10, "version": "0.1.0" },
   "alerts": { "command_env": "IZIN_NOTIFY_CMD", "language": "ms", "level": "warn" }
 }

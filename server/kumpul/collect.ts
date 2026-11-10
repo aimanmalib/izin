@@ -66,6 +66,7 @@ function summarize(load: Awaited<ReturnType<Session["robotsFor"]>>, input: Colle
     ...(delay !== undefined ? { crawl_delay_s: delay } : {}),
     input_disallowed: {
       izinbot: p ? p.isDisallowed(input.url, FETCHER_TOKEN) : false,
+      any: p ? p.isDisallowed(input.url, "*") : false,
       ...(agent ? { agent: p ? p.isDisallowed(input.url, agent) : false } : {}),
     },
     content_signal: {
