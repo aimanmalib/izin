@@ -1,0 +1,136 @@
+{
+  "label": "Spot checks: 10 real (site, action) pairs from the gallery, labelled by the builder agent from the rulebook (R1 to R10) and the quoted text, and committed before any decision run. Quotes are short extracts with their URL; line breaks in robots.txt comments are shown as spaces.",
+  "read_with": "IzinBot/0.1 (+https://izin.sasateguh.com/bot), one collector pass per site (robots.txt and the policy pages the gallery names), no model call.",
+  "pairs": [
+    {
+      "site": "ebay.com",
+      "url": "https://www.ebay.com/",
+      "action": "purchase",
+      "label": "NO_GO",
+      "rules": [
+        "R4"
+      ],
+      "quote": "Automated scraping, buy-for-me agents, LLM-driven bots, or any end-to-end flow that attempts to place orders without human review is strictly prohibited.",
+      "quote_url": "https://ebay.com/robots.txt",
+      "read_on": "2026-11-10",
+      "why": "The robots.txt comment block names buy-for-me agents and prohibits them; the prohibition is specific to ordering, so R6 does not apply."
+    },
+    {
+      "site": "shop.app",
+      "url": "https://shop.app/",
+      "action": "purchase",
+      "label": "NO_GO",
+      "rules": [
+        "R4"
+      ],
+      "quote": "Automated scraping, “buy-for-me” agents, or any end-to-end flow that completes payment without a final human review step is not permitted.",
+      "quote_url": "https://shop.app/robots.txt",
+      "read_on": "2026-11-10",
+      "why": "The robots.txt comment block prohibits buy-for-me agents at checkout; the Checkout Kit clause is a route for integrators, and the prohibition is specific to buying, so R6 does not apply."
+    },
+    {
+      "site": "booking.com",
+      "url": "https://www.booking.com/",
+      "action": "purchase",
+      "label": "NO_GO",
+      "rules": [
+        "R4"
+      ],
+      "quote": "you’re not allowed to access, monitor, copy, scrape/crawl, download, reproduce, or otherwise use anything on our Platform using any robot, spider, scraper, other automated means, or automated assistants (including, but not limited to, those that operate by interacting with or otherwise making use of your browser, such as AI-powered assistants) for any purpose without the prior, express written permission of Booking.com.",
+      "quote_url": "https://www.booking.com/content/terms.html",
+      "read_on": "2026-11-10",
+      "why": "A general ban on automated means and AI-powered assistants for any purpose covers booking (R4)."
+    },
+    {
+      "site": "airbnb.com",
+      "url": "https://www.airbnb.com/",
+      "action": "account",
+      "label": "NO_GO",
+      "rules": [
+        "R4"
+      ],
+      "quote": "Do not use bots, crawlers, scrapers, or other automated means to access or collect data or other content from or otherwise interact with the Airbnb Platform.",
+      "quote_url": "https://www.airbnb.com/help/article/2908",
+      "read_on": "2026-11-10",
+      "why": "A general ban on automated means to interact with the platform covers opening an account (R4)."
+    },
+    {
+      "site": "linkedin.com",
+      "url": "https://www.linkedin.com/",
+      "action": "crawl",
+      "label": "NO_GO",
+      "rules": [
+        "R4"
+      ],
+      "quote": "The use of robots or other automated means to access LinkedIn without the express permission of LinkedIn is strictly prohibited.",
+      "quote_url": "https://linkedin.com/robots.txt",
+      "read_on": "2026-11-10",
+      "why": "The robots.txt comment prohibits automated access without permission; the search-engine clause is discretionary and needs an application, so it grants nothing to this crawler and R6 does not apply."
+    },
+    {
+      "site": "github.com",
+      "url": "https://github.com/",
+      "action": "account",
+      "label": "NO_GO",
+      "rules": [
+        "R4"
+      ],
+      "quote": "You must be a human to create an Account. Accounts registered by \"bots\" or other automated methods are not permitted.",
+      "quote_url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+      "read_on": "2026-11-10",
+      "why": "The terms prohibit accounts registered by automated methods; machine accounts must be set up by a person, so automated sign-up stays prohibited."
+    },
+    {
+      "site": "github.com",
+      "url": "https://github.com/",
+      "action": "train",
+      "label": "ASK",
+      "rules": [
+        "R5"
+      ],
+      "quote": "By using automated means to access, collect, or otherwise use (“Access”) any publicly accessible Content from the Service for the purpose of developing or training any commercially available artificial intelligence model, machine learning system, or similar technology (a \"Commercial AI System\"), you hereby waive any and all policies, terms, conditions, or contractual provisions governing products, services, websites or datasets you own",
+      "quote_url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+      "read_on": "2026-11-10",
+      "why": "Training on public content carries a condition (the reciprocity waiver), so ASK with the condition stated (R5)."
+    },
+    {
+      "site": "github.com",
+      "url": "https://github.com/",
+      "action": "read_page",
+      "label": "GO",
+      "rules": [
+        "R8"
+      ],
+      "quote": null,
+      "quote_url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+      "read_on": "2026-11-10",
+      "why": "The terms read in full contain no rule on reading one public page by automated means; the API rate-limit clause is about the API, not pages. Silent, so GO (R8)."
+    },
+    {
+      "site": "wikipedia.org",
+      "url": "https://www.wikipedia.org/",
+      "action": "crawl",
+      "label": "ASK",
+      "rules": [
+        "R5"
+      ],
+      "quote": "Friendly, low-speed bots are welcome viewing article pages, but not dynamically-generated pages please.",
+      "quote_url": "https://wikipedia.org/robots.txt",
+      "read_on": "2026-11-10",
+      "why": "The robots.txt comment welcomes bots on article pages under conditions (low speed, no dynamic pages), so ASK with the conditions (R5)."
+    },
+    {
+      "site": "wikipedia.org",
+      "url": "https://www.wikipedia.org/",
+      "action": "train",
+      "label": "ASK",
+      "rules": [
+        "R8"
+      ],
+      "quote": null,
+      "quote_url": "https://wikipedia.org/robots.txt",
+      "read_on": "2026-11-10",
+      "why": "The documents read say nothing about training; silence does not grant a licence to train (R8)."
+    }
+  ]
+}
