@@ -203,6 +203,8 @@ export const configSchema = z
           .strict(),
       })
       .strict(),
+    // Robots-only baseline: which quoted stances count as "the site's words restrict" (ADR 0010).
+    baseline: z.object({ restricting_stances: z.array(z.enum(STANCES)).min(1) }).strict(),
     alerts: z
       .object({
         command_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),

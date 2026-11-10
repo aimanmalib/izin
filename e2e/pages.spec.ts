@@ -51,6 +51,10 @@ test("the gallery lists every site, opens a verdict's receipt, and lists the sit
   await expect(page.locator(".blocked li")).toHaveCount(gallery.blocked_reader.length);
   const cell = rows.first().locator("a .verdict");
   await expect(cell).toHaveText(/NO-GO|ASK|GO/);
+  // The robots-only baseline: the seeded cell says what robots.txt alone answers, and the count shows.
+  const robots = Object.values(en.web.gallery.robots_short);
+  await expect(rows.first().locator(".robots-only")).toHaveText(new RegExp(robots.map((r) => r.replace(/\./g, "\\.")).join("|")));
+  await expect(page.getByRole("heading", { name: en.web.gallery.baseline_head })).toBeVisible();
   await cell.click();
   await expect(page).toHaveURL(/\/r\/[a-z2-7]{10}$/);
   await expect(page.locator(".receipt-verdict .verdict")).toBeVisible();
@@ -59,6 +63,7 @@ test("the gallery lists every site, opens a verdict's receipt, and lists the sit
 test("the benchmark page shows who could be read and says when the run has not happened", async ({ page }) => {
   await page.goto("/bench");
   await expect(page.getByRole("heading", { name: en.web.bench.readability_head })).toBeVisible();
+  await expect(page.getByRole("heading", { name: en.web.gallery.baseline_head })).toBeVisible();
   await expect(page.getByText("IzinBot/0.1", { exact: false })).toBeVisible();
 });
 

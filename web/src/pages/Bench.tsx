@@ -1,6 +1,7 @@
 // /bench: who could be read, then the benchmark run (Set A, Set B, decision step variants, total
 // cost) once bench/results.json exists. Every number comes from the API; none is written here.
 import { getBench } from "../api";
+import { BaselineSummary } from "../components/Baseline";
 import { day, PageHead, usd, useView } from "../components/Page";
 import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT } from "../i18n";
@@ -14,7 +15,7 @@ export function BenchPage() {
 
   if (bench === "failed") return <p className="wrap problem" role="alert">{t.web.errors.network}</p>;
   if (!bench) return <div className="wrap loading" aria-busy="true" />;
-  const { readability: rd, results: rs } = bench;
+  const { readability: rd, results: rs, baseline } = bench;
 
   return (
     <div className="wrap page">
@@ -29,6 +30,8 @@ export function BenchPage() {
           <p className="hint mono break">{fmt(b.readability_ua, { ua: rd.user_agent })}</p>
         </section>
       ) : null}
+
+      <BaselineSummary baseline={baseline} />
 
       {!rs ? (
         <p className="banner" role="status">{b.not_run}</p>

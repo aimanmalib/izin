@@ -1,6 +1,7 @@
 // /gallery: the site by action matrix (verdict colour and word, each opening its receipt), the date
 // each site was read, the method, and the separate list of sites that blocked the reader.
 import { getBench, getGallery, type Action, type SiteView } from "../api";
+import { BaselineSummary } from "../components/Baseline";
 import { day, PageHead, useView } from "../components/Page";
 import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT } from "../i18n";
@@ -39,6 +40,7 @@ export function GalleryPage({ site }: { site: SiteView }) {
       </dl>
 
       {anyRun ? null : <p className="banner" role="status">{g.none_yet}</p>}
+      <BaselineSummary baseline={gallery.baseline} marked />
 
       <div className="scroll-x matrix-wrap" tabIndex={0} role="region" aria-label={g.h1}>
         <table className="matrix">
@@ -62,11 +64,15 @@ export function GalleryPage({ site }: { site: SiteView }) {
                   {actions.map((a) => {
                     const c = row.checks[a];
                     return (
-                      <td key={a}>
+                      <td key={a} className={c?.words_restrict ? "is-words" : undefined}>
                         {c?.verdict ? (
-                          <a href={`/r/${c.receipt_id}`} onClick={linkClick} aria-label={`${row.host}, ${t.actions[a]}: ${t.verdicts[c.verdict].label}`}>
-                            <VerdictBadge verdict={c.verdict} size="sm" />
-                          </a>
+                          <>
+                            <a href={`/r/${c.receipt_id}`} onClick={linkClick} aria-label={`${row.host}, ${t.actions[a]}: ${t.verdicts[c.verdict].label}`}>
+                              <VerdictBadge verdict={c.verdict} size="sm" />
+                            </a>
+                            {c.robots_only ? <span className="robots-only">{g.robots_short[c.robots_only]}</span> : null}
+                            {c.words_restrict ? <span className="sr">{g.words_restrict}</span> : null}
+                          </>
                         ) : (
                           <span className="muted" title={g.not_run}>
                             <span aria-hidden="true">·</span>

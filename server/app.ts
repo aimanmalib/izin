@@ -1,6 +1,6 @@
 // HTTP surface: the check API under /api/, MCP at /mcp and the web app (web/dist) for every page.
 import Fastify, { type FastifyInstance } from "fastify";
-import { FIXTURES_DIR, WEB_DIST, type IzinConfig } from "./config.js";
+import { BENCH_DIR, FIXTURES_DIR, WEB_DIST, type IzinConfig } from "./config.js";
 import { makeClientIp, type ClientIp } from "./api/clientip.js";
 import { registerApi } from "./api/routes.js";
 import { benchView, dolphinShare, galleryView } from "./api/views.js";
@@ -41,8 +41,8 @@ export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config)
       dolphinShare: () => dolphinShare(rt.db),
       budgetLeftPct: () => rt.guard.leftPct(),
     },
-    gallery: () => galleryView(rt.db),
-    bench: () => benchView(),
+    gallery: () => galleryView(rt.db, config.baseline.restricting_stances),
+    bench: () => benchView(BENCH_DIR, galleryView(rt.db, config.baseline.restricting_stances).baseline),
   });
   // Read on each request so a new receipt id in config/examples.json needs no code change.
   app.get("/api/site", async () => siteView(config, rt.db, loadExamples(opts.examplesPath)));

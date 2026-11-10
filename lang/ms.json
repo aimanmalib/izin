@@ -268,7 +268,17 @@
         "travel": "Pelancongan",
         "social": "Sosial",
         "developer": "Pembangun"
-      }
+      },
+      "robots_short": {
+        "allowed": "robots.txt: benarkan",
+        "disallowed": "robots.txt: larang",
+        "no_robots": "tiada robots.txt"
+      },
+      "words_restrict": "Kata-kata laman sendiri mengehadkan ini",
+      "baseline_head": "robots.txt sahaja, berbanding kata-kata laman sendiri",
+      "baseline_line": "Dalam {count} daripada {allowed} pasangan yang halamannya dibenarkan robots.txt, klausa laman yang dipetik mengehadkan atau melarang tindakan itu, dan Izin menjawab ASK atau NO-GO berdasarkan klausa itu.",
+      "baseline_split": "Pengurai robots.txt sahaja, bagi {pairs} pasangan: benarkan {allowed}, larang {disallowed}, tiada robots.txt {no_robots}.",
+      "baseline_note": "Petak bertanda ialah pasangan itu. ASK yang datang hanya daripada sekatan atau halaman yang tidak dapat dibaca tidak dikira."
     },
     "bench": {
       "h1": "Penanda aras",

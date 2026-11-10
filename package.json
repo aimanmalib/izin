@@ -21,7 +21,8 @@
     "e2e": "playwright test",
     "gate": "bash scripts/gerbang-ujian.sh",
     "check": "tsx scripts/check.ts",
-    "readability": "tsx scripts/readability.ts"
+    "readability": "tsx scripts/readability.ts",
+    "ukur": "tsx scripts/ukur.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

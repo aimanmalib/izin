@@ -268,7 +268,17 @@
         "travel": "Travel",
         "social": "Social",
         "developer": "Developer"
-      }
+      },
+      "robots_short": {
+        "allowed": "robots.txt: allows",
+        "disallowed": "robots.txt: disallows",
+        "no_robots": "no robots.txt"
+      },
+      "words_restrict": "The site's own words restrict this",
+      "baseline_head": "robots.txt alone, against the site's own words",
+      "baseline_line": "In {count} of {allowed} pairs where robots.txt allows the page, a quoted clause from the site restricts or forbids the action, and Izin answered ASK or NO-GO on that clause.",
+      "baseline_split": "A robots.txt parser alone, over {pairs} pairs: allows {allowed}, disallows {disallowed}, no robots.txt {no_robots}.",
+      "baseline_note": "Marked cells are those pairs. An ASK that comes only from a block or a page that could not be read is not counted."
     },
     "bench": {
       "h1": "Benchmark",

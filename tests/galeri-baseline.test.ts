@@ -1,0 +1,133 @@
+// Robots-only baseline (ADR 0010): what robots.txt alone answers per pair, and the headline count of
+// pairs it allows while a quoted clause from the site restricts the action. Synthetic receipts only.
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterAll, describe, expect, it } from "vitest";
+import { benchView, galleryView } from "../server/api/views.js";
+import type { Stance, Verdict } from "../server/config.js";
+import { baselineCell, baselineCounts, robotsOnly, wordsRestrict, type BaselineReceipt } from "../server/galeri/baseline.js";
+import { baselineSection, replaceSection } from "../server/galeri/ukur.js";
+import { openDb, ReceiptStore } from "../server/resit/store.js";
+
+const RESTRICT: Stance[] = ["prohibits", "restricts", "requires"];
+
+function receipt(o: { fetched?: boolean; disallowed?: boolean; verdict: Verdict; clauses?: [string, boolean][] }): BaselineReceipt {
+  return {
+    verdict: o.verdict,
+    signals: { robots: { fetched: o.fetched ?? true, disallow_for_agent: o.disallowed ?? false, crawl_delay: null, content_signal: {} } },
+    clauses: (o.clauses ?? []).map(([stance, decisive], i) => ({
+      id: `c${i}`,
+      doc: "d1",
+      section: "s",
+      category: "automated_access",
+      stance,
+      quote: "synthetic clause text for the test",
+      source_url: "https://shop.example/terms",
+      fragment_url: null,
+      decisive,
+    })),
+  };
+}
+
+describe("robots-only answer", () => {
+  it("is allowed, disallowed or no_robots from the stored robots signals", () => {
+    expect(robotsOnly(receipt({ verdict: "GO" }))).toBe("allowed");
+    expect(robotsOnly(receipt({ verdict: "NO_GO", disallowed: true }))).toBe("disallowed");
+    expect(robotsOnly(receipt({ verdict: "ASK", fetched: false }))).toBe("no_robots");
+  });
+});
+
+describe("headline count: robots allows, the site's words restrict", () => {
+  it("counts an allowed pair with a decisive prohibiting clause and NO-GO", () => {
+    expect(wordsRestrict(receipt({ verdict: "NO_GO", clauses: [["prohibits", true]] }), RESTRICT)).toBe(true);
+  });
+  it("counts an allowed pair with a decisive restricting or requiring clause and ASK", () => {
+    expect(wordsRestrict(receipt({ verdict: "ASK", clauses: [["restricts", true]] }), RESTRICT)).toBe(true);
+    expect(wordsRestrict(receipt({ verdict: "ASK", clauses: [["requires", true]] }), RESTRICT)).toBe(true);
+  });
+  it("does not count an ASK that comes from a failure (no decisive clause)", () => {
+    expect(wordsRestrict(receipt({ verdict: "ASK" }), RESTRICT)).toBe(false);
+    expect(wordsRestrict(receipt({ verdict: "ASK", clauses: [["prohibits", false]] }), RESTRICT)).toBe(false);
+  });
+  it("does not count a pair robots.txt disallows, or one with no robots.txt", () => {
+    expect(wordsRestrict(receipt({ verdict: "NO_GO", disallowed: true, clauses: [["prohibits", true]] }), RESTRICT)).toBe(false);
+    expect(wordsRestrict(receipt({ verdict: "NO_GO", fetched: false, clauses: [["prohibits", true]] }), RESTRICT)).toBe(false);
+  });
+  it("does not count GO, or an ASK resting on a permitting or unclear clause", () => {
+    expect(wordsRestrict(receipt({ verdict: "GO", clauses: [["restricts", true]] }), RESTRICT)).toBe(false);
+    expect(wordsRestrict(receipt({ verdict: "ASK", clauses: [["permits", true], ["unclear", true]] }), RESTRICT)).toBe(false);
+  });
+  it("takes the restricting stances from config", () => {
+    expect(wordsRestrict(receipt({ verdict: "ASK", clauses: [["requires", true]] }), ["prohibits"])).toBe(false);
+  });
+  it("adds the cells up", () => {
+    const cells = [
+      receipt({ verdict: "NO_GO", clauses: [["prohibits", true]] }),
+      receipt({ verdict: "ASK" }),
+      receipt({ verdict: "GO" }),
+      receipt({ verdict: "NO_GO", disallowed: true, clauses: [["prohibits", true]] }),
+      receipt({ verdict: "ASK", fetched: false }),
+    ].map((r) => baselineCell(r, RESTRICT));
+    expect(baselineCounts(cells)).toEqual({ pairs: 5, allowed: 3, disallowed: 1, no_robots: 1, robots_allowed_words_restrict: 1 });
+  });
+});
+
+describe("gallery and bench views", () => {
+  const dir = mkdtempSync(join(tmpdir(), "izin-baseline-"));
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+  const galleryPath = join(dir, "gallery.json");
+  writeFileSync(galleryPath, JSON.stringify({ sites: [{ host: "shop.example", group: "shopping" }, { host: "other.example", group: "travel" }], blocked_reader: [] }));
+
+  function seeded() {
+    const db = new ReceiptStore(openDb(":memory:")).db;
+    const put = (id: string, site: string, action: string, r: BaselineReceipt | null) => {
+      db.prepare(`INSERT INTO checks (id, created_at, site, url, action, source, status, verdict, receipt_json) VALUES (?, '2026-11-10', ?, ?, ?, 'gallery', ?, ?, ?)`).run(
+        id, site, `https://${site}/`, action, r ? "done" : "running", r?.verdict ?? null, r ? JSON.stringify(r) : null,
+      );
+      db.prepare("INSERT INTO gallery (site, action, check_id, updated_at) VALUES (?, ?, ?, '2026-11-10')").run(site, action, id);
+    };
+    put("aaaaaaaaaa", "shop.example", "purchase", receipt({ verdict: "NO_GO", clauses: [["prohibits", true]] }));
+    put("bbbbbbbbbb", "shop.example", "crawl", receipt({ verdict: "NO_GO", disallowed: true }));
+    put("cccccccccc", "other.example", "post", receipt({ verdict: "ASK" }));
+    put("dddddddddd", "other.example", "train", null);
+    return db;
+  }
+
+  it("adds robots_only and words_restrict to each finished cell and counts them", () => {
+    const v = galleryView(seeded(), RESTRICT, galleryPath);
+    expect(v.sites[0]!.checks.purchase).toMatchObject({ robots_only: "allowed", words_restrict: true });
+    expect(v.sites[0]!.checks.crawl).toMatchObject({ robots_only: "disallowed", words_restrict: false });
+    expect(v.sites[1]!.checks.post).toMatchObject({ robots_only: "allowed", words_restrict: false });
+    expect(v.sites[1]!.checks.train?.robots_only).toBeUndefined();
+    expect(v.baseline).toEqual({ pairs: 3, allowed: 2, disallowed: 1, no_robots: 0, robots_allowed_words_restrict: 1 });
+  });
+
+  it("bench carries the baseline only once a pair has a receipt", () => {
+    const empty = galleryView(new ReceiptStore(openDb(":memory:")).db, RESTRICT, galleryPath).baseline;
+    expect(benchView(dir, empty).baseline).toBeNull();
+    expect(benchView(dir, galleryView(seeded(), RESTRICT, galleryPath).baseline)?.baseline?.robots_allowed_words_restrict).toBe(1);
+  });
+
+  it("writes the UKUR section from the view, with the counted pairs and their receipts", () => {
+    const v = galleryView(seeded(), RESTRICT, galleryPath);
+    const s = baselineSection(v, "https://izin.example/", "2026-11-10");
+    expect(s).toContain("## Robots-only baseline");
+    expect(s).toContain("**1 of 2**");
+    expect(s).toContain("- shop.example, purchase: NO_GO, [receipt](https://izin.example/r/aaaaaaaaaa)");
+    expect(s).not.toContain("other.example");
+    expect(baselineSection({ sites: [], baseline: baselineCounts([]) }, "https://izin.example", "2026-11-10")).toContain("No gallery pair has a receipt yet.");
+  });
+});
+
+describe("UKUR sections", () => {
+  it("appends a section once, then replaces it in place", () => {
+    const first = replaceSection("# What we measured\n\nIntro.\n", "x", "one");
+    expect(first).toContain("<!-- izin:x:start -->\none\n<!-- izin:x:end -->");
+    const second = replaceSection(`${first}\nAfter.\n`, "x", "two");
+    expect(second).not.toContain("one");
+    expect(second).toContain("Intro.");
+    expect(second).toContain("After.");
+    expect(second.match(/izin:x:start/g)).toHaveLength(1);
+  });
+});

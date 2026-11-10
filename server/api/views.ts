@@ -3,14 +3,15 @@
 import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { z } from "zod";
-import { ACTIONS, BENCH_DIR, GALLERY_PATH, type Action, type Verdict } from "../config.js";
+import { ACTIONS, BENCH_DIR, GALLERY_PATH, type Action, type Stance, type Verdict } from "../config.js";
+import { baselineCell, baselineCounts, type BaselineCell, type BaselineCounts, type BaselineReceipt } from "../galeri/baseline.js";
 
 interface GalleryFile {
   sites: { host: string; group: string }[];
   blocked_reader: { host: string; reason: string }[];
 }
 
-export interface GalleryCell {
+export interface GalleryCell extends Partial<BaselineCell> {
   verdict: Verdict | null;
   receipt_id: string;
   updated_at: string;
@@ -19,26 +20,29 @@ export interface GalleryCell {
 
 const readJson = <T>(path: string): T | null => (existsSync(path) ? (JSON.parse(readFileSync(path, "utf8")) as T) : null);
 
-export function galleryView(db: Database.Database, path: string = GALLERY_PATH) {
+/** The gallery matrix with the robots-only baseline per finished cell and its counts (ADR 0010). */
+export function galleryView(db: Database.Database, restricting: readonly Stance[], path: string = GALLERY_PATH) {
   const file = readJson<GalleryFile>(path) ?? { sites: [], blocked_reader: [] };
   const rows = db
-    .prepare<[], { site: string; action: string; check_id: string; updated_at: string; changed: number; verdict: string | null }>(
-      `SELECT g.site, g.action, g.check_id, g.updated_at, g.changed, c.verdict
+    .prepare<[], { site: string; action: string; check_id: string; updated_at: string; changed: number; verdict: string | null; receipt_json: string | null }>(
+      `SELECT g.site, g.action, g.check_id, g.updated_at, g.changed, c.verdict, c.receipt_json
        FROM gallery g LEFT JOIN checks c ON c.id = g.check_id AND c.status = 'done'`,
     )
     .all();
-  return {
-    sites: file.sites.map((s) => ({
-      host: s.host,
-      group: s.group,
-      checks: Object.fromEntries(
-        rows
-          .filter((r) => r.site === s.host)
-          .map((r) => [r.action, { verdict: r.verdict as Verdict | null, receipt_id: r.check_id, updated_at: r.updated_at, changed: r.changed === 1 }]),
-      ) as Partial<Record<Action, GalleryCell>>,
-    })),
-    blocked_reader: file.blocked_reader,
+  const cells: BaselineCell[] = [];
+  const cell = (r: (typeof rows)[number]): GalleryCell => {
+    const out: GalleryCell = { verdict: r.verdict as Verdict | null, receipt_id: r.check_id, updated_at: r.updated_at, changed: r.changed === 1 };
+    if (!r.receipt_json) return out;
+    const b = baselineCell(JSON.parse(r.receipt_json) as BaselineReceipt, restricting);
+    cells.push(b);
+    return { ...out, ...b };
   };
+  const sites = file.sites.map((s) => ({
+    host: s.host,
+    group: s.group,
+    checks: Object.fromEntries(rows.filter((r) => r.site === s.host).map((r) => [r.action, cell(r)])) as Partial<Record<Action, GalleryCell>>,
+  }));
+  return { sites, blocked_reader: file.blocked_reader, baseline: baselineCounts(cells) };
 }
 
 interface ReadabilityFile {
@@ -78,14 +82,18 @@ export const benchResultsSchema = z.object({
 
 export type BenchResults = z.infer<typeof benchResultsSchema>;
 
-/** Readability counts now; benchmark results join when their file exists and has the expected shape. */
-export function benchView(dir: string = BENCH_DIR) {
+/**
+ * Readability counts now; benchmark results join when their file exists and has the expected shape.
+ * The robots-only baseline comes from the gallery (null until a gallery cell has a receipt).
+ */
+export function benchView(dir: string = BENCH_DIR, baseline: BaselineCounts | null = null) {
   const readability = readJson<ReadabilityFile>(`${dir}readability.json`);
   const raw = readJson<unknown>(`${dir}results.json`);
   const parsed = raw === null ? null : benchResultsSchema.safeParse(raw);
   return {
     readability: readability ? { run_at: readability.run_at, user_agent: readability.user_agent, counts: readability.counts } : null,
     results: parsed?.success ? parsed.data : null,
+    baseline: baseline && baseline.pairs > 0 ? baseline : null,
   };
 }
 
