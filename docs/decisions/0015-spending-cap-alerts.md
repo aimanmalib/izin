@@ -30,3 +30,10 @@ nothing needed doing until the next UTC day.
 - A reached total cap produces one alert, not one a day. Removing the `alerts_sent` rows (or using
   a fresh database) sends it again.
 - Rolling back to an earlier release leaves the extra table in place; older code ignores it.
+
+## Verification after release (2026-11-11)
+
+Released as `3dbbd30` while the total cap was reached. Three `GET /api/health` reads returned
+`cache_only: true` and logged no alert; the `alerts_sent` table was created next to the existing
+tables, and the `budget`, `checks` and `extractions` row counts matched the counts taken before the
+release.
