@@ -49,7 +49,8 @@
   "alerts": {
     "reader_no_credit": "Dolphin credit is used up: the owner should redeem a coupon at app.dphn.ai; Izin is using the fallback reader.",
     "decider_no_credit": "SERV credit is used up: new checks cannot reach a verdict and return ASK; saved receipts still work. The owner decides whether to add credit.",
-    "budget_cap": "Izin reached a spending cap from config: new checks are paused and saved receipts are still served. Raise the cap in config only if credit allows; otherwise nothing to do until the next UTC day.",
+    "budget_cap_day": "Izin reached its daily {provider} spending cap: {spent} of {cap} USD spent today (budget.{provider}_usd_per_day in config/izin.json). New checks are paused and saved receipts are still served. Nothing to do: new checks open again at 00:00 UTC. Raise budget.{provider}_usd_per_day only if the provider credit allows.",
+    "budget_cap_total": "Izin reached its total {provider} spending cap: {spent} of {cap} USD spent in all (budget.{provider}_usd_total in config/izin.json). This cap never resets, so new checks stay paused until it changes; saved receipts are still served. To do: add {provider} credit at the provider, then raise budget.{provider}_usd_total in config/izin.json and deploy. This alert is sent once until the cap changes.",
     "unhealthy": "The Izin container failed its health check twice in a row: check the container logs and restart it with the deploy script."
   },
   "receipt": {

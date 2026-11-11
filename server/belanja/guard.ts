@@ -1,6 +1,7 @@
 // Spending guard: what each check cost on SERV and on Dolphin goes into the budget table by UTC
 // day; new checks stop when a daily or total cap from config is reached. Saved receipts are still
 // served (cache-only mode). Build scripts named in config skip the daily caps, never the totals.
+// Reading which cap applies (cap) has no side effects; only a refused new check (exhausted) alerts.
 import type Database from "better-sqlite3";
 import type { IzinConfig } from "../config.js";
 import type { DocReading } from "../baca/reader.js";
@@ -40,6 +41,12 @@ export interface BudgetState {
   day: { serv_usd: number; dolphin_usd: number; new_checks: number };
   total: { serv_usd: number; dolphin_usd: number };
 }
+
+const PROVIDERS = ["serv", "dolphin"] as const;
+
+export type BudgetCap =
+  | { kind: "none"; provider: null; spent_usd: number; cap_usd: number }
+  | { kind: "day" | "total"; provider: (typeof PROVIDERS)[number]; spent_usd: number; cap_usd: number };
 
 export class BudgetGuard {
   constructor(
@@ -81,14 +88,39 @@ export class BudgetGuard {
     return { day, total: { serv_usd: total?.serv_usd ?? 0, dolphin_usd: total?.dolphin_usd ?? 0 } };
   }
 
-  /** True when a new check from this source must not start; the first such answer of the day alerts the operator. */
-  async exhausted(source: CheckSource): Promise<boolean> {
+  /**
+   * Which cap stops a new check from this source, without side effects (status reads use this).
+   * A total cap wins over a daily one; SERV is named before Dolphin when both are reached.
+   */
+  cap(source: CheckSource): BudgetCap {
     const b = this.cfg.budget;
     const s = this.state();
-    const daily = !b.daily_exempt_sources.includes(source) && (s.day.serv_usd >= b.serv_usd_per_day || s.day.dolphin_usd >= b.dolphin_usd_per_day);
-    const total = s.total.serv_usd >= b.serv_usd_total || s.total.dolphin_usd >= b.dolphin_usd_total;
-    if (daily || total) await this.alert("budget_cap");
-    return daily || total;
+    for (const provider of PROVIDERS) {
+      const spent = s.total[`${provider}_usd`];
+      const cap = b[`${provider}_usd_total`];
+      if (spent >= cap) return { kind: "total", provider, spent_usd: spent, cap_usd: cap };
+    }
+    if (!b.daily_exempt_sources.includes(source)) {
+      for (const provider of PROVIDERS) {
+        const spent = s.day[`${provider}_usd`];
+        const cap = b[`${provider}_usd_per_day`];
+        if (spent >= cap) return { kind: "day", provider, spent_usd: spent, cap_usd: cap };
+      }
+    }
+    return { kind: "none", provider: null, spent_usd: 0, cap_usd: 0 };
+  }
+
+  /**
+   * True when a new check from this source must not start, and the operator is alerted: a daily
+   * cap once per UTC day, a total cap once until that cap's value changes in config.
+   */
+  async exhausted(source: CheckSource): Promise<boolean> {
+    const c = this.cap(source);
+    if (c.kind === "none") return false;
+    const vars = { provider: c.provider, spent: c.spent_usd.toFixed(2), cap: c.cap_usd.toFixed(2) };
+    if (c.kind === "total") await this.alert("budget_cap_total", { vars, key: `${c.provider}:${c.cap_usd}` });
+    else await this.alert("budget_cap_day", { vars });
+    return true;
   }
 
   /** Share of the total budget left, the smaller of SERV and Dolphin, as a whole percentage. */

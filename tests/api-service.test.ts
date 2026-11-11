@@ -147,7 +147,7 @@ describe("spending caps", () => {
     expect(res.statusCode).toBe(503);
     expect(res.json()).toEqual({ error: "budget_exhausted", cached_id: first.id });
     expect((await post({ url: url("other.example", "/"), action: "crawl" })).json()).toEqual({ error: "budget_exhausted" });
-    expect(alerts).toEqual(["budget_cap", "budget_cap"]); // the alert itself sends once a day (alerts.ts)
+    expect(alerts).toEqual(["budget_cap_day", "budget_cap_day"]); // the alert itself sends once a day (alerts.ts)
     expect((await app!.inject({ method: "GET", url: "/api/health" })).json().cache_only).toBe(true);
     clock.t += 86_400_000;
     expect((await post({ url: url("shop.example", "/"), action: "crawl", detail: "next day" })).statusCode).toBe(202);

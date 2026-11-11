@@ -131,8 +131,8 @@ export class CheckService {
     return receipt ? { status: "done", receipt } : { status: "error" };
   }
 
-  /** New checks are paused (spending cap reached); saved receipts are still served. */
+  /** New checks are paused (spending cap reached); saved receipts are still served. A status read, so it never alerts. */
   async cacheOnly(): Promise<boolean> {
-    return this.d.guard.exhausted("web");
+    return this.d.guard.cap("web").kind !== "none";
   }
 }

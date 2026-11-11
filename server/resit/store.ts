@@ -1,4 +1,4 @@
-// SQLite storage for checks, fetched documents, reader extractions, daily spend and the gallery.
+// SQLite storage for checks, fetched documents, reader extractions, daily spend, sent alerts and the gallery.
 // Document text stays on the server: no route serves the docs table.
 import { createHash } from "node:crypto";
 import Database from "better-sqlite3";
@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS extractions (
   PRIMARY KEY (doc_sha256, provider, model, prompt_version)
 );
 CREATE TABLE IF NOT EXISTS budget (day TEXT PRIMARY KEY, serv_usd REAL NOT NULL DEFAULT 0, dolphin_usd REAL NOT NULL DEFAULT 0, new_checks INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS alerts_sent (kind TEXT NOT NULL, key TEXT NOT NULL, sent_at TEXT NOT NULL, PRIMARY KEY (kind, key));
 CREATE TABLE IF NOT EXISTS gallery (site TEXT NOT NULL, action TEXT NOT NULL, check_id TEXT NOT NULL, updated_at TEXT NOT NULL, changed INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (site, action));
 `;
 

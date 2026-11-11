@@ -49,7 +49,8 @@
   "alerts": {
     "reader_no_credit": "Kredit Dolphin habis: pemilik tebus kupon di app.dphn.ai; Izin memakai pembaca sandaran.",
     "decider_no_credit": "Kredit SERV habis: semakan baharu tidak dapat memutus dan memulangkan ASK; resit tersimpan masih berfungsi. Pemilik memutuskan sama ada menambah kredit.",
-    "budget_cap": "Izin mencapai had belanja dalam config: semakan baharu dihentikan dan resit tersimpan masih dilayan. Naikkan had dalam config hanya jika kredit mencukupi; jika tidak, tiada tindakan hingga hari UTC berikutnya.",
+    "budget_cap_day": "Izin mencapai had belanja harian {provider}: {spent} daripada {cap} USD dibelanja hari ini (budget.{provider}_usd_per_day dalam config/izin.json). Semakan baharu dihentikan dan resit tersimpan masih dilayan. Tiada tindakan: semakan baharu dibuka semula pada 00:00 UTC. Naikkan budget.{provider}_usd_per_day hanya jika kredit penyedia mencukupi.",
+    "budget_cap_total": "Izin mencapai had belanja jumlah {provider}: {spent} daripada {cap} USD dibelanja keseluruhannya (budget.{provider}_usd_total dalam config/izin.json). Had ini tidak pernah ditetapkan semula, jadi semakan baharu kekal dihentikan sehingga had berubah; resit tersimpan masih dilayan. Perlu dibuat: tambah kredit {provider} pada penyedia, kemudian naikkan budget.{provider}_usd_total dalam config/izin.json dan deploy. Amaran ini dihantar sekali sehingga had berubah.",
     "unhealthy": "Kontena Izin gagal semakan kesihatan dua kali berturut: semak log kontena dan mulakan semula dengan skrip deploy."
   },
   "receipt": {
