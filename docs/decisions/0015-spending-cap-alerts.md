@@ -37,3 +37,8 @@ Released as `3dbbd30` while the total cap was reached. Three `GET /api/health` r
 `cache_only: true` and logged no alert; the `alerts_sent` table was created next to the existing
 tables, and the `budget`, `checks` and `extractions` row counts matched the counts taken before the
 release.
+
+Across the next UTC day boundary (checked 2026-11-12 00:10 UTC, same container since release, no
+restarts) the uptime monitor kept reading `GET /api/health` with the total cap still reached:
+no alert was logged or delivered after the release, and `alerts_sent` held no rows because no new
+check was attempted. Row counts in `budget`, `checks` and `extractions` were unchanged.
