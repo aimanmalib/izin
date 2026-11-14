@@ -91,4 +91,15 @@ describe("public wording", () => {
     expect(readme.match(split)?.length ?? 0).toBeGreaterThanOrEqual(2);
     expect(readme).not.toMatch(/gave \d+ false GO/);
   });
+
+  it("quotes the README reading cost line from docs/UKUR.md", () => {
+    const readme = readFileSync("README.md", "utf8");
+    const ukur = readFileSync("docs/UKUR.md", "utf8");
+    const line = /\*\*Reading cost:\*\* ([\d,]+) tokens read on Dolphin over (\d+) stored readings, USD ([\d.]+)\./.exec(readme);
+    expect(line).not.toBeNull();
+    const [, tokens, readings, usd] = line!;
+    const tokenLine = /Tokens read on Dolphin: ([\d,]+) \(.*?\) over (\d+) stored readings\./.exec(ukur);
+    const costLine = /Cost of those readings on Dolphin: USD ([\d.]+)\./.exec(ukur);
+    expect([tokens, readings, usd]).toEqual([tokenLine?.[1], tokenLine?.[2], costLine?.[1]]);
+  });
 });

@@ -124,7 +124,7 @@ fetched and no model called:
 | V0 | 37 of 43 | 0 of 43 | 1 of 43 |
 | V1, ships | 34 of 43 | 0 of 43 | 0 of 43 |
 
-**Reading cost:** 443,416 tokens read on Dolphin over 50 stored readings, USD 0.005772. In the gallery and benchmark runs,
+**Reading cost:** 446,861 tokens read on Dolphin over 53 stored readings, USD 0.005838. In the gallery and benchmark runs,
 100% of reader tokens were served by Dolphin.
 
 ## Limits
