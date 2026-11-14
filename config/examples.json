@@ -1,8 +1,8 @@
 {
   "examples": [
-    { "key": "ebay_buy", "site": "https://www.ebay.com/", "action": "purchase", "receipt_id": null },
-    { "key": "shop_buy", "site": "https://shop.app/", "action": "purchase", "receipt_id": null },
-    { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": null }
+    { "key": "ebay_buy", "site": "https://www.ebay.com/", "action": "purchase", "receipt_id": "yddnqgirk6" },
+    { "key": "shop_buy", "site": "https://shop.app/", "action": "purchase", "receipt_id": "a3ze6kal6w" },
+    { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": "kclke25oah" }
   ],
   "prime": [
     { "site": "https://openserv.ai/", "action": "account" },
