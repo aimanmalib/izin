@@ -291,7 +291,7 @@
       "readability_ua": "Ejen pengguna: {ua}",
       "not_run": "Penanda aras belum dijalankan. Keputusannya dipaparkan di sini selepas larian.",
       "run_at": "Dijalankan pada {date}. Jumlah kos larian: USD {usd}.",
-      "set_a_head": "Set A: keputusan yang direkod manusia",
+      "set_a_head": "Set A: keputusan yang direkod oleh semakan sumber yang dijalankan ejen pengekod",
       "set_a_site": "Laman",
       "set_a_action": "Tindakan",
       "set_a_human": "Direkod",

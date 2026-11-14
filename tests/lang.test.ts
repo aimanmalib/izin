@@ -58,3 +58,11 @@ describe("lang parity", () => {
     for (const [k, v] of [...EN, ...MS]) if (k.startsWith("web.")) expect(v, k).not.toMatch(banned);
   });
 });
+
+describe("public wording", () => {
+  // The 5 Nov source review was run by a coding agent; no UI text may present it as a human reading.
+  const human = /\b(by people|by hand|handwritten|recorded by humans?)\b|direkod manusia|dengan tangan/i;
+  it("does not describe the recorded decisions as made by people", () => {
+    for (const [k, v] of [...EN, ...MS]) expect(human.test(v), `${k}: ${v}`).toBe(false);
+  });
+});
