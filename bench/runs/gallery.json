@@ -1,0 +1,1323 @@
+{
+  "run_at": "2026-11-10T20:59:36.371Z",
+  "user_agent": "IzinBot/0.1 (+https://izin.sasateguh.com/bot)",
+  "sites": 24,
+  "stopped": false,
+  "checks": [
+    {
+      "site": "shop.app",
+      "action": "read_page",
+      "receipt_id": "dkpugjlf2w",
+      "verdict": "ASK",
+      "ms_total": 19605,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "ebay.com",
+      "action": "read_page",
+      "receipt_id": "zz3xqsl4g5",
+      "verdict": "ASK",
+      "ms_total": 23058,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "booking.com",
+      "action": "read_page",
+      "receipt_id": "bvyfleqgw6",
+      "verdict": "NO_GO",
+      "ms_total": 27410,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "shop.app",
+      "action": "crawl",
+      "receipt_id": "il4245znya",
+      "verdict": "ASK",
+      "ms_total": 18378,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "shop.app",
+      "action": "train",
+      "receipt_id": "uqotdjtrwh",
+      "verdict": "ASK",
+      "ms_total": 11250,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "ebay.com",
+      "action": "crawl",
+      "receipt_id": "ondk3fajw7",
+      "verdict": "ASK",
+      "ms_total": 34540,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "booking.com",
+      "action": "crawl",
+      "receipt_id": "fml77ub6sn",
+      "verdict": "NO_GO",
+      "ms_total": 30364,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "shop.app",
+      "action": "account",
+      "receipt_id": "ikpjewuvh7",
+      "verdict": "ASK",
+      "ms_total": 16008,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "ebay.com",
+      "action": "train",
+      "receipt_id": "5hr2x2b37d",
+      "verdict": "ASK",
+      "ms_total": 15462,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "shop.app",
+      "action": "purchase",
+      "receipt_id": "a3ze6kal6w",
+      "verdict": "ASK",
+      "ms_total": 9740,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "booking.com",
+      "action": "train",
+      "receipt_id": "p6kxs4rkdq",
+      "verdict": "NO_GO",
+      "ms_total": 19205,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "ebay.com",
+      "action": "account",
+      "receipt_id": "2v37lz5tbw",
+      "verdict": "NO_GO",
+      "ms_total": 27103,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "shop.app",
+      "action": "post",
+      "receipt_id": "dtsydy5tzo",
+      "verdict": "ASK",
+      "ms_total": 25293,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "booking.com",
+      "action": "account",
+      "receipt_id": "ghfhcsud2u",
+      "verdict": "NO_GO",
+      "ms_total": 23762,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "ebay.com",
+      "action": "purchase",
+      "receipt_id": "yddnqgirk6",
+      "verdict": "NO_GO",
+      "ms_total": 18041,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "airbnb.com",
+      "action": "read_page",
+      "receipt_id": "vfv6443ryf",
+      "verdict": "NO_GO",
+      "ms_total": 26140,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "booking.com",
+      "action": "purchase",
+      "receipt_id": "nfra5ziw4b",
+      "verdict": "NO_GO",
+      "ms_total": 29769,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "ebay.com",
+      "action": "post",
+      "receipt_id": "ymxvtbehvy",
+      "verdict": "ASK",
+      "ms_total": 20187,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "airbnb.com",
+      "action": "crawl",
+      "receipt_id": "44uppzmnul",
+      "verdict": "NO_GO",
+      "ms_total": 24010,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "booking.com",
+      "action": "post",
+      "receipt_id": "khljrcgxxz",
+      "verdict": "NO_GO",
+      "ms_total": 29188,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "walmart.com",
+      "action": "read_page",
+      "receipt_id": "xbk2maz4gf",
+      "verdict": "ASK",
+      "ms_total": 34397,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "airbnb.com",
+      "action": "train",
+      "receipt_id": "jx5cxmd2gp",
+      "verdict": "ASK",
+      "ms_total": 22647,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "walmart.com",
+      "action": "crawl",
+      "receipt_id": "5dvaysgf7g",
+      "verdict": "NO_GO",
+      "ms_total": 18147,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "airbnb.com",
+      "action": "account",
+      "receipt_id": "4g2mnc35xz",
+      "verdict": "NO_GO",
+      "ms_total": 23058,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "target.com",
+      "action": "read_page",
+      "receipt_id": "luq6sgyu3a",
+      "verdict": "ASK",
+      "ms_total": 48739,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "walmart.com",
+      "action": "train",
+      "receipt_id": "mgd6im7c2w",
+      "verdict": "NO_GO",
+      "ms_total": 20868,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "airbnb.com",
+      "action": "purchase",
+      "receipt_id": "cfh6x6nz63",
+      "verdict": "NO_GO",
+      "ms_total": 23656,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "target.com",
+      "action": "crawl",
+      "receipt_id": "xotohwd73m",
+      "verdict": "NO_GO",
+      "ms_total": 26830,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "airbnb.com",
+      "action": "post",
+      "receipt_id": "ykalancyjb",
+      "verdict": "NO_GO",
+      "ms_total": 23146,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "walmart.com",
+      "action": "account",
+      "receipt_id": "b7vwv4vuhl",
+      "verdict": "ASK",
+      "ms_total": 39833,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "target.com",
+      "action": "train",
+      "receipt_id": "3wjkdi3chl",
+      "verdict": "NO_GO",
+      "ms_total": 22703,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "walmart.com",
+      "action": "purchase",
+      "receipt_id": "u5ge2ipvmz",
+      "verdict": "ASK",
+      "ms_total": 19769,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "stripe.com",
+      "action": "read_page",
+      "receipt_id": "5g3zh72wr2",
+      "verdict": "ASK",
+      "ms_total": 29583,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "stripe.com",
+      "action": "crawl",
+      "receipt_id": "ofbmtkr63j",
+      "verdict": "ASK",
+      "ms_total": 15147,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "target.com",
+      "action": "account",
+      "receipt_id": "gdiyobs45x",
+      "verdict": "ASK",
+      "ms_total": 35520,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "walmart.com",
+      "action": "post",
+      "receipt_id": "7k742zfxcr",
+      "verdict": "ASK",
+      "ms_total": 30147,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "stripe.com",
+      "action": "train",
+      "receipt_id": "qdpr62gono",
+      "verdict": "ASK",
+      "ms_total": 20548,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "x.com",
+      "action": "read_page",
+      "receipt_id": "24k2kugm5j",
+      "verdict": "NO_GO",
+      "ms_total": 15016,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "target.com",
+      "action": "purchase",
+      "receipt_id": "vid65gncxy",
+      "verdict": "ASK",
+      "ms_total": 33852,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "stripe.com",
+      "action": "account",
+      "receipt_id": "ec2rkqfvs2",
+      "verdict": "ASK",
+      "ms_total": 25115,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "target.com",
+      "action": "post",
+      "receipt_id": "paac2eco3q",
+      "verdict": "ASK",
+      "ms_total": 7120,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "stripe.com",
+      "action": "purchase",
+      "receipt_id": "cxaa3ijtwg",
+      "verdict": "ASK",
+      "ms_total": 3837,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "linkedin.com",
+      "action": "read_page",
+      "receipt_id": "3cqtflpget",
+      "verdict": "ASK",
+      "ms_total": 5203,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "stripe.com",
+      "action": "post",
+      "receipt_id": "ud2kiregxk",
+      "verdict": "ASK",
+      "ms_total": 3075,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "linkedin.com",
+      "action": "crawl",
+      "receipt_id": "ometc3zqqx",
+      "verdict": "NO_GO",
+      "ms_total": 1887,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "linkedin.com",
+      "action": "train",
+      "receipt_id": "vrd727n5pi",
+      "verdict": "ASK",
+      "ms_total": 2449,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "linkedin.com",
+      "action": "account",
+      "receipt_id": "ca3dyt7cmj",
+      "verdict": "ASK",
+      "ms_total": 952,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "linkedin.com",
+      "action": "purchase",
+      "receipt_id": "46lsrhhkfo",
+      "verdict": "ASK",
+      "ms_total": 1955,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "x.com",
+      "action": "crawl",
+      "receipt_id": "27ir6rj725",
+      "verdict": "NO_GO",
+      "ms_total": 31199,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "linkedin.com",
+      "action": "post",
+      "receipt_id": "6lpdzavk7v",
+      "verdict": "ASK",
+      "ms_total": 808,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "x.com",
+      "action": "train",
+      "receipt_id": "b7lbdrm6bt",
+      "verdict": "ASK",
+      "ms_total": 547,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "x.com",
+      "action": "account",
+      "receipt_id": "3us6nz3yxc",
+      "verdict": "ASK",
+      "ms_total": 582,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "x.com",
+      "action": "purchase",
+      "receipt_id": "ho6pu72rea",
+      "verdict": "ASK",
+      "ms_total": 659,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "x.com",
+      "action": "post",
+      "receipt_id": "ynk7rcjgdu",
+      "verdict": "ASK",
+      "ms_total": 590,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wikipedia.org",
+      "action": "read_page",
+      "receipt_id": "fofqkscwub",
+      "verdict": "ASK",
+      "ms_total": 8319,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wikipedia.org",
+      "action": "crawl",
+      "receipt_id": "epzai7nioc",
+      "verdict": "ASK",
+      "ms_total": 4509,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wikipedia.org",
+      "action": "train",
+      "receipt_id": "t6i4c5vrah",
+      "verdict": "ASK",
+      "ms_total": 3576,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wikipedia.org",
+      "action": "account",
+      "receipt_id": "i77wtm5xod",
+      "verdict": "ASK",
+      "ms_total": 4589,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "github.com",
+      "action": "read_page",
+      "receipt_id": "jbfo7ggri5",
+      "verdict": "ASK",
+      "ms_total": 32915,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wikipedia.org",
+      "action": "purchase",
+      "receipt_id": "eiakfunjpn",
+      "verdict": "ASK",
+      "ms_total": 4563,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "github.com",
+      "action": "crawl",
+      "receipt_id": "xwuypc34pq",
+      "verdict": "ASK",
+      "ms_total": 4325,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wikipedia.org",
+      "action": "post",
+      "receipt_id": "3u63oqkq6v",
+      "verdict": "ASK",
+      "ms_total": 4202,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "github.com",
+      "action": "train",
+      "receipt_id": "4qbqpz643a",
+      "verdict": "ASK",
+      "ms_total": 4453,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "aliexpress.com",
+      "action": "read_page",
+      "receipt_id": "xng6ms7b5r",
+      "verdict": "ASK",
+      "ms_total": 6289,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "github.com",
+      "action": "account",
+      "receipt_id": "l4iurpn4be",
+      "verdict": "ASK",
+      "ms_total": 5319,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "aliexpress.com",
+      "action": "crawl",
+      "receipt_id": "eomxk6jvxb",
+      "verdict": "ASK",
+      "ms_total": 4003,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "github.com",
+      "action": "purchase",
+      "receipt_id": "dag4ucm2nd",
+      "verdict": "ASK",
+      "ms_total": 4437,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "aliexpress.com",
+      "action": "train",
+      "receipt_id": "6vif6wqsav",
+      "verdict": "ASK",
+      "ms_total": 4071,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "aliexpress.com",
+      "action": "account",
+      "receipt_id": "5s4675yslk",
+      "verdict": "ASK",
+      "ms_total": 3244,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "github.com",
+      "action": "post",
+      "receipt_id": "i6lgzvvwv2",
+      "verdict": "ASK",
+      "ms_total": 4292,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "aliexpress.com",
+      "action": "purchase",
+      "receipt_id": "kmdr2m4lly",
+      "verdict": "ASK",
+      "ms_total": 3341,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "aliexpress.com",
+      "action": "post",
+      "receipt_id": "eiu4bdttgk",
+      "verdict": "ASK",
+      "ms_total": 2644,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "temu.com",
+      "action": "read_page",
+      "receipt_id": "t3feiozsrd",
+      "verdict": "ASK",
+      "ms_total": 6277,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "temu.com",
+      "action": "crawl",
+      "receipt_id": "7wil2hv6zj",
+      "verdict": "ASK",
+      "ms_total": 3940,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "bestbuy.com",
+      "action": "read_page",
+      "receipt_id": "lrngeasx3q",
+      "verdict": "ASK",
+      "ms_total": 57377,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wayfair.com",
+      "action": "read_page",
+      "receipt_id": "jndpncnpec",
+      "verdict": "ASK",
+      "ms_total": 9660,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "temu.com",
+      "action": "train",
+      "receipt_id": "txr4jxtlx7",
+      "verdict": "ASK",
+      "ms_total": 5609,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "temu.com",
+      "action": "account",
+      "receipt_id": "6eld6eluj6",
+      "verdict": "ASK",
+      "ms_total": 5177,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wayfair.com",
+      "action": "crawl",
+      "receipt_id": "e326rpkjpw",
+      "verdict": "ASK",
+      "ms_total": 7619,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "temu.com",
+      "action": "purchase",
+      "receipt_id": "efimzgru23",
+      "verdict": "ASK",
+      "ms_total": 5011,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wayfair.com",
+      "action": "train",
+      "receipt_id": "eeevke4p4q",
+      "verdict": "ASK",
+      "ms_total": 7288,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "temu.com",
+      "action": "post",
+      "receipt_id": "fsbni4tmln",
+      "verdict": "ASK",
+      "ms_total": 4935,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wayfair.com",
+      "action": "account",
+      "receipt_id": "dnve7uh3y3",
+      "verdict": "ASK",
+      "ms_total": 7361,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wayfair.com",
+      "action": "purchase",
+      "receipt_id": "m6dcnxa47g",
+      "verdict": "ASK",
+      "ms_total": 8303,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "nike.com",
+      "action": "read_page",
+      "receipt_id": "4jflgykj6x",
+      "verdict": "ASK",
+      "ms_total": 17467,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "wayfair.com",
+      "action": "post",
+      "receipt_id": "likvfdh3ud",
+      "verdict": "ASK",
+      "ms_total": 7907,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "nike.com",
+      "action": "crawl",
+      "receipt_id": "arsojrk3py",
+      "verdict": "ASK",
+      "ms_total": 6591,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "nike.com",
+      "action": "train",
+      "receipt_id": "5hx5bgsics",
+      "verdict": "ASK",
+      "ms_total": 5313,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "bestbuy.com",
+      "action": "crawl",
+      "receipt_id": "bdnpmnyapb",
+      "verdict": "ASK",
+      "ms_total": 53732,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "nike.com",
+      "action": "account",
+      "receipt_id": "2bpr5kxveh",
+      "verdict": "ASK",
+      "ms_total": 5201,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "nike.com",
+      "action": "purchase",
+      "receipt_id": "5a6xspkee4",
+      "verdict": "ASK",
+      "ms_total": 6492,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "lazada.com.my",
+      "action": "read_page",
+      "receipt_id": "r5ovgdytji",
+      "verdict": "ASK",
+      "ms_total": 22316,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "nike.com",
+      "action": "post",
+      "receipt_id": "weg45cpp6t",
+      "verdict": "ASK",
+      "ms_total": 5155,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "lazada.com.my",
+      "action": "crawl",
+      "receipt_id": "lcusplrygz",
+      "verdict": "ASK",
+      "ms_total": 5105,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "lazada.com.my",
+      "action": "train",
+      "receipt_id": "5cdqdiwe63",
+      "verdict": "ASK",
+      "ms_total": 6507,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "kayak.com",
+      "action": "read_page",
+      "receipt_id": "jzm2tuaeni",
+      "verdict": "ASK",
+      "ms_total": 15228,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "lazada.com.my",
+      "action": "account",
+      "receipt_id": "kymwtk6avj",
+      "verdict": "ASK",
+      "ms_total": 6126,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "lazada.com.my",
+      "action": "purchase",
+      "receipt_id": "m3kiqenykq",
+      "verdict": "ASK",
+      "ms_total": 6584,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "kayak.com",
+      "action": "crawl",
+      "receipt_id": "wzi6jswhap",
+      "verdict": "ASK",
+      "ms_total": 9410,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "lazada.com.my",
+      "action": "post",
+      "receipt_id": "uvlcadmo2h",
+      "verdict": "ASK",
+      "ms_total": 6579,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "kayak.com",
+      "action": "train",
+      "receipt_id": "qa4hbz6k5c",
+      "verdict": "ASK",
+      "ms_total": 9760,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "skyscanner.net",
+      "action": "read_page",
+      "receipt_id": "um77p4z5nj",
+      "verdict": "ASK",
+      "ms_total": 6516,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "bestbuy.com",
+      "action": "train",
+      "receipt_id": "svvgow7h2r",
+      "verdict": "ASK",
+      "ms_total": 48349,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "skyscanner.net",
+      "action": "crawl",
+      "receipt_id": "7cmubxniny",
+      "verdict": "ASK",
+      "ms_total": 5050,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "kayak.com",
+      "action": "account",
+      "receipt_id": "2lxtm67pq5",
+      "verdict": "ASK",
+      "ms_total": 8798,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "skyscanner.net",
+      "action": "train",
+      "receipt_id": "w7vwwxbl4o",
+      "verdict": "ASK",
+      "ms_total": 3878,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "skyscanner.net",
+      "action": "account",
+      "receipt_id": "da4jbvhgk7",
+      "verdict": "ASK",
+      "ms_total": 3812,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "kayak.com",
+      "action": "purchase",
+      "receipt_id": "m3z7pri3yi",
+      "verdict": "ASK",
+      "ms_total": 8935,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "skyscanner.net",
+      "action": "purchase",
+      "receipt_id": "azg2ti7spw",
+      "verdict": "ASK",
+      "ms_total": 4939,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "skyscanner.net",
+      "action": "post",
+      "receipt_id": "wsuitdy6o6",
+      "verdict": "ASK",
+      "ms_total": 3936,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "kayak.com",
+      "action": "post",
+      "receipt_id": "yl7dxvzzck",
+      "verdict": "ASK",
+      "ms_total": 9130,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "read_page",
+      "receipt_id": "3aq374sgwv",
+      "verdict": "ASK",
+      "ms_total": 10265,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "crawl",
+      "receipt_id": "jg4pupyedm",
+      "verdict": "ASK",
+      "ms_total": 3736,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "train",
+      "receipt_id": "qt4se5w5yb",
+      "verdict": "ASK",
+      "ms_total": 3642,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "trip.com",
+      "action": "read_page",
+      "receipt_id": "i4m4qbcmqu",
+      "verdict": "ASK",
+      "ms_total": 21690,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "bestbuy.com",
+      "action": "account",
+      "receipt_id": "wq5xbogiqi",
+      "verdict": "ASK",
+      "ms_total": 45178,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "account",
+      "receipt_id": "z52ghx23es",
+      "verdict": "ASK",
+      "ms_total": 2628,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "trip.com",
+      "action": "crawl",
+      "receipt_id": "o5igwxveu5",
+      "verdict": "ASK",
+      "ms_total": 3140,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "purchase",
+      "receipt_id": "e2eirkkqza",
+      "verdict": "ASK",
+      "ms_total": 3592,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "trip.com",
+      "action": "train",
+      "receipt_id": "qt4xeezooz",
+      "verdict": "ASK",
+      "ms_total": 3907,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "post",
+      "receipt_id": "p4radtsnwe",
+      "verdict": "ASK",
+      "ms_total": 2739,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "trip.com",
+      "action": "account",
+      "receipt_id": "y645hdvzi5",
+      "verdict": "ASK",
+      "ms_total": 3276,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "trip.com",
+      "action": "purchase",
+      "receipt_id": "3wrnyzkbit",
+      "verdict": "ASK",
+      "ms_total": 3472,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "trip.com",
+      "action": "post",
+      "receipt_id": "6i2qo5e7kw",
+      "verdict": "ASK",
+      "ms_total": 4097,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "bestbuy.com",
+      "action": "purchase",
+      "receipt_id": "tdx2tpudvw",
+      "verdict": "ASK",
+      "ms_total": 49288,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "pinterest.com",
+      "action": "read_page",
+      "receipt_id": "eqz3ysiqfj",
+      "verdict": "ASK",
+      "ms_total": 63631,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "pinterest.com",
+      "action": "crawl",
+      "receipt_id": "c5ckttlmoo",
+      "verdict": "NO_GO",
+      "ms_total": 790,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "pinterest.com",
+      "action": "train",
+      "receipt_id": "x33qnbp5ho",
+      "verdict": "ASK",
+      "ms_total": 743,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "pinterest.com",
+      "action": "account",
+      "receipt_id": "kz4rpoebxm",
+      "verdict": "ASK",
+      "ms_total": 2022,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "pinterest.com",
+      "action": "purchase",
+      "receipt_id": "rxkquvzw7g",
+      "verdict": "ASK",
+      "ms_total": 716,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "pinterest.com",
+      "action": "post",
+      "receipt_id": "hvovvyncmj",
+      "verdict": "ASK",
+      "ms_total": 883,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "bestbuy.com",
+      "action": "post",
+      "receipt_id": "bafsfqbzaf",
+      "verdict": "ASK",
+      "ms_total": 45062,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "uber.com",
+      "action": "read_page",
+      "receipt_id": "ihktnru2ph",
+      "verdict": "ASK",
+      "ms_total": 114986,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "uber.com",
+      "action": "crawl",
+      "receipt_id": "wjvm7qoovw",
+      "verdict": "ASK",
+      "ms_total": 6034,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "uber.com",
+      "action": "train",
+      "receipt_id": "zchwmc5v3c",
+      "verdict": "ASK",
+      "ms_total": 5773,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "uber.com",
+      "action": "account",
+      "receipt_id": "4eijpbdpiw",
+      "verdict": "ASK",
+      "ms_total": 5680,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "uber.com",
+      "action": "purchase",
+      "receipt_id": "evwcvf4omp",
+      "verdict": "ASK",
+      "ms_total": 5206,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "uber.com",
+      "action": "post",
+      "receipt_id": "7svr5cp6x3",
+      "verdict": "ASK",
+      "ms_total": 6807,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "quora.com",
+      "action": "read_page",
+      "receipt_id": "n5kfyxud4b",
+      "verdict": "ASK",
+      "ms_total": 101196,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "quora.com",
+      "action": "crawl",
+      "receipt_id": "4s7jioxrz2",
+      "verdict": "ASK",
+      "ms_total": 893,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "quora.com",
+      "action": "train",
+      "receipt_id": "vivrits6q4",
+      "verdict": "ASK",
+      "ms_total": 888,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "quora.com",
+      "action": "account",
+      "receipt_id": "pwn2w7cris",
+      "verdict": "ASK",
+      "ms_total": 2248,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "quora.com",
+      "action": "purchase",
+      "receipt_id": "vdldf6e7h5",
+      "verdict": "ASK",
+      "ms_total": 2271,
+      "changed": false,
+      "error": null
+    },
+    {
+      "site": "quora.com",
+      "action": "post",
+      "receipt_id": "pxxzdyeltm",
+      "verdict": "ASK",
+      "ms_total": 1931,
+      "changed": false,
+      "error": null
+    }
+  ],
+  "reader": {
+    "calls": 39,
+    "ok_calls": 39,
+    "tokens": {
+      "dolphin": 394608,
+      "other": 0
+    },
+    "dolphin_share": 1,
+    "dolphin": {
+      "ok_calls": 39,
+      "median_ms": 3277,
+      "median_ttft_ms": 1791,
+      "median_tokens_per_s": 844.6
+    }
+  },
+  "spend": {
+    "serv_usd": 0.047325,
+    "dolphin_usd": 0.004953
+  }
+}

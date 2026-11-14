@@ -1,0 +1,141 @@
+{
+  "run_at": "2026-11-14T11:57:16.553Z",
+  "total_cost_usd": 1.923142,
+  "set_a": [
+    {
+      "site": "substack.com",
+      "action": "crawl",
+      "human_verdict": "NO_GO",
+      "izin_verdict": "NO_GO",
+      "receipt_id": null,
+      "note": "The feed itself was also out of date; the recorded reason for this pair is the terms."
+    },
+    {
+      "site": "allai.events",
+      "action": "crawl",
+      "human_verdict": "ASK",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "robots.txt allowed the event pages for all agents and disallowed some named AI crawlers."
+    },
+    {
+      "site": "hackerearth.com",
+      "action": "crawl",
+      "human_verdict": "GO",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "The prohibition the terms do contain is about copying or reverse engineering the subscription software."
+    },
+    {
+      "site": "kaggle.com",
+      "action": "crawl",
+      "human_verdict": "ASK",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "Later the review used the official API; the website is not read."
+    },
+    {
+      "site": "zindi.africa",
+      "action": "crawl",
+      "human_verdict": "GO",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "The terms forbid collecting personal information about users; the review stored competition listings and no personal data."
+    },
+    {
+      "site": "taikai.network",
+      "action": "crawl",
+      "human_verdict": "NO_GO",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "robots.txt also sends Content-Signal ai-train=no."
+    },
+    {
+      "site": "internshala.com",
+      "action": "crawl",
+      "human_verdict": "NO_GO",
+      "izin_verdict": "NO_GO",
+      "receipt_id": null,
+      "note": "A case where robots.txt and the terms disagree."
+    },
+    {
+      "site": "eventbrite.com",
+      "action": "crawl",
+      "human_verdict": "NO_GO",
+      "izin_verdict": "NO_GO",
+      "receipt_id": null,
+      "note": "robots.txt allows the listing path; the terms prohibit."
+    },
+    {
+      "site": "gdg.community.dev",
+      "action": "crawl",
+      "human_verdict": "ASK",
+      "izin_verdict": "GO",
+      "receipt_id": null,
+      "note": "Recorded as a condition (rate limit), so the mapping gives ASK."
+    },
+    {
+      "site": "uninet.my",
+      "action": "crawl",
+      "human_verdict": "GO",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "The terms prohibit false or harmful content and disrupting the service."
+    },
+    {
+      "site": "dev.to",
+      "action": "crawl",
+      "human_verdict": "ASK",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "Recorded as an official-API condition, so the mapping gives ASK."
+    },
+    {
+      "site": "pentas.app",
+      "action": "crawl",
+      "human_verdict": "NO_GO",
+      "izin_verdict": "NO_GO",
+      "receipt_id": null,
+      "note": "The review made no request to this site after reading the terms."
+    },
+    {
+      "site": "eventsize.com",
+      "action": "crawl",
+      "human_verdict": "ASK",
+      "izin_verdict": "ASK",
+      "receipt_id": null,
+      "note": "Recorded as conditional, so the mapping gives ASK."
+    }
+  ],
+  "set_b": {
+    "pairs": 20,
+    "agree": 17,
+    "false_go": 2,
+    "false_no_go": 0,
+    "owner_review": false
+  },
+  "variants": [
+    {
+      "pairs": 43,
+      "agree": 36,
+      "false_go": 1,
+      "false_no_go": 1,
+      "id": "V0",
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "cost_usd_per_decision": 0.000032,
+      "median_ms": 3075,
+      "shipped": false
+    },
+    {
+      "pairs": 43,
+      "agree": 31,
+      "false_go": 3,
+      "false_no_go": 0,
+      "id": "V1",
+      "model": "gpt-6-luna",
+      "cost_usd_per_decision": 0.053362,
+      "median_ms": 12897,
+      "shipped": true
+    }
+  ]
+}

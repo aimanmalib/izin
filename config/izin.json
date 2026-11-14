@@ -175,7 +175,7 @@
   },
   "decider": {
     "base_url": "https://inference-api.openserv.ai/v1",
-    "model": "gpt-6-luna-serv-multipath",
+    "model": "gpt-6-luna",
     "suffix": "-serv-multipath",
     "key_env": "SERV_API_KEY",
     "prompt": "decider.v1",

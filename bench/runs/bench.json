@@ -1,0 +1,712 @@
+{
+  "run_at": "2026-11-14T11:57:16.553Z",
+  "stopped": false,
+  "shipped": "V1",
+  "variants": [
+    {
+      "id": "V0",
+      "label": "Dolphin only, no SERV",
+      "provider": "dolphin",
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "suffix": "-serv-multipath",
+      "start_rung": "c",
+      "reasoning_effort": "none",
+      "guard": false
+    },
+    {
+      "id": "V1",
+      "label": "SERV gpt-6-luna",
+      "provider": "serv",
+      "model": "gpt-6-luna",
+      "suffix": "-serv-multipath",
+      "start_rung": "a",
+      "reasoning_effort": "low",
+      "guard": true
+    }
+  ],
+  "by_set": {
+    "V0": {
+      "A": {
+        "pairs": 13,
+        "agree": 8,
+        "false_go": 1,
+        "false_no_go": 1
+      },
+      "B": {
+        "pairs": 20,
+        "agree": 20,
+        "false_go": 0,
+        "false_no_go": 0
+      },
+      "spot": {
+        "pairs": 10,
+        "agree": 8,
+        "false_go": 0,
+        "false_no_go": 0
+      }
+    },
+    "V1": {
+      "A": {
+        "pairs": 13,
+        "agree": 8,
+        "false_go": 1,
+        "false_no_go": 0
+      },
+      "B": {
+        "pairs": 20,
+        "agree": 17,
+        "false_go": 2,
+        "false_no_go": 0
+      },
+      "spot": {
+        "pairs": 10,
+        "agree": 6,
+        "false_go": 0,
+        "false_no_go": 0
+      }
+    }
+  },
+  "failures": {
+    "V0": 0,
+    "V1": 1
+  },
+  "rows": {
+    "V0": {
+      "A02": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S4",
+          "S5"
+        ]
+      },
+      "A04": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "A01": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S4"
+        ]
+      },
+      "A06": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S4",
+          "S5"
+        ]
+      },
+      "A03": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "A08": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A05": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A07": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A11": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "A09": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A13": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "B01": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A10": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "A12": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B02": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B04": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B06": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B03": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B07": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B05": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B10": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S4",
+          "S5"
+        ]
+      },
+      "B08": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B11": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B13": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S3",
+          "S5"
+        ]
+      },
+      "B09": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "B15": {
+        "final": "NO_GO",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S1",
+          "S5"
+        ]
+      },
+      "B12": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "B14": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S2"
+        ]
+      },
+      "B18": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B16": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "B17": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B19": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B20": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "S01": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "S02": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "S03": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "S05": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S1",
+          "S5"
+        ]
+      },
+      "S04": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "S07": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "S06": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "S08": {
+        "final": "ASK",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": [
+          "S6"
+        ]
+      },
+      "S10": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "S09": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      }
+    },
+    "V1": {
+      "A02": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S4",
+          "S5"
+        ]
+      },
+      "A04": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "A03": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "A06": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S4",
+          "S5"
+        ]
+      },
+      "A01": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S4"
+        ]
+      },
+      "A05": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "A07": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A09": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A11": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "A08": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A13": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "A12": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "A10": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "B01": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B02": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B03": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B04": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B05": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B06": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B07": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B10": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S4",
+          "S5"
+        ]
+      },
+      "B08": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B09": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "B13": {
+        "final": "ASK",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S3",
+          "S5"
+        ]
+      },
+      "B12": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "B15": {
+        "final": "NO_GO",
+        "serv": null,
+        "failure": null,
+        "ceilings": [
+          "S1",
+          "S5"
+        ]
+      },
+      "B11": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B17": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "B14": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S2"
+        ]
+      },
+      "B16": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "B18": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B19": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "B20": {
+        "final": "GO",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "S02": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "S01": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S5"
+        ]
+      },
+      "S03": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "S04": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": [
+          "S9"
+        ]
+      },
+      "S06": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": []
+      },
+      "S05": {
+        "final": "NO_GO",
+        "serv": "NO_GO",
+        "failure": null,
+        "ceilings": [
+          "S1",
+          "S5"
+        ]
+      },
+      "S08": {
+        "final": "ASK",
+        "serv": "GO",
+        "failure": null,
+        "ceilings": [
+          "S6"
+        ]
+      },
+      "S09": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "S10": {
+        "final": "ASK",
+        "serv": "ASK",
+        "failure": null,
+        "ceilings": []
+      },
+      "S07": {
+        "final": "ASK",
+        "serv": null,
+        "failure": "timeout",
+        "ceilings": [
+          "S8"
+        ]
+      }
+    }
+  },
+  "reader": {
+    "calls": 25,
+    "ok_calls": 25,
+    "tokens": {
+      "dolphin": 59317,
+      "other": 0
+    },
+    "dolphin_share": 1,
+    "dolphin": {
+      "ok_calls": 25,
+      "median_ms": 1445,
+      "median_ttft_ms": 1372,
+      "median_tokens_per_s": 19133.3
+    }
+  },
+  "runs": {
+    "V0": "2026-11-10T21:12:14.885Z",
+    "V1": "2026-11-14T11:57:16.553Z"
+  }
+}
