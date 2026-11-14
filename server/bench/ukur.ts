@@ -15,6 +15,8 @@ export interface BenchReportFile {
   failures: Record<string, number>;
   rows: Record<string, Record<string, { final: string; serv: string | null; failure: string | null; ceilings: string[] }>>;
   reader: ReaderStats;
+  /** Variant id -> when it ran, when the report joins runs on the same frozen evidence. */
+  runs?: Record<string, string>;
 }
 
 export interface GalleryRunFile {
@@ -71,7 +73,7 @@ export function benchSection(results: BenchResults, report: BenchReportFile, man
   const lines = [
     "## Benchmark",
     "",
-    `Run ${report.run_at} by \`scripts/bench.ts\` on the sets committed before it ([ADR 0014](decisions/0014-pre-registered-benchmark-sets.md)). Each pair was collected and read once; every variant decided on the same frozen message (\`bench/evidence/\`), and the code ceilings were applied to each answer.${report.stopped ? " The run stopped at the budget cap: the numbers cover the pairs it reached." : ""}`,
+    `${report.runs ? `Runs: ${Object.entries(report.runs).map(([id, at]) => `${id} ${at}`).join(", ")}, each` : `Run ${report.run_at}`} by \`scripts/bench.ts\` on the sets committed before it ([ADR 0014](decisions/0014-pre-registered-benchmark-sets.md)). Each pair was collected and read once; every variant decided on the same frozen message (\`bench/evidence/\`), and the code ceilings were applied to each answer.${report.runs ? " A later run decided on that frozen message without reading any site again (`bench --from-evidence`); `scripts/bench-merge.ts` joins the runs." : ""}${report.stopped ? " The run stopped at the budget cap: the numbers cover the pairs it reached." : ""}`,
     "",
     `Shipped variant (K6: fewest false GO, then most agreement, then lowest cost; only SERV variants ship): **${shipped}** \`${v.model}\`.`,
     "",
@@ -79,14 +81,14 @@ export function benchSection(results: BenchResults, report: BenchReportFile, man
     "",
     "### Variants",
     "",
-    "| Variant | Model | Pairs | Agree | False GO | False NO-GO | No valid answer | Cost per decision (USD) | Median decision time |",
+    "| Variant | Model | Pairs | Agree | False GO | False NO-GO | No valid answer | Estimated cost per decision (USD) | Median decision time |",
     "|---|---|---|---|---|---|---|---|---|",
     ...results.variants.map(
       (x) =>
         `| ${x.id}${x.shipped ? " (shipped)" : ""} | \`${x.model}\` | ${x.pairs} | ${x.agree} (${pct(x.agree, x.pairs)}) | ${x.false_go} | ${x.false_no_go} | ${report.failures[x.id] ?? 0} | ${usd(x.cost_usd_per_decision)} | ${secs(x.median_ms)} |`,
     ),
     "",
-    `V0 is the same rulebook sent to Dolphin's model with no SERV features. Total cost of the run (reading and every variant): USD ${usd(results.total_cost_usd)}.`,
+    `V0 is the same rulebook sent to Dolphin's model with no SERV features. Costs are the spending guard's estimates (listed token price; SERV times the measured factor of [ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md)), not provider invoices. Estimated total (reading and every variant): USD ${usd(results.total_cost_usd)}.`,
     "",
     "### By set",
     "",
@@ -97,7 +99,9 @@ export function benchSection(results: BenchResults, report: BenchReportFile, man
       return `| ${x.id} | ${s.A.agree} of ${s.A.pairs} | ${s.A.false_go} | ${s.B.agree} of ${s.B.pairs} | ${s.B.false_go} | ${s.spot.agree} of ${s.spot.pairs} | ${s.spot.false_go} |`;
     }),
     "",
-    `### Set A: ${manual.label}`,
+    `### ${manual.label.split(":")[0]}`,
+    "",
+    manual.label,
     "",
     "Mapping from the recorded decision to a verdict:",
     "",
@@ -119,7 +123,13 @@ export function benchSection(results: BenchResults, report: BenchReportFile, man
   return lines.join("\n");
 }
 
-export function galleryRunSection(g: GalleryRunFile, h1: H1File | null): string {
+/** How many gallery receipts got a valid answer from the decision step (read from the stored receipts). */
+export interface GalleryDecided {
+  with_receipt: number;
+  serv_answered: number;
+}
+
+export function galleryRunSection(g: GalleryRunFile, h1: H1File | null, decided: GalleryDecided | null = null): string {
   const done = g.checks.filter((c) => c.verdict);
   const by = (v: string) => done.filter((c) => c.verdict === v).length;
   const ms = done.map((c) => c.ms_total).sort((a, b) => a - b);
@@ -127,8 +137,14 @@ export function galleryRunSection(g: GalleryRunFile, h1: H1File | null): string 
   const lines = [
     "## Gallery run",
     "",
-    `Run ${g.run_at} by \`scripts/gallery.ts\` with \`${g.user_agent}\`: ${g.sites} sites, ${g.checks.length} checks, ${done.length} with a receipt${g.stopped ? " (stopped at the budget cap)" : ""}. GO ${by("GO")}, ASK ${by("ASK")}, NO-GO ${by("NO_GO")}. Median time per check ${secs(med)}, longest ${secs(ms.at(-1) ?? 0)}. Spend: SERV USD ${usd(g.spend.serv_usd)}, Dolphin USD ${usd(g.spend.dolphin_usd)}.`,
+    `Run ${g.run_at} by \`scripts/gallery.ts\` with \`${g.user_agent}\`: ${g.sites} sites, ${g.checks.length} checks, ${done.length} with a receipt${g.stopped ? " (stopped at the budget cap)" : ""}. GO ${by("GO")}, ASK ${by("ASK")}, NO-GO ${by("NO_GO")}. Median time per check ${secs(med)}, longest ${secs(ms.at(-1) ?? 0)}. Spend counted by the spending guard during the run, with the cost factor then in config (it under-counted SERV; [ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md)): SERV USD ${usd(g.spend.serv_usd)}, Dolphin USD ${usd(g.spend.dolphin_usd)}.`,
   ];
+  if (decided) {
+    lines.push(
+      "",
+      `Receipts where the decision step gave a valid answer: **${decided.serv_answered} of ${decided.with_receipt}**. The others carry ceiling S8 (no valid decision came back) and stay at ASK; none of them is a GO.`,
+    );
+  }
   const errors = g.checks.filter((c) => c.error);
   if (errors.length) lines.push("", `Checks that ended in an error: ${errors.map((c) => `${c.site} ${c.action}`).join(", ")}.`);
   if (h1) {

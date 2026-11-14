@@ -5,6 +5,7 @@ import type { BenchResults } from "../server/api/views.js";
 import { loadSets } from "../server/bench/sets.js";
 import { readerStats } from "../server/bench/stats.js";
 import { benchSection, explain, galleryRunSection, readerSection, type BenchReportFile, type GalleryRunFile } from "../server/bench/ukur.js";
+import { mergeRuns } from "../server/bench/merge.js";
 import { loadBenchConfig } from "../server/bench/variants.js";
 
 const manual = loadSets().manual;
@@ -65,6 +66,38 @@ describe("UKUR sections", () => {
     expect(s).toContain("GO 0, ASK 1, NO-GO 1. Median time per check 2.0 s, longest 3.0 s");
     expect(s).toContain("b.example crawl");
     expect(s).toContain("**pass** (1 of 1");
+    expect(s).not.toContain("valid answer");
+    expect(galleryRunSection(g, null, { with_receipt: 2, serv_answered: 1 })).toContain("decision step gave a valid answer: **1 of 2**");
+  });
+
+  it("joins a frozen-evidence rerun to the earlier run: kept variants, the rerun's variants, K6 picked again", () => {
+    const later: BenchResults = {
+      ...results,
+      run_at: "2026-11-14T00:00:00.000Z",
+      total_cost_usd: 1,
+      set_a: results.set_a.map((r) => ({ ...r, receipt_id: null })),
+      variants: [{ id: "V1", model: "m1", ...share(43, 31, 3), cost_usd_per_decision: 0.05, median_ms: 13000, shipped: true }],
+    };
+    const laterReport: BenchReportFile = {
+      ...report, run_at: later.run_at, shipped: "V1", by_set: { V1: { A: share(13, 8, 1), B: share(20, 17, 2), spot: share(10, 6) } },
+      failures: { V1: 1 }, rows: { V1: { A01: { final: "ASK", serv: "ASK", failure: null, ceilings: [] } } }, reader: { ...reader, calls: 0 },
+    };
+    const base = { results, report: { ...report, reader: { ...reader, calls: 25 } } };
+    const m = mergeRuns(base, ["V0"], { results: later, report: laterReport }, "V2");
+    expect(m.report.shipped).toBe("V1");
+    expect(m.results.variants.map((v) => [v.id, v.shipped])).toEqual([["V0", false], ["V1", true]]);
+    expect(Object.keys(m.report.by_set)).toEqual(["V0", "V1"]);
+    expect(m.report.rows.V2).toBeUndefined();
+    expect(m.report.reader.calls).toBe(25);
+    expect(m.report.runs).toEqual({ V0: results.run_at, V1: later.run_at });
+    expect(m.results.total_cost_usd).toBeCloseTo(1.1234, 6);
+    expect(m.results.set_a.every((r) => r.receipt_id === null)).toBe(true);
+    const s = benchSection(m.results, m.report, manual, "https://izin.example");
+    expect(s).toContain(`Runs: V0 ${results.run_at}, V1 ${later.run_at}`);
+    expect(s).toContain("bench --from-evidence");
+    expect(s).toContain("\n### Set A\n");
+    expect(() => mergeRuns(base, ["V1"], { results: later, report: laterReport }, "V2")).toThrow(/both runs/);
+    expect(() => mergeRuns(base, ["V3"], { results: later, report: laterReport }, "V2")).toThrow(/not in the earlier run/);
   });
 
   it("adds Dolphin and other reader tokens over all runs for H10", () => {

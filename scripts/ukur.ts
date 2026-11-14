@@ -13,7 +13,7 @@ import { benchResultsSchema, galleryView } from "../server/api/views.js";
 import { readingCost, type ReadingCost } from "../server/belanja/kos.js";
 import { BENCH_DIR, loadConfig } from "../server/config.js";
 import { loadSets } from "../server/bench/sets.js";
-import { benchSection, galleryRunSection, readerSection, type BenchReportFile, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
+import { benchSection, galleryRunSection, readerSection, type BenchReportFile, type GalleryDecided, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
 import { baselineSection, readingCostSection, replaceSection, type GallerySlice } from "../server/galeri/ukur.js";
 
 const { values } = parseArgs({
@@ -42,6 +42,17 @@ if (values.db) {
   process.exit(2);
 }
 
+/** Of the gallery run's receipts, how many got a valid decision (no S8 ceiling): read from the stored receipts. */
+function galleryDecided(file: string, run: GalleryRunFile): GalleryDecided {
+  const db = new Database(file, { readonly: true, fileMustExist: true });
+  const get = db.prepare("SELECT receipt_json FROM checks WHERE id = ?");
+  const ids = run.checks.map((c) => c.receipt_id).filter((id): id is string => !!id);
+  const rows = ids.map((id) => get.get(id) as { receipt_json: string | null } | undefined).filter((r) => r?.receipt_json);
+  const serv_answered = rows.filter((r) => !(JSON.parse(r!.receipt_json!) as { decided_by: { ceilings: string[] } }).decided_by.ceilings.includes("S8")).length;
+  db.close();
+  return { with_receipt: rows.length, serv_answered };
+}
+
 const at = new Date().toISOString().slice(0, 10);
 const sections: [string, string][] = [
   ["robots-only-baseline", baselineSection(gallery, cfg.public_origin, at)],
@@ -53,7 +64,7 @@ const results = runFile<unknown>("results.json");
 const galleryRun = runFile<GalleryRunFile>("runs/gallery.json");
 const h1 = runFile<H1File>("runs/h1.json");
 if (report && results) sections.push(["benchmark", benchSection(benchResultsSchema.parse(results), report, loadSets().manual, cfg.public_origin)]);
-if (galleryRun) sections.push(["gallery-run", galleryRunSection(galleryRun, h1)]);
+if (galleryRun) sections.push(["gallery-run", galleryRunSection(galleryRun, h1, values.db ? galleryDecided(values.db, galleryRun) : null)]);
 const readerRuns = [
   ...(galleryRun ? [{ name: "Gallery", reader: galleryRun.reader }] : []),
   ...(report ? [{ name: "Benchmark", reader: report.reader }] : []),
