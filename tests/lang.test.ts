@@ -2,7 +2,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import en from "../lang/en.json" with { type: "json" };
 import ms from "../lang/ms.json" with { type: "json" };
-import { loadConfig } from "../server/config.js";
+import { EXAMPLES_PATH, loadConfig } from "../server/config.js";
+import { loadExamples } from "../server/web/site.js";
 
 type Tree = { [k: string]: string | Tree };
 
@@ -38,6 +39,15 @@ describe("lang parity", () => {
       }
       for (const c of config.categories) expect(t.has(`categories.${c}`), c).toBe(true);
       for (const s of config.stances) expect(t.has(`stances.${s}`), s).toBe(true);
+    }
+  });
+
+  it("labels every one-click example in config/examples.json, and only those", () => {
+    const keys = loadExamples(EXAMPLES_PATH).map((e) => `web.form.example_${e.key}`);
+    for (const t of [EN, MS]) {
+      for (const k of keys) expect(t.has(k), k).toBe(true);
+      const labels = [...t.keys()].filter((k) => /^web\.form\.example_/.test(k) && k !== "web.form.example_filled");
+      expect(labels.sort()).toEqual([...keys].sort());
     }
   });
 

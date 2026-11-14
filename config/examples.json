@@ -1,7 +1,7 @@
 {
   "examples": [
     { "key": "ebay_buy", "site": "https://www.ebay.com/", "action": "purchase", "receipt_id": "yddnqgirk6" },
-    { "key": "shop_buy", "site": "https://shop.app/", "action": "purchase", "receipt_id": "a3ze6kal6w" },
+    { "key": "booking_buy", "site": "https://booking.com/", "action": "purchase", "receipt_id": "nfra5ziw4b" },
     { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": "kclke25oah" }
   ],
   "prime": [
