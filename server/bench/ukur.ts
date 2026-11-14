@@ -178,6 +178,20 @@ export function remeasureSection(r: RemeasureFile): string {
 export interface GalleryDecided {
   with_receipt: number;
   serv_answered: number;
+  /** Decider model named on the receipts with a valid answer, and how many each. */
+  models?: Record<string, number>;
+  /** The decider in config now, for the sentence that compares the two. */
+  shipped_model?: string;
+}
+
+function deciderLine(d: GalleryDecided): string | null {
+  const names = Object.entries(d.models ?? {}).sort((a, b) => b[1] - a[1]);
+  if (!names.length) return null;
+  const list = names.map(([m, n]) => `\`${m}\` (${n})`).join(", ");
+  const now = d.shipped_model && !names.some(([m]) => m === d.shipped_model)
+    ? ` New checks use the decider in config now, \`${d.shipped_model}\` ([ADR 0017](decisions/0017-shipped-decider-variant.md)), so these receipts name a different model from a check made today.`
+    : "";
+  return `Decider model named on those receipts: ${list}.${now}`;
 }
 
 export function galleryRunSection(g: GalleryRunFile, h1: H1File | null, decided: GalleryDecided | null = null): string {
@@ -195,6 +209,8 @@ export function galleryRunSection(g: GalleryRunFile, h1: H1File | null, decided:
       "",
       `Receipts where the decision step gave a valid answer: **${decided.serv_answered} of ${decided.with_receipt}**. The others carry ceiling S8 (no valid decision came back) and stay at ASK; none of them is a GO.`,
     );
+    const line = deciderLine(decided);
+    if (line) lines.push("", line);
   }
   const errors = g.checks.filter((c) => c.error);
   if (errors.length) lines.push("", `Checks that ended in an error: ${errors.map((c) => `${c.site} ${c.action}`).join(", ")}.`);

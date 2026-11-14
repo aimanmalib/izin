@@ -50,7 +50,8 @@ the terms banned scraping. In 2 the terms could not be read by a script. A robot
  2 Decide   SERV Reasoning: a verdict in a strict JSON schema, citing clause ids
       |
  3 Ceilings code: robots.txt, Content Signals, blocks and unread pages cap the verdict;
-      |           a GO that cites nothing, or sits next to a prohibiting clause, becomes ASK
+      |           a GO that cites nothing, or sits next to a prohibiting clause, becomes ASK;
+      |           text addressed to AI readers, or a Crawl-delay on a crawl, caps it at ASK
    receipt  what was fetched and when, the quoted clauses with links, the ceilings, a hash
 ```
 
@@ -79,8 +80,12 @@ The decision step. [`server/putus/serv.ts`](server/putus/serv.ts) (`requestFor`,
   detail. Declared on every request, it refused 8 of 10 normal policy payloads in the G1 run ([`docs/UKUR-G1.md`](docs/UKUR-G1.md)), so it is not on by default
   ([ADR 0012](docs/decisions/0012-g1-reader-thinking-and-guard-mode.md)).
 
-Multipath is not used. The Multipath variants of the benchmark could not be measured after the credit ran out, and the
-decider that ships is the configuration the published numbers describe ([ADR 0017](docs/decisions/0017-shipped-decider-variant.md)).
+The gallery run of 10 Nov was decided with Multipath on: its receipts, including the eBay receipt above, name
+`gpt-6-luna-serv-multipath`. Checks made since 14 Nov use `gpt-6-luna` without Multipath. The Multipath variants of the
+benchmark could not be measured after the credit ran out, and the decider that ships is the configuration the published
+numbers describe ([ADR 0017](docs/decisions/0017-shipped-decider-variant.md)). A fresh decision on SERV costs about 1 US cent
+(USD 0.0122 a decision in the benchmark, estimated at the cost factor calibrated against the SERV console balance,
+[ADR 0019](docs/decisions/0019-serv-cost-from-console-balance.md)). A saved receipt is reused for 7 days and makes no new model call.
 When SERV rejects a feature combination, the request steps down a ladder (no Shadow Agent, then the base model, then JSON
 checked in code) and the receipt records the rung.
 
@@ -105,10 +110,19 @@ deciding on the same frozen evidence:
 | V0 | Dolphin `DeepSeek-V4.1-Flash`, no SERV features | 36 of 43 | 1 | 1 | 0.000032 | 3.1 s |
 | V1, ships | SERV `gpt-6-luna` | 31 of 43 | 3 | 0 | 0.0122 | 12.9 s |
 
-False GO for the shipped decider: 2 of 20 designed cases, 0 of 10 spot checks, 1 of 13 recorded decisions.
+False GO for the shipped decider in that run: 2 of 20 designed cases, 0 of 10 spot checks, 1 of 13 recorded decisions.
+Two came from pages that tell AI readers what to answer (B09, the injection case, and B20): the code set the sentence aside
+and only lowered the confidence, and the decision step still answered GO. The third (A09) was a crawl on a site whose
+robots.txt sets a Crawl-delay.
 
-V1 has more false GO than V0 on this small set. One of them is the injection case: a policy page that tells AI readers to
-answer GO. The code set that sentence aside and lowered the confidence, and the decision step still answered GO.
+**Re-measure with the current ceilings:** two code ceilings now cap those cases at ASK
+([ADR 0020](docs/decisions/0020-two-signal-ceilings-and-remeasure.md)). Applied to the same stored answers, with no site
+fetched and no model called:
+
+| Variant | Agree | False GO | False NO-GO |
+|---|---|---|---|
+| V0 | 37 of 43 | 0 of 43 | 1 of 43 |
+| V1, ships | 34 of 43 | 0 of 43 | 0 of 43 |
 
 **Reading cost:** 443,416 tokens read on Dolphin over 50 stored readings, USD 0.005772. In the gallery and benchmark runs,
 100% of reader tokens were served by Dolphin.
@@ -119,8 +133,8 @@ answer GO. The code set that sentence aside and lowered the confidence, and the 
 - It obeys robots.txt and stops there; a site that blocks IzinBot is reported as blocked.
 - GO means no restriction was found in what was read. Izin reads public text and reports what it says; it is a starting
   point for a decision, not advice.
-- The benchmark is small (43 pairs). False GO for the shipped decider: 2 of 20 designed cases, 0 of 10 spot checks, 1 of 13
-  recorded decisions.
+- The benchmark is small (43 pairs). False GO for the shipped decider in the run: 2 of 20 designed cases, 0 of 10 spot
+  checks, 1 of 13 recorded decisions; 0 of 43 after the re-measure with the current ceilings.
 - The public instance has daily and total spending caps. When a cap is reached it serves stored receipts and makes no new model calls.
 
 ## Related work

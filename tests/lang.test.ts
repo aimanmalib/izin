@@ -87,7 +87,7 @@ describe("public wording", () => {
 
   it("splits the shipped decider's false GO by benchmark set in the README", () => {
     const readme = readFileSync("README.md", "utf8");
-    const split = /False GO for the shipped decider: \d+ of \d+ designed cases, \d+ of \d+ spot checks, \d+ of \d+\s+recorded decisions/g;
+    const split = /False GO for the shipped decider(?: in (?:that|the) run)?: \d+ of \d+ designed cases, \d+ of \d+\s+spot\s+checks, \d+ of \d+\s+recorded decisions/g;
     expect(readme.match(split)?.length ?? 0).toBeGreaterThanOrEqual(2);
     expect(readme).not.toMatch(/gave \d+ false GO/);
   });

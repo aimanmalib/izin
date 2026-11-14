@@ -142,6 +142,8 @@ Pairs whose verdict changed:
 Run 2026-11-10T20:59:36.371Z by `scripts/gallery.ts` with `IzinBot/0.1 (+https://izin.sasateguh.com/bot)`: 24 sites, 144 checks, 144 with a receipt. GO 0, ASK 123, NO-GO 21. Median time per check 6.6 s, longest 115.0 s. Spend counted by the spending guard during the run, with the cost factor then in config (it under-counted SERV; [ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md)): SERV USD 0.0473, Dolphin USD 0.004953.
 
 Receipts where the decision step gave a valid answer: **41 of 144**. The others carry ceiling S8 (no valid decision came back) and stay at ASK; none of them is a GO.
+
+Decider model named on those receipts: `gpt-6-luna-serv-multipath` (41). New checks use the decider in config now, `gpt-6-luna` ([ADR 0017](decisions/0017-shipped-decider-variant.md)), so these receipts name a different model from a check made today.
 <!-- izin:gallery-run:end -->
 
 <!-- izin:reader:start -->

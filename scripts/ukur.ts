@@ -49,9 +49,12 @@ function galleryDecided(file: string, run: GalleryRunFile): GalleryDecided {
   const get = db.prepare("SELECT receipt_json FROM checks WHERE id = ?");
   const ids = run.checks.map((c) => c.receipt_id).filter((id): id is string => !!id);
   const rows = ids.map((id) => get.get(id) as { receipt_json: string | null } | undefined).filter((r) => r?.receipt_json);
-  const serv_answered = rows.filter((r) => !(JSON.parse(r!.receipt_json!) as { decided_by: { ceilings: string[] } }).decided_by.ceilings.includes("S8")).length;
+  type Saved = { decided_by: { ceilings: string[] }; decider: { model: string | null } };
+  const answered = rows.map((r) => JSON.parse(r!.receipt_json!) as Saved).filter((r) => !r.decided_by.ceilings.includes("S8"));
+  const models: Record<string, number> = {};
+  for (const r of answered) if (r.decider.model) models[r.decider.model] = (models[r.decider.model] ?? 0) + 1;
   db.close();
-  return { with_receipt: rows.length, serv_answered };
+  return { with_receipt: rows.length, serv_answered: answered.length, models, shipped_model: cfg.decider.model };
 }
 
 const at = new Date().toISOString().slice(0, 10);

@@ -84,6 +84,19 @@ describe("UKUR sections", () => {
     expect(galleryRunSection(g, null, { with_receipt: 2, serv_answered: 1 })).toContain("decision step gave a valid answer: **1 of 2**");
   });
 
+  it("names the decider model on the gallery receipts and says when it differs from the decider in config", () => {
+    const g: GalleryRunFile = {
+      run_at: "2026-11-10T00:00:00.000Z", user_agent: "IzinBot/0.1", sites: 1, stopped: false, reader, spend: { serv_usd: 0, dolphin_usd: 0 },
+      checks: [{ site: "a.example", action: "crawl", receipt_id: "x", verdict: "NO_GO", ms_total: 1000, error: null }],
+    };
+    const other = galleryRunSection(g, null, { with_receipt: 1, serv_answered: 1, models: { "model-x-multi": 1 }, shipped_model: "model-x" });
+    expect(other).toContain("Decider model named on those receipts: `model-x-multi` (1).");
+    expect(other).toContain("New checks use the decider in config now, `model-x`");
+    const same = galleryRunSection(g, null, { with_receipt: 1, serv_answered: 1, models: { "model-x": 1 }, shipped_model: "model-x" });
+    expect(same).toContain("`model-x` (1).");
+    expect(same).not.toContain("New checks use");
+  });
+
   it("joins a frozen-evidence rerun to the earlier run: kept variants, the rerun's variants, K6 picked again", () => {
     const later: BenchResults = {
       ...results,
