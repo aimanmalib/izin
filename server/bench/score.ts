@@ -1,6 +1,7 @@
 // Scoring for the benchmark: agreement with the pre-registered answer, false GO and false NO_GO,
 // the median, and the K6 rule that picks the variant to ship. Pure functions, no I/O.
 import type { Verdict } from "../config.js";
+import { strictest } from "../putus/siling.js";
 
 export interface ScoredPair {
   expected: Verdict;
@@ -56,4 +57,40 @@ export function pickShipped(scores: readonly VariantScore[], tie: string): strin
   const best = [...serv].sort(cmp)[0]!;
   const tied = serv.filter((s) => cmp(s, best) === 0);
   return tied.some((s) => s.id === tie) ? tie : best.id;
+}
+
+/** One saved answer, the frozen signals it was decided on, and the pre-registered label. */
+export interface SavedPair {
+  id: string;
+  set: "A" | "B" | "spot";
+  expected: Verdict;
+  acceptable: readonly Verdict[];
+  final: Verdict;
+  /** Ceilings the current code reads from the frozen signals. */
+  extra: { code: string; cap: Verdict }[];
+}
+
+export interface Remeasured {
+  before: Share;
+  after: Share;
+  by_set: Record<"A" | "B" | "spot", Share>;
+  changed: { id: string; before: Verdict; after: Verdict; ceilings: string[]; expected: Verdict[] }[];
+}
+
+/**
+ * The current code ceilings applied to saved final verdicts, with no new decision: each final verdict
+ * becomes the strictest of itself and the extra caps, so a re-measure can only lower a verdict.
+ */
+export function remeasure(pairs: readonly SavedPair[]): Remeasured {
+  const capped = pairs.map((p) => ({ p, after: strictest(p.final, ...p.extra.map((c) => c.cap)) }));
+  const scored = (rows: typeof capped, pick: (r: (typeof capped)[number]) => Verdict) => share(rows.map((r) => ({ expected: r.p.expected, acceptable: r.p.acceptable, got: pick(r) })));
+  const bySet = (s: SavedPair["set"]) => scored(capped.filter((r) => r.p.set === s), (r) => r.after);
+  return {
+    before: scored(capped, (r) => r.p.final),
+    after: scored(capped, (r) => r.after),
+    by_set: { A: bySet("A"), B: bySet("B"), spot: bySet("spot") },
+    changed: capped
+      .filter((r) => r.after !== r.p.final)
+      .map((r) => ({ id: r.p.id, before: r.p.final, after: r.after, ceilings: r.p.extra.map((c) => c.code), expected: [r.p.expected, ...r.p.acceptable] })),
+  };
 }

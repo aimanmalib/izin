@@ -1,11 +1,11 @@
 // Code ceilings. The final verdict is the strictest of the decider's verdict and every ceiling
 // that applies (NO_GO < ASK < GO). Code can only lower a verdict, never raise it, and GO is only
-// possible when the decider returned a valid GO. Codes S1 to S9 are listed on every receipt.
+// possible when the decider returned a valid GO. Codes S1 to S10 are listed on every receipt.
 import type { Action, Verdict } from "../config.js";
 import type { Confidence, Decision } from "./decision.js";
 import type { DeciderClause, DeciderSignals } from "./message.js";
 
-export type CeilingCode = "S1" | "S2" | "S3" | "S4" | "S5" | "S6" | "S7" | "S8" | "S9";
+export type CeilingCode = "S1" | "S2" | "S3" | "S4" | "S5" | "S6" | "S7" | "S8" | "S9" | "S10";
 export type Flag =
   | "model_disagrees_with_evidence"
   | "unsupported_no_go"
@@ -13,7 +13,8 @@ export type Flag =
   | "guard_tripped"
   | "bad_citation"
   | "decider_skipped"
-  | "shadow_exhausted";
+  | "shadow_exhausted"
+  | "addressed_to_ai";
 
 /** Plain-English pieces the ceilings add to a receipt (from the language file, not from code). */
 export interface CeilingTexts {
@@ -24,6 +25,10 @@ export interface CeilingTexts {
   reason_guard_tripped: string;
   reason_robots: string;
   reason_ai_train: string;
+  /** S9 condition when it lowers a GO. */
+  ai_text_found: string;
+  /** S10 condition; {seconds} is the robots.txt Crawl-delay. */
+  crawl_delay_wait: string;
 }
 
 export interface CeilingInput {
@@ -51,12 +56,29 @@ export interface Outcome {
   decisive_clause_ids: string[];
 }
 
+export interface Cap {
+  code: CeilingCode;
+  cap: Verdict;
+}
+
+/**
+ * Ceilings read from the signals alone, applied after the decision: S9 (text addressed to AI agents was
+ * found, so a GO cannot stand) and S10 (a crawl where robots.txt sets a Crawl-delay is GO only with a
+ * wait between requests, so it is ASK with that condition). Exported for the re-measure of saved runs.
+ */
+export function signalCeilings(action: Action, s: DeciderSignals): Cap[] {
+  const caps: Cap[] = [];
+  if (s.addressed_to_ai_found) caps.push({ code: "S9", cap: "ASK" });
+  if (action === "crawl" && (s.robots.crawl_delay ?? 0) > 0) caps.push({ code: "S10", cap: "ASK" });
+  return caps;
+}
+
 const ORDER: Verdict[] = ["NO_GO", "ASK", "GO"];
 export const strictest = (...vs: Verdict[]): Verdict => ORDER[Math.min(...vs.map((v) => ORDER.indexOf(v)))]!;
 
 export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   const { action, signals: s, decision } = input;
-  const caps: { code: CeilingCode; cap: Verdict }[] = [];
+  const caps: Cap[] = [];
   const flags: Flag[] = [];
   const conditions = [...(decision?.conditions ?? [])];
   const missing = [...(decision?.missing ?? [])];
@@ -113,6 +135,17 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   }
   if (input.shadow_exhausted) flags.push("shadow_exhausted");
 
+  const late = signalCeilings(action, s);
+  caps.push(...late);
+  if (late.some((c) => c.code === "S9")) {
+    flags.push("addressed_to_ai");
+    if (decision?.verdict === "GO" && !conditions.includes(t.ai_text_found)) conditions.push(t.ai_text_found);
+  }
+  if (late.some((c) => c.code === "S10")) {
+    const wait = t.crawl_delay_wait.replace("{seconds}", String(s.robots.crawl_delay));
+    if (!conditions.includes(wait)) conditions.push(wait);
+  }
+
   // S7 is the one ceiling that replaces the decider's verdict instead of capping it.
   const servVerdict = decision?.verdict ?? null;
   const base: Verdict = !servVerdict ? "ASK" : caps.some((c) => c.code === "S7") ? "ASK" : servVerdict;
@@ -120,10 +153,7 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
 
   let confidence: Confidence = decision?.confidence ?? "low";
   const ceilings = [...new Set(caps.map((c) => c.code))];
-  if (s.addressed_to_ai_found) {
-    confidence = "low";
-    ceilings.push("S9");
-  }
+  if (s.addressed_to_ai_found) confidence = "low";
 
   let reason = decision?.reason ?? "";
   if (!decision) reason = input.decider === "skipped" ? t.reason_decider_skipped : input.decider === "guard_tripped" ? t.reason_guard_tripped : t.reason_decider_unavailable;

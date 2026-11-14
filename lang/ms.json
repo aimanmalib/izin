@@ -66,7 +66,9 @@
     "reason_decider_unavailable": "Langkah keputusan tidak memulangkan jawapan yang boleh dipakai, jadi keputusan tidak boleh GO. Bukti yang dikumpul dipaparkan di bawah.",
     "reason_guard_tripped": "Langkah keputusan menolak permintaan sebagai kemungkinan suntikan prompt, jadi keputusan tidak boleh GO.",
     "reason_robots": "robots.txt laman ini melarang URL ini untuk ejen automatik.",
-    "reason_ai_train": "robots.txt laman ini memberi isyarat ai-train=no."
+    "reason_ai_train": "robots.txt laman ini memberi isyarat ai-train=no.",
+    "ai_text_found": "seseorang perlu membaca halaman yang dipetik dahulu: ia mengandungi teks yang ditujukan kepada ejen AI, yang Izin ketepikan",
+    "crawl_delay_wait": "tunggu {seconds} saat antara permintaan (Crawl-delay robots.txt)"
   },
   "mcp": {
     "check_title": "Semak satu tindakan ejen di satu laman",
@@ -316,6 +318,10 @@
       "v_cost": "USD setiap keputusan",
       "v_ms": "Median ms",
       "v_shipped": "digunakan",
+      "remeasure_head": "Diukur semula dengan siling semasa",
+      "remeasure_line": "{id} (digunakan), jawapan tersimpan larian {date} dengan siling {ceilings} dikenakan dalam kod: {agree} daripada {pairs} pasangan sepadan (sebelum: {agree_before}). GO palsu: {false_go} daripada {pairs} (sebelum: {false_go_before}). NO-GO palsu: {false_no_go} daripada {pairs} (sebelum: {false_no_go_before}).",
+      "remeasure_other": "{id}, kaedah sama: {agree} daripada {pairs} sepadan, GO palsu {false_go}, NO-GO palsu {false_no_go}.",
+      "remeasure_note": "Tiada laman diambil semula dan tiada model dipanggil. S9 mengehadkan GO kepada ASK bila halaman mengandungi teks yang ditujukan kepada ejen AI. S10 mengehadkan crawl kepada ASK bila robots.txt menetapkan Crawl-delay.",
       "reading_cost_head": "Kos bacaan",
       "reading_cost_line": "Pembaca telah menggunakan {tokens} token di Dolphin bagi {readings} bacaan tersimpan ({tokens_in} masuk, {tokens_out} keluar). Bacaan itu berkos USD {usd}.",
       "reading_cost_line_one": "Pembaca telah menggunakan {tokens} token di Dolphin bagi {readings} bacaan tersimpan ({tokens_in} masuk, {tokens_out} keluar). Bacaan itu berkos USD {usd}.",
@@ -338,6 +344,8 @@
       "why_head": "Keputusan tidak boleh menjadi GO. Ini sebabnya.",
       "why_s8": "Jika langkah keputusan menolak permintaan sebagai kemungkinan suntikan, atau tidak memberi jawapan yang boleh digunakan, kod mengehadkan keputusan kepada ASK (siling S8).",
       "why_s6": "Jika ia menjawab GO sedangkan klausa yang dipetik melarang tindakan itu, kod mengehadkan keputusan kepada ASK (siling S6).",
+      "why_s9": "Jika halaman mengandungi teks yang ditujukan kepada ejen AI, seperti halaman ini, kod mengetepikannya dan mengehadkan keputusan kepada ASK (siling S9).",
+      "remeasure_line": "Pada jawapan penanda aras tersimpan yang diukur semula dengan siling semasa, langkah keputusan yang digunakan memberi {false_go} GO palsu dalam {pairs} pasangan.",
       "why_receipt": "Resit menyenaraikan siling dan bendera yang dikenakan dalam larian anda.",
       "busy": "Memulakan semakan"
     },

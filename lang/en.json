@@ -66,7 +66,9 @@
     "reason_decider_unavailable": "The decision step did not return a usable answer, so the verdict cannot be GO. The evidence collected is shown below.",
     "reason_guard_tripped": "The decision step refused the request as a possible prompt injection, so the verdict cannot be GO.",
     "reason_robots": "The site's robots.txt disallows this URL for automated agents.",
-    "reason_ai_train": "The site's robots.txt signals ai-train=no."
+    "reason_ai_train": "The site's robots.txt signals ai-train=no.",
+    "ai_text_found": "a person should read the quoted pages first: they contain text addressed to AI agents, which Izin set aside",
+    "crawl_delay_wait": "wait {seconds} seconds between requests (robots.txt Crawl-delay)"
   },
   "mcp": {
     "check_title": "Check one agent action on one site",
@@ -316,6 +318,10 @@
       "v_cost": "USD a decision",
       "v_ms": "Median ms",
       "v_shipped": "in use",
+      "remeasure_head": "Re-measured with the current ceilings",
+      "remeasure_line": "{id} (in use), the saved answers of the {date} run with ceilings {ceilings} applied in code: {agree} of {pairs} pairs agree (before: {agree_before}). False GO: {false_go} of {pairs} (before: {false_go_before}). False NO-GO: {false_no_go} of {pairs} (before: {false_no_go_before}).",
+      "remeasure_other": "{id}, same method: {agree} of {pairs} agree, false GO {false_go}, false NO-GO {false_no_go}.",
+      "remeasure_note": "No site was fetched again and no model was called. S9 caps a GO at ASK when a page holds text addressed to AI agents. S10 caps a crawl at ASK when robots.txt sets a Crawl-delay.",
       "reading_cost_head": "Reading cost",
       "reading_cost_line": "The reader has used {tokens} tokens on Dolphin over {readings} stored readings ({tokens_in} in, {tokens_out} out). Those readings cost USD {usd}.",
       "reading_cost_line_one": "The reader has used {tokens} tokens on Dolphin over {readings} stored reading ({tokens_in} in, {tokens_out} out). That reading cost USD {usd}.",
@@ -338,6 +344,8 @@
       "why_head": "The verdict cannot become GO. Here is why.",
       "why_s8": "If the decision step refuses the request as a possible injection, or gives no usable answer, the code caps the verdict at ASK (ceiling S8).",
       "why_s6": "If it answers GO while a quoted clause forbids the action, the code caps the verdict at ASK (ceiling S6).",
+      "why_s9": "If a page holds text addressed to AI agents, as this one does, the code sets it aside and caps the verdict at ASK (ceiling S9).",
+      "remeasure_line": "On the saved benchmark answers re-measured with the current ceilings, the decision step in use gives {false_go} false GO in {pairs} pairs.",
       "why_receipt": "The receipt lists which ceilings and flags were applied in your run.",
       "busy": "Starting the check"
     },

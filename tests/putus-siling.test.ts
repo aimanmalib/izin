@@ -1,10 +1,10 @@
-// Code ceilings S1 to S9: each one, the R6 case, and failures that must never end in GO.
+// Code ceilings S1 to S10: each one, the R6 case, and failures that must never end in GO.
 import { describe, expect, it } from "vitest";
 import type { Action, Verdict } from "../server/config.js";
 import en from "../lang/en.json" with { type: "json" };
 import type { Decision } from "../server/putus/decision.js";
 import type { DeciderClause, DeciderSignals } from "../server/putus/message.js";
-import { applyCeilings, strictest, type CeilingInput, type CeilingTexts } from "../server/putus/siling.js";
+import { applyCeilings, signalCeilings, strictest, type CeilingInput, type CeilingTexts } from "../server/putus/siling.js";
 
 const texts: CeilingTexts = en.receipt;
 
@@ -104,9 +104,45 @@ describe("applyCeilings", () => {
     expect(bad).toMatchObject({ final: "ASK", ceilings: ["S8"], flags: ["bad_citation"], decisive_clause_ids: ["c1"] });
   });
 
-  it("S9: text addressed to AI lowers confidence without changing the verdict", () => {
+  it("S9: text addressed to AI keeps a NO_GO, lowers confidence and is flagged", () => {
     const o = run({ signals: signals({ addressed_to_ai_found: true }), clauses: [clause("c1", "prohibits")], decision: decision("NO_GO", ["c1"]) });
-    expect(o).toMatchObject({ final: "NO_GO", confidence: "low", ceilings: ["S9"] });
+    expect(o).toMatchObject({ final: "NO_GO", confidence: "low", ceilings: ["S9"], flags: ["addressed_to_ai"] });
+    expect(o.conditions).not.toContain(texts.ai_text_found);
+  });
+
+  it("S9: text addressed to AI caps a GO at ASK, with the named flag and a condition", () => {
+    const o = run({ action: "read_page", signals: signals({ addressed_to_ai_found: true }), clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) });
+    expect(o).toMatchObject({ final: "ASK", serv_verdict: "GO", confidence: "low", ceilings: ["S9"], flags: ["addressed_to_ai"] });
+    expect(o.conditions).toContain(texts.ai_text_found);
+  });
+
+  it("S10: a crawl where robots.txt sets a Crawl-delay is ASK with a wait condition", () => {
+    const o = run({ signals: signals({}, { crawl_delay: 2 }), clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) });
+    expect(o).toMatchObject({ final: "ASK", serv_verdict: "GO", ceilings: ["S10"], flags: [] });
+    expect(o.conditions).toContain(texts.crawl_delay_wait.replace("{seconds}", "2"));
+    expect(texts.crawl_delay_wait).toContain("{seconds}");
+  });
+
+  it("S10 only applies to crawl, and not without a positive Crawl-delay", () => {
+    for (const action of ["read_page", "train", "account", "purchase", "post"] as Action[]) {
+      expect(run({ action, signals: signals({}, { crawl_delay: 5 }), clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) }).final).toBe("GO");
+    }
+    expect(run({ signals: signals({}, { crawl_delay: null }), clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) }).final).toBe("GO");
+    expect(run({ signals: signals({}, { crawl_delay: 0 }), clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) }).final).toBe("GO");
+  });
+
+  it("S9 and S10 never raise a verdict: every decided verdict ends at or below where it started", () => {
+    const sigs = [signals({ addressed_to_ai_found: true }), signals({}, { crawl_delay: 3 }), signals({ addressed_to_ai_found: true }, { crawl_delay: 3 })];
+    for (const action of ["read_page", "crawl", "train", "account", "purchase", "post"] as Action[]) {
+      for (const sig of sigs) {
+        for (const v of ["GO", "ASK", "NO_GO"] as Verdict[]) {
+          const plain = run({ action, clauses: [clause("c1", "prohibits")], decision: decision(v, ["c1"]) }).final;
+          const capped = run({ action, signals: sig, clauses: [clause("c1", "prohibits")], decision: decision(v, ["c1"]) }).final;
+          expect(strictest(plain, capped)).toBe(capped);
+        }
+        for (const cap of signalCeilings(action, sig)) expect(cap.cap).toBe("ASK");
+      }
+    }
   });
 
   it("R6: an ASK citing a general ban and a specific permission stands (code only caps, never raises)", () => {
