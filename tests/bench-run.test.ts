@@ -221,6 +221,17 @@ describe("gallery run", () => {
     expect(second.checks[0]!.changed).toBe(true);
   });
 
+  it("leaves the cells it is told to skip and runs only the others", async () => {
+    const db = new Database(":memory:");
+    const store = new ReceiptStore(db);
+    const guard = new BudgetGuard(db, cfg, async () => false);
+    const run = await runGallery([{ host: "skip.example" }], {
+      pipeline: pipelineDeps(cfg, { env: { IZIN_FAKE: "1" } }), store, guard, concurrency: 1,
+      actions: ["crawl", "read_page", "post"], skip: (_h, a) => a !== "read_page",
+    });
+    expect(run.checks.map((c) => c.action)).toEqual(["read_page"]);
+  });
+
   it("starts no check once the budget guard is exhausted", async () => {
     const db = new Database(":memory:");
     const capped = testConfig();

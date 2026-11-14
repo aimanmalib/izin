@@ -34,6 +34,8 @@ export interface GalleryDeps {
   guard: BudgetGuard;
   concurrency: number;
   actions?: readonly Action[];
+  /** Cells to leave as they are (for example cells that already have a decision). */
+  skip?: (host: string, action: Action) => boolean;
   /** Start page of a host (default https://host/). */
   urlFor?: (host: string) => string;
   now?: () => Date;
@@ -55,6 +57,7 @@ export async function runGallery(sites: GallerySite[], deps: GalleryDeps): Promi
   };
   const one = async (site: GallerySite) => {
     for (const action of actions) {
+      if (deps.skip?.(site.host, action)) continue;
       if (out.stopped || (await deps.guard.exhausted("gallery"))) return void (out.stopped = true);
       const t0 = now().getTime();
       try {
