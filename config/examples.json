@@ -3,5 +3,11 @@
     { "key": "ebay_buy", "site": "https://www.ebay.com/", "action": "purchase", "receipt_id": null },
     { "key": "shop_buy", "site": "https://shop.app/", "action": "purchase", "receipt_id": null },
     { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": null }
+  ],
+  "prime": [
+    { "site": "https://openserv.ai/", "action": "account" },
+    { "site": "https://dphn.ai/", "action": "account" },
+    { "site": "https://gokite.ai/", "action": "read_page" },
+    { "site": "https://reppo.xyz/", "action": "post" }
   ]
 }

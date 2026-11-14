@@ -25,6 +25,7 @@
     "ukur": "tsx scripts/ukur.ts",
     "g1": "tsx scripts/g1.ts",
     "gallery": "tsx scripts/gallery.ts",
+    "prime": "tsx scripts/prime.ts",
     "bench": "tsx scripts/bench.ts",
     "bench-merge": "tsx scripts/bench-merge.ts",
     "mcp-check": "tsx scripts/mcp-check.ts"

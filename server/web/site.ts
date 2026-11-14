@@ -19,14 +19,21 @@ const examplesSchema = z
         })
         .strict(),
     ),
+    // Checks run ahead of time so their receipts are saved (scripts/prime.ts); not shown as buttons.
+    prime: z.array(z.object({ site: z.url(), action: z.enum(ACTIONS) }).strict()).default([]),
   })
   .strict();
 
-export type Examples = z.infer<typeof examplesSchema>["examples"];
+export type ExamplesFile = z.infer<typeof examplesSchema>;
+export type Examples = ExamplesFile["examples"];
+
+export function loadExamplesFile(path: string = EXAMPLES_PATH): ExamplesFile {
+  if (!existsSync(path)) return { examples: [], prime: [] };
+  return examplesSchema.parse(JSON.parse(readFileSync(path, "utf8")));
+}
 
 export function loadExamples(path: string = EXAMPLES_PATH): Examples {
-  if (!existsSync(path)) return [];
-  return examplesSchema.parse(JSON.parse(readFileSync(path, "utf8"))).examples;
+  return loadExamplesFile(path).examples;
 }
 
 export interface CostView {
