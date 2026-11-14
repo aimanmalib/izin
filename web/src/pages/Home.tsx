@@ -127,7 +127,10 @@ export function Home({ site }: { site: SiteView }) {
             <ReadingCost cost={site.reading_cost} head={false} />
             <ul className="tiers">
               <li>{fmt(h.tier_free, { n: site.tiers.free_checks_per_hour })}</li>
-              <li>{fmt(h.tier_agent, { usd: site.tiers.agent_usd_per_check })}</li>
+              <li>
+                {fmt(h.tier_agent, { saved: site.tiers.agent_usd_per_saved_answer, fresh: site.tiers.agent_usd_per_fresh_check })}{" "}
+                {fmt(h.tier_reuse, { days: site.tiers.reuse_days })}
+              </li>
               <li>{fmt(h.tier_watch, { usd: site.tiers.watch_usd_per_month, sites: site.tiers.watch_sites })}</li>
             </ul>
           </div>

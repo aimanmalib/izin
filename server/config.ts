@@ -200,13 +200,18 @@ export const configSchema = z
         poll_ms: z.number().int().min(250).max(10_000),
         // Rough time each live step is shown for while a check runs; the receipt decides when it ends.
         step_ms: z.array(z.number().int().positive()).length(5),
+        // Planned agent prices: an answer from a saved receipt, and a fresh reading plus decision.
         tiers: z
           .object({
-            agent_usd_per_check: z.number().positive(),
+            agent_usd_per_saved_answer: z.number().positive(),
+            agent_usd_per_fresh_check: z.number().positive(),
             watch_usd_per_month: z.number().positive(),
             watch_sites: positiveInt,
           })
-          .strict(),
+          .strict()
+          .refine((t) => t.agent_usd_per_fresh_check > t.agent_usd_per_saved_answer, {
+            message: "a fresh check must cost more than an answer from a saved receipt",
+          }),
       })
       .strict(),
     // Robots-only baseline: which quoted stances count as "the site's words restrict" (ADR 0010).

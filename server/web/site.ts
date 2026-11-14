@@ -76,7 +76,7 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     gallery_excerpt: { rows: w.gallery_excerpt_rows, actions: w.gallery_excerpt_actions },
     poll_ms: w.poll_ms,
     step_ms: w.step_ms,
-    tiers: { free_checks_per_hour: cfg.limits.rate_new_checks_per_ip_hour, ...w.tiers },
+    tiers: { free_checks_per_hour: cfg.limits.rate_new_checks_per_ip_hour, reuse_days: cfg.limits.cached_receipt_days, ...w.tiers },
     detail_max_chars: cfg.limits.detail_max_chars,
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
     examples,

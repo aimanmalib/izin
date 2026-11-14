@@ -205,7 +205,7 @@
     "gallery_excerpt_actions": ["purchase", "account", "post"],
     "poll_ms": 1200,
     "step_ms": [2500, 9000, 1500, 4000, 800],
-    "tiers": { "agent_usd_per_check": 0.01, "watch_usd_per_month": 5, "watch_sites": 100 }
+    "tiers": { "agent_usd_per_saved_answer": 0.01, "agent_usd_per_fresh_check": 0.05, "watch_usd_per_month": 5, "watch_sites": 100 }
   },
   "baseline": { "restricting_stances": ["prohibits", "restricts", "requires"] },
   "reading_cost": {

@@ -67,6 +67,13 @@ describe("config/izin.json", () => {
     expect(() => parseConfig(bad)).toThrow(/server timeout/);
   });
 
+  it("rejects a fresh-check price that is not above the saved-answer price", () => {
+    const bad = clone();
+    const t = bad.web.tiers;
+    bad.web = { ...bad.web, tiers: { ...t, agent_usd_per_fresh_check: t.agent_usd_per_saved_answer } };
+    expect(() => parseConfig(bad)).toThrow(/fresh check/);
+  });
+
   it("rejects unknown keys", () => {
     expect(() => parseConfig({ ...clone(), surprise: true })).toThrow();
   });

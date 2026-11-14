@@ -109,6 +109,11 @@ describe("/r/<id>.json and /api/site", () => {
     expect(before.examples).toEqual([{ key: "a", site: "https://a.example/", action: "purchase", receipt_id: "abcdefghij" }]);
     expect(before.action_order).toHaveLength(6);
     expect(before.tiers.free_checks_per_hour).toBe(testConfig().limits.rate_new_checks_per_ip_hour);
+    // Two planned agent prices: a saved answer costs less than a fresh reading and decision,
+    // and the reuse window the page states is the one the service uses to reuse a receipt.
+    expect(before.tiers).not.toHaveProperty("agent_usd_per_check");
+    expect(before.tiers.agent_usd_per_fresh_check).toBeGreaterThan(before.tiers.agent_usd_per_saved_answer);
+    expect(before.tiers.reuse_days).toBe(testConfig().limits.cached_receipt_days);
     const { id } = (await app.inject({ method: "POST", url: "/api/check", payload: { url: url("shop.example", "/"), action: "crawl" } })).json();
     await rt.service.queue.wait(id, 10_000);
     const cost = costView(rt.db, testConfig());
