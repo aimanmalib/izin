@@ -168,6 +168,31 @@ describe("collect", () => {
     expect(down.out.signals.docs_read).toBe(0);
   });
 
+  it("reads an ordinary page that only loads the CDN's challenge-platform script, and still flags a real challenge", async () => {
+    const jsd = '<script src="/cdn-cgi/challenge-platform/scripts/jsd/main.js"></script>';
+    const terms = `<html><head><title>Terms of Service</title>${jsd}</head><body>${policyText("terms", 800)}</body></html>`;
+    expect(terms.length).toBeGreaterThanOrEqual(800);
+    const plain = await run(
+      { "shop.example": { "/robots.txt": txt(""), "/": { body: page("Home", footer) + jsd }, "/terms": { body: terms } } },
+      (rr) => ({ url: rr.url("shop.example", "/terms") }),
+    );
+    expect(plain.out.signals.blocked).toEqual([]);
+    expect(plain.out.docs.some((d) => d.kind === "policy" && d.state === "ok")).toBe(true);
+    await s?.close();
+
+    const real = await run(
+      {
+        "shop.example": {
+          "/robots.txt": txt(""),
+          "/": { body: `<html><title>Just a moment...</title>${jsd}</html>` },
+          "/terms": { body: `<html><body><div id="cf-chl-widget"></div>${jsd}</body></html>` },
+        },
+      },
+      (rr) => ({ url: rr.url("shop.example", "/terms") }),
+    );
+    expect(real.out.signals.blocked.map((b) => [b.kind, b.status])).toEqual([["policy", 200], ["home", 200]]);
+  });
+
   it("treats a missing robots.txt as no rules and reports the agent token's own disallow", async () => {
     const none = await run({ "shop.example": { "/": { body: page("x", footer) }, "/terms": { body: page(policyText("t")) } } }, (rr) => ({
       url: rr.url("shop.example"),

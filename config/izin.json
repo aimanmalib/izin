@@ -56,7 +56,6 @@
     "Just a moment...",
     "Performing security verification",
     "cf-chl-",
-    "challenge-platform",
     "Attention Required! | Cloudflare"
   ],
   "blocked_statuses": [401, 403, 429, 503],
