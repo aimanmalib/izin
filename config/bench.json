@@ -1,5 +1,5 @@
 {
-  "_comment": "Benchmark and gallery run settings (PRD 4.11). Variants are decided on the same frozen evidence. 'provider' picks the endpoint and key from config/izin.json (serv = decider, dolphin = primary reader). 'estimate' is the upper bound a --kering run prints before any paid call.",
+  "_comment": "Benchmark and gallery run settings (PRD 4.11). Variants are decided on the same frozen evidence. 'provider' picks the endpoint and key from config/izin.json (serv = decider, dolphin = primary reader). 'estimate' is the upper bound a --kering run prints before any paid call. 'serv_cost_factor_of_saved_run' is the SERV cost factor the committed run in bench/runs/bench.json was priced with; pages and docs/UKUR.md price it again with the factor in config/izin.json.",
   "concurrency": 3,
   "gallery_concurrency": 3,
   "variants": [
@@ -9,6 +9,7 @@
     { "id": "V3", "label": "SERV gpt-6-luna-serv-kronos-multipath", "provider": "serv", "model": "gpt-6-luna-serv-kronos-multipath", "suffix": "-serv-kronos-multipath", "start_rung": "a", "reasoning_effort": "low", "guard": true }
   ],
   "tie_variant": "V2",
+  "serv_cost_factor_of_saved_run": 170,
   "estimate": { "decision_tokens_in": 2500, "decision_tokens_out": 600, "read_tokens_per_site": 60000, "read_out_tokens_per_site": 3000 },
   "h1": {
     "action": "read_page",

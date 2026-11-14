@@ -38,10 +38,10 @@
   },
   "budget": {
     "serv_usd_per_day": 0.6,
-    "serv_usd_total": 9.0,
+    "serv_usd_total": 10.07,
     "dolphin_usd_per_day": 0.1,
     "dolphin_usd_total": 0.85,
-    "serv_cost_factor": 170,
+    "serv_cost_factor": 39,
     "daily_exempt_sources": ["gallery", "bench", "cli"]
   },
   "do_not_fetch_hosts": [

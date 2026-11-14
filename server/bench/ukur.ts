@@ -1,6 +1,7 @@
 // Generated sections of docs/UKUR.md for the benchmark, the gallery run, H1 and the reader. Every
 // number is read from the run files (bench/results.json, bench/runs/*.json); nothing is typed in.
 import type { BenchResults } from "../api/views.js";
+import type { PricedResults } from "../belanja/kos.js";
 import type { ReaderStats } from "./stats.js";
 import type { Share } from "./score.js";
 import type { ManualSet } from "./sets.js";
@@ -66,7 +67,22 @@ export function explain(row: { final: string; serv: string | null; failure: stri
   return `the decision step answered ${row.serv ?? row.final} from the quoted clauses${caps.length ? `; ${caps.join(", ")}` : ""}`;
 }
 
-export function benchSection(results: BenchResults, report: BenchReportFile, manual: ManualSet, origin: string): string {
+/** Where the cost column comes from; with a repricing, the run-time SERV figures are named and labelled too. */
+export function costNote(results: BenchResults | PricedResults): string {
+  if (!("serv_cost_factor" in results)) {
+    return `Costs are the spending guard's estimates (listed token price; SERV times the measured factor of [ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md)), not provider invoices. Estimated total (reading and every variant): USD ${usd(results.total_cost_usd)}.`;
+  }
+  const priced = results as PricedResults;
+  const f = priced.serv_cost_factor;
+  const serv = priced.variants.filter((x) => x.cost_usd_per_decision !== x.cost_usd_per_decision_at_run);
+  return [
+    `Costs are the spending guard's estimates, not provider invoices: listed token price, and for SERV times the cost factor now in config (${f.now}), calibrated against the SERV console balance ([ADR 0019](decisions/0019-serv-cost-from-console-balance.md)).`,
+    `The run itself was priced with the earlier factor ${f.at_run} ([ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md), measured on the 10 Nov runs): ${serv.map((x) => `${x.id} USD ${usd(x.cost_usd_per_decision_at_run)} a decision, `).join("")}USD ${usd(priced.total_cost_usd_at_run)} in total, estimates with the 10 Nov factor.`,
+    `Estimated total at the current factor (reading and every variant): USD ${usd(results.total_cost_usd)}.`,
+  ].join(" ");
+}
+
+export function benchSection(results: BenchResults | PricedResults, report: BenchReportFile, manual: ManualSet, origin: string): string {
   const shipped = report.shipped;
   const v = results.variants.find((x) => x.id === shipped)!;
   const sets = report.by_set[shipped]!;
@@ -88,7 +104,7 @@ export function benchSection(results: BenchResults, report: BenchReportFile, man
         `| ${x.id}${x.shipped ? " (shipped)" : ""} | \`${x.model}\` | ${x.pairs} | ${x.agree} (${pct(x.agree, x.pairs)}) | ${x.false_go} | ${x.false_no_go} | ${report.failures[x.id] ?? 0} | ${usd(x.cost_usd_per_decision)} | ${secs(x.median_ms)} |`,
     ),
     "",
-    `V0 is the same rulebook sent to Dolphin's model with no SERV features. Costs are the spending guard's estimates (listed token price; SERV times the measured factor of [ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md)), not provider invoices. Estimated total (reading and every variant): USD ${usd(results.total_cost_usd)}.`,
+    `V0 is the same rulebook sent to Dolphin's model with no SERV features. ${costNote(results)}`,
     "",
     "### By set",
     "",

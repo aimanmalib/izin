@@ -73,9 +73,9 @@ False GO for the shipped variant: **2 of 20 designed cases** (Set B), **0 of 10 
 | Variant | Model | Pairs | Agree | False GO | False NO-GO | No valid answer | Estimated cost per decision (USD) | Median decision time |
 |---|---|---|---|---|---|---|---|---|
 | V0 | `deepseek-ai/DeepSeek-V4.1-Flash` | 43 | 36 (84%) | 1 | 1 | 0 | 0.000032 | 3.1 s |
-| V1 (shipped) | `gpt-6-luna` | 43 | 31 (72%) | 3 | 0 | 1 | 0.0534 | 12.9 s |
+| V1 (shipped) | `gpt-6-luna` | 43 | 31 (72%) | 3 | 0 | 1 | 0.0122 | 12.9 s |
 
-V0 is the same rulebook sent to Dolphin's model with no SERV features. Costs are the spending guard's estimates (listed token price; SERV times the measured factor of [ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md)), not provider invoices. Estimated total (reading and every variant): USD 1.9231.
+V0 is the same rulebook sent to Dolphin's model with no SERV features. Costs are the spending guard's estimates, not provider invoices: listed token price, and for SERV times the cost factor now in config (39), calibrated against the SERV console balance ([ADR 0019](decisions/0019-serv-cost-from-console-balance.md)). The run itself was priced with the earlier factor 170 ([ADR 0016](decisions/0016-measured-serv-cost-and-frozen-rerun.md), measured on the 10 Nov runs): V1 USD 0.0534 a decision, USD 1.9231 in total, estimates with the 10 Nov factor. Estimated total at the current factor (reading and every variant): USD 0.4428.
 
 ### By set
 

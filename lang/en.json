@@ -291,6 +291,7 @@
       "readability_ua": "User agent: {ua}",
       "not_run": "The benchmark has not been run yet. Its results appear here after the run.",
       "run_at": "Run on {date}. Total cost of the run: USD {usd}.",
+      "cost_factor_note": "SERV costs are estimated as listed token price times the current cost factor ({now}), calibrated against the SERV console balance. The run itself was priced with factor {then}: USD {then_usd} in total.",
       "set_a_head": "Set A: decisions recorded by a source review run by a coding agent",
       "set_a_site": "Site",
       "set_a_action": "Action",

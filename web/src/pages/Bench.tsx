@@ -1,5 +1,6 @@
 // /bench: who could be read, then the benchmark run (Set A, Set B, decision step variants, total
 // cost) once bench/results.json exists. Every number comes from the API; none is written here.
+import type { PricedResults } from "../../../server/belanja/kos";
 import { getBench } from "../api";
 import { BaselineSummary } from "../components/Baseline";
 import { day, PageHead, usd, useView } from "../components/Page";
@@ -17,6 +18,8 @@ export function BenchPage() {
   if (bench === "failed") return <p className="wrap problem" role="alert">{t.web.errors.network}</p>;
   if (!bench) return <div className="wrap loading" aria-busy="true" />;
   const { readability: rd, results: rs, baseline, reading_cost } = bench;
+  // Present when the server priced the saved run's SERV costs again with the current factor.
+  const priced = rs && "serv_cost_factor" in rs ? (rs as PricedResults) : null;
 
   return (
     <div className="wrap page">
@@ -41,6 +44,9 @@ export function BenchPage() {
       ) : (
         <>
           <p>{fmt(b.run_at, { date: day(rs.run_at, lang), usd: usd(rs.total_cost_usd) })}</p>
+          {priced ? (
+            <p className="hint">{fmt(b.cost_factor_note, { now: priced.serv_cost_factor.now, then: priced.serv_cost_factor.at_run, then_usd: usd(priced.total_cost_usd_at_run) })}</p>
+          ) : null}
 
           <section className="section-tight" aria-labelledby="a-h">
             <h2 id="a-h">{b.set_a_head}</h2>

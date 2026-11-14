@@ -10,9 +10,10 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import Database from "better-sqlite3";
 import { benchResultsSchema, galleryView } from "../server/api/views.js";
-import { readingCost, type ReadingCost } from "../server/belanja/kos.js";
+import { readingCost, reprice, repricingOf, type ReadingCost } from "../server/belanja/kos.js";
 import { BENCH_DIR, loadConfig } from "../server/config.js";
 import { loadSets } from "../server/bench/sets.js";
+import { loadBenchConfig } from "../server/bench/variants.js";
 import { benchSection, galleryRunSection, readerSection, type BenchReportFile, type GalleryDecided, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
 import { baselineSection, readingCostSection, replaceSection, type GallerySlice } from "../server/galeri/ukur.js";
 
@@ -63,7 +64,10 @@ const report = runFile<BenchReportFile>("runs/bench.json");
 const results = runFile<unknown>("results.json");
 const galleryRun = runFile<GalleryRunFile>("runs/gallery.json");
 const h1 = runFile<H1File>("runs/h1.json");
-if (report && results) sections.push(["benchmark", benchSection(benchResultsSchema.parse(results), report, loadSets().manual, cfg.public_origin)]);
+if (report && results) {
+  const priced = reprice(benchResultsSchema.parse(results), report.rows, repricingOf(cfg, loadBenchConfig()));
+  sections.push(["benchmark", benchSection(priced, report, loadSets().manual, cfg.public_origin)]);
+}
 if (galleryRun) sections.push(["gallery-run", galleryRunSection(galleryRun, h1, values.db ? galleryDecided(values.db, galleryRun) : null)]);
 const readerRuns = [
   ...(galleryRun ? [{ name: "Gallery", reader: galleryRun.reader }] : []),

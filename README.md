@@ -103,7 +103,7 @@ deciding on the same frozen evidence:
 | Variant | Decider | Agree | False GO | False NO-GO | Cost per decision (USD, estimated) | Median time |
 |---|---|---|---|---|---|---|
 | V0 | Dolphin `DeepSeek-V4.1-Flash`, no SERV features | 36 of 43 | 1 | 1 | 0.000032 | 3.1 s |
-| V1, ships | SERV `gpt-6-luna` | 31 of 43 | 3 | 0 | 0.0534 | 12.9 s |
+| V1, ships | SERV `gpt-6-luna` | 31 of 43 | 3 | 0 | 0.0122 | 12.9 s |
 
 False GO for the shipped decider: 2 of 20 designed cases, 0 of 10 spot checks, 1 of 13 recorded decisions.
 

@@ -291,6 +291,7 @@
       "readability_ua": "Ejen pengguna: {ua}",
       "not_run": "Penanda aras belum dijalankan. Keputusannya dipaparkan di sini selepas larian.",
       "run_at": "Dijalankan pada {date}. Jumlah kos larian: USD {usd}.",
+      "cost_factor_note": "Kos SERV dianggar sebagai harga token tersenarai didarab faktor kos semasa ({now}), yang ditentukur dengan baki konsol SERV. Larian itu sendiri dikira dengan faktor {then}: jumlah USD {then_usd}.",
       "set_a_head": "Set A: keputusan yang direkod oleh semakan sumber yang dijalankan ejen pengekod",
       "set_a_site": "Laman",
       "set_a_action": "Tindakan",

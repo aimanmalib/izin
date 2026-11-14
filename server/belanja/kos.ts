@@ -2,6 +2,7 @@
 // tokens would cost at the listed price of a SERV model. Tokens and cost come from the extractions
 // ledger; prices and their public sources come from config. Nothing here is a fixed number.
 import type Database from "better-sqlite3";
+import type { BenchResults } from "../api/views.js";
 import type { IzinConfig } from "../config.js";
 
 export interface ReadingCost {
@@ -60,5 +61,56 @@ export function readingCost(db: Database.Database, cfg: IzinConfig): ReadingCost
       cost_usd: (tokensIn * listed.input + tokensOut * listed.output) / 1_000_000,
     },
     price_sources: cfg.reading_cost.price_sources,
+  };
+}
+
+/** How SERV costs in a saved benchmark run are priced again: which variants ran on SERV, the factor then and now. */
+export interface Repricing {
+  serv_variants: string[];
+  factor_at_run: number;
+  factor_now: number;
+}
+
+type RunRows = Record<string, Record<string, { serv: string | null; failure: string | null }>>;
+
+export type PricedResults = Omit<BenchResults, "variants"> & {
+  total_cost_usd_at_run: number;
+  serv_cost_factor: { at_run: number; now: number };
+  variants: (BenchResults["variants"][number] & { cost_usd_per_decision_at_run: number })[];
+};
+
+const round6 = (n: number) => Math.round(n * 1e6) / 1e6;
+
+/** The variants that ran on SERV, the factor the saved run was priced with, and the factor in config now. */
+export function repricingOf(cfg: IzinConfig, bench: { variants: { id: string; provider: string }[]; serv_cost_factor_of_saved_run: number }): Repricing {
+  return {
+    serv_variants: bench.variants.filter((v) => v.provider === "serv").map((v) => v.id),
+    factor_at_run: bench.serv_cost_factor_of_saved_run,
+    factor_now: cfg.budget.serv_cost_factor,
+  };
+}
+
+/**
+ * A SERV estimate is listed token price times the factor in config, so the saved run's SERV costs are
+ * priced with today's factor by scaling them (the run kept no per-decision tokens, and its files are not
+ * rewritten). Dolphin costs carry no factor and stay. The run-time figures are kept beside the new ones.
+ * Decisions counted per variant = rows that reached the decider (an answer or a failure).
+ */
+export function reprice(results: BenchResults, rows: RunRows, p: Repricing): PricedResults {
+  const ratio = p.factor_now / p.factor_at_run;
+  let servAtRun = 0;
+  const variants = results.variants.map((v) => {
+    const atRun = v.cost_usd_per_decision;
+    if (!p.serv_variants.includes(v.id)) return { ...v, cost_usd_per_decision_at_run: atRun };
+    const decided = Object.values(rows[v.id] ?? {}).filter((r) => r.serv !== null || r.failure !== null).length;
+    servAtRun += atRun * decided;
+    return { ...v, cost_usd_per_decision: round6(atRun * ratio), cost_usd_per_decision_at_run: atRun };
+  });
+  return {
+    ...results,
+    variants,
+    total_cost_usd: round6(Math.max(0, results.total_cost_usd - servAtRun * (1 - ratio))),
+    total_cost_usd_at_run: results.total_cost_usd,
+    serv_cost_factor: { at_run: p.factor_at_run, now: p.factor_now },
   };
 }

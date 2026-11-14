@@ -110,6 +110,15 @@ describe("benchmark view", () => {
     expect(benchView(write("bad", { ...results, set_a: [{ ...results.set_a[0], human_verdict: "MAYBE" }] })).results).toBeNull();
   });
 
+  it("prices the saved run's SERV costs again with the current factor when a repricing is given", () => {
+    const d = write("priced", results);
+    mkdirSync(`${d}runs`, { recursive: true });
+    writeFileSync(`${d}runs/bench.json`, JSON.stringify({ rows: { V2: { A01: { serv: "GO", failure: null }, A02: { serv: null, failure: null } } } }));
+    const v = benchView(d, null, null, { serv_variants: ["V2"], factor_at_run: 10, factor_now: 5 });
+    expect(v.results?.variants[0]?.cost_usd_per_decision).toBe(0.005);
+    expect(v.results && "serv_cost_factor" in v.results ? v.results.serv_cost_factor : null).toEqual({ at_run: 10, now: 5 });
+  });
+
   it("reads the tracked readability file", () => {
     const v = benchView();
     expect(v.readability?.user_agent).toBe(loadConfig().user_agent);

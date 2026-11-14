@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { readingCost, type ReadingCost } from "../server/belanja/kos.js";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { readingCost, reprice, repricingOf, type ReadingCost } from "../server/belanja/kos.js";
+import { loadBenchConfig } from "../server/bench/variants.js";
 import { loadConfig, type IzinConfig } from "../server/config.js";
 import { readingCostSection, replaceSection } from "../server/galeri/ukur.js";
 import { openDb, ReceiptStore } from "../server/resit/store.js";
@@ -95,5 +98,47 @@ describe("readingCostSection", () => {
     expect(doc).toContain("## Robots-only baseline");
     expect(doc.match(/## Reading cost/g)).toHaveLength(1);
     expect(doc).not.toContain("No reading on Dolphin");
+  });
+});
+
+describe("pricing a saved benchmark run again with the current SERV factor", () => {
+  const share = { pairs: 4, agree: 3, false_go: 0, false_no_go: 0 };
+  const saved = {
+    run_at: "2026-11-01T00:00:00.000Z",
+    total_cost_usd: 1.0,
+    set_a: [],
+    set_b: { ...share, owner_review: false },
+    variants: [
+      { id: "V0", model: "d", ...share, cost_usd_per_decision: 0.0001, median_ms: 1, shipped: false },
+      { id: "V1", model: "s", ...share, cost_usd_per_decision: 0.3, median_ms: 1, shipped: true },
+    ],
+  };
+  // V1 reached the decider three times (two answers and one failure); one case had nothing to decide.
+  const rows = {
+    V0: { A: { serv: "ASK", failure: null } },
+    V1: { A: { serv: "ASK", failure: null }, B: { serv: "GO", failure: null }, C: { serv: null, failure: "timeout" }, D: { serv: null, failure: null } },
+  };
+
+  it("scales SERV variants by factor now / factor at run, keeps Dolphin variants and the run-time figures", () => {
+    const p = reprice(saved, rows, { serv_variants: ["V1"], factor_at_run: 100, factor_now: 25 });
+    expect(p.variants[1]).toMatchObject({ cost_usd_per_decision: 0.075, cost_usd_per_decision_at_run: 0.3 });
+    expect(p.variants[0]).toMatchObject({ cost_usd_per_decision: 0.0001, cost_usd_per_decision_at_run: 0.0001 });
+    // SERV part at run time 3 x 0.3 = 0.9; at a quarter of the factor it is 0.225, so 1.0 - 0.9 + 0.225.
+    expect(p.total_cost_usd).toBeCloseTo(0.325, 6);
+    expect(p.total_cost_usd_at_run).toBe(1.0);
+    expect(p.serv_cost_factor).toEqual({ at_run: 100, now: 25 });
+  });
+
+  it("reads the factors from config and the SERV variants from the benchmark config", () => {
+    const r = repricingOf({ ...base, budget: { ...base.budget, serv_cost_factor: 12 } }, { variants: [{ id: "V0", provider: "dolphin" }, { id: "V1", provider: "serv" }], serv_cost_factor_of_saved_run: 34 });
+    expect(r).toEqual({ serv_variants: ["V1"], factor_at_run: 34, factor_now: 12 });
+    expect(repricingOf(base, loadBenchConfig()).factor_now).toBe(base.budget.serv_cost_factor);
+  });
+
+  it("keeps the SERV cost factor out of the code: no literal factor in server/ or web/src/", () => {
+    const files = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name)) : /\.tsx?$/.test(e.name) ? [join(dir, e.name)] : []));
+    const offenders = [...files("server"), ...files("web/src")].filter((f) => /serv_cost_factor\s*[:=]\s*\d|\b170\b/.test(readFileSync(f, "utf8")));
+    expect(offenders).toEqual([]);
   });
 });

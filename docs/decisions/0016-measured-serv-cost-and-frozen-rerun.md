@@ -1,6 +1,6 @@
 # 0016. Measured SERV cost per decision, and benchmark reruns on frozen evidence
 
-Status: accepted
+Status: accepted. Superseded in part by [ADR 0019](0019-serv-cost-from-console-balance.md) (the factor value).
 
 ## Context
 

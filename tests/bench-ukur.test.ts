@@ -7,6 +7,7 @@ import { readerStats } from "../server/bench/stats.js";
 import { benchSection, explain, galleryRunSection, readerSection, type BenchReportFile, type GalleryRunFile } from "../server/bench/ukur.js";
 import { mergeRuns } from "../server/bench/merge.js";
 import { loadBenchConfig } from "../server/bench/variants.js";
+import { reprice } from "../server/belanja/kos.js";
 
 const manual = loadSets().manual;
 const reader = readerStats([]);
@@ -44,6 +45,18 @@ describe("UKUR sections", () => {
     expect(s).toContain(`| ${manual.pairs[0]!.site} | crawl | ${manual.pairs[0]!.human_verdict} |`);
     expect(s).toContain("S4 (a page blocked the reader) set ASK");
     expect(s.split("\n").filter((l) => l.startsWith("| ") && l.includes("](https://izin.example/r/abcdefgh)"))).toHaveLength(manual.pairs.length);
+  });
+
+  it("prints the SERV cost calibration note with the run-time figures labelled when the run is priced again", () => {
+    const priced = reprice(results, { V2: { A01: { serv: "NO_GO", failure: null } } }, { serv_variants: ["V2"], factor_at_run: 200, factor_now: 50 });
+    const s = benchSection(priced, report, manual, "https://izin.example");
+    expect(s).toContain("| V2 (shipped) | `m2` | 43 | 38 (88%) | 0 | 0 | 0 | 0.000500 |");
+    expect(s).toContain("cost factor now in config (50), calibrated against the SERV console balance ([ADR 0019]");
+    expect(s).toContain("priced with the earlier factor 200");
+    expect(s).toContain("V2 USD 0.002000 a decision, USD 0.1234 in total, estimates with the 10 Nov factor");
+    expect(s).toContain("Estimated total at the current factor (reading and every variant): USD 0.1219.");
+    // Without a repricing the older note stays.
+    expect(benchSection(results, report, manual, "https://izin.example")).toContain("SERV times the measured factor of [ADR 0016]");
   });
 
   it("explains a do-not-fetch pair and a missing decision", () => {

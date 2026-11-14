@@ -34,6 +34,8 @@ export const benchConfigSchema = z
       )
       .min(1),
     tie_variant: z.string().regex(/^V\d$/),
+    /** The SERV cost factor the committed benchmark run was priced with (it is priced again with the current one). */
+    serv_cost_factor_of_saved_run: z.number().min(1),
     estimate: z
       .object({
         decision_tokens_in: positiveInt,
