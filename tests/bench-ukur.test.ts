@@ -4,10 +4,11 @@ import { describe, expect, it } from "vitest";
 import type { BenchResults } from "../server/api/views.js";
 import { loadSets } from "../server/bench/sets.js";
 import { readerStats } from "../server/bench/stats.js";
-import { benchSection, explain, galleryRunSection, readerSection, type BenchReportFile, type GalleryRunFile } from "../server/bench/ukur.js";
+import { benchSection, explain, galleryRunSection, readerSection, remeasureSection, type BenchReportFile, type GalleryRunFile, type RemeasureFile } from "../server/bench/ukur.js";
 import { mergeRuns } from "../server/bench/merge.js";
 import { loadBenchConfig } from "../server/bench/variants.js";
 import { reprice } from "../server/belanja/kos.js";
+import { replaceSection } from "../server/galeri/ukur.js";
 
 const manual = loadSets().manual;
 const reader = readerStats([]);
@@ -116,5 +117,33 @@ describe("UKUR sections", () => {
   it("adds Dolphin and other reader tokens over all runs for H10", () => {
     const r = (d: number, o: number) => ({ ...reader, tokens: { dolphin: d, other: o }, dolphin_share: d / (d + o) });
     expect(readerSection([{ name: "Gallery", reader: r(90, 10) }, { name: "Benchmark", reader: r(70, 30) }], "2026-11-10T00:00:00.000Z")).toContain("**80%** (160 of 200)");
+  });
+
+  it("writes the re-measure as N of M for every variant, names each changed pair, and links the ADR", () => {
+    const sh = (agree: number, false_go: number, false_no_go = 0) => ({ pairs: 5, agree, false_go, false_no_go });
+    const file: RemeasureFile = {
+      run_at: "2026-11-14T18:00:00.000Z",
+      source: { file: "bench/runs/bench.json", run_at: "2026-11-14T11:57:16.553Z", shipped: "V1" },
+      method: "synthetic",
+      ceilings: ["S9", "S10"],
+      variants: {
+        V0: { label: "x", before: sh(3, 1, 1), after: sh(4, 0, 1), by_set: { A: sh(4, 0), B: sh(0, 0), spot: sh(0, 0) }, changed: [{ id: "A09", before: "GO", after: "ASK", ceilings: ["S10"], expected: ["ASK"] }] },
+        V1: { label: "y", before: sh(2, 2), after: sh(4, 0), by_set: { A: sh(4, 0), B: sh(0, 0), spot: sh(0, 0) }, changed: [{ id: "B09", before: "GO", after: "ASK", ceilings: ["S9"], expected: ["ASK"] }] },
+      },
+    };
+    const s = remeasureSection(file);
+    expect(s).toContain("| V1 (shipped) | 2 of 5 | 4 of 5 | 2 of 5 | 0 of 5 | 0 of 5 | 0 of 5 |");
+    expect(s).toContain("| V0 | 3 of 5 | 4 of 5 | 1 of 5 | 0 of 5 | 1 of 5 | 1 of 5 |");
+    expect(s).toContain("- V1 B09: GO to ASK (S9, text addressed to AI agents was found and set aside); expected ASK");
+    expect(s).toContain("decisions/0020-two-signal-ceilings-and-remeasure.md");
+    expect(explain({ final: "ASK", serv: "GO", failure: null, ceilings: ["S6"] }, "fetch_once")).toContain("conflicted with a prohibiting clause");
+  });
+
+  it("places a new section after the one named, and replaces it in place later", () => {
+    const doc = "# T\n\n<!-- izin:benchmark:start -->\nB\n<!-- izin:benchmark:end -->\n\n## Notes\n";
+    const once = replaceSection(doc, "remeasure", "R1", "benchmark");
+    expect(once.indexOf("izin:remeasure:start")).toBeGreaterThan(once.indexOf("izin:benchmark:end"));
+    expect(once.indexOf("izin:remeasure:end")).toBeLessThan(once.indexOf("## Notes"));
+    expect(replaceSection(once, "remeasure", "R2", "benchmark")).toBe(once.replace("R1", "R2"));
   });
 });

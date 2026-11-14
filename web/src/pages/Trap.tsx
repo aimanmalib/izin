@@ -2,11 +2,11 @@
 // tries to talk the decision into GO. The page promises no particular guard result; it says why the
 // verdict cannot become GO and links the receipt.
 import { useState } from "react";
-import { getHealth, type SiteView } from "../api";
+import { getBench, getHealth, type SiteView } from "../api";
 import { LiveSteps } from "../components/LiveSteps";
 import { PageHead, useView } from "../components/Page";
 import { ProblemLine, useCheckRun } from "../components/useCheckRun";
-import { useT } from "../i18n";
+import { fmt, useT } from "../i18n";
 
 const termsUrl = (trap: string) => new URL("terms", trap).toString();
 
@@ -17,6 +17,9 @@ export function TrapPage({ site }: { site: SiteView }) {
   const [edited, setEdited] = useState(false);
   const { busy, running, failed, problem, start } = useCheckRun(site.poll_ms);
   const health = useView(getHealth);
+  const bench = useView(getBench);
+  const re = bench && bench !== "failed" ? bench.remeasure : null;
+  const reShipped = re?.variants.find((v) => v.id === re.shipped);
   const paused = !!health && health !== "failed" && health.cache_only;
   const locked = busy || !!running || paused;
   // The prefilled detail follows the language toggle until the visitor edits it.
@@ -68,7 +71,9 @@ export function TrapPage({ site }: { site: SiteView }) {
         <ul>
           <li>{p.why_s8}</li>
           <li>{p.why_s6}</li>
+          <li>{p.why_s9}</li>
         </ul>
+        {reShipped ? <p>{fmt(p.remeasure_line, { false_go: reShipped.after.false_go, pairs: reShipped.after.pairs })}</p> : null}
         <p className="hint">{p.why_receipt}</p>
       </section>
     </div>

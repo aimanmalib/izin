@@ -84,7 +84,7 @@ decider that ships is the configuration the published numbers describe ([ADR 001
 When SERV rejects a feature combination, the request steps down a ladder (no Shadow Agent, then the base model, then JSON
 checked in code) and the receipt records the rung.
 
-The ceilings are plain code in [`server/putus/siling.ts`](server/putus/siling.ts) (`applyCeilings`, line 57).
+The ceilings are plain code in [`server/putus/siling.ts`](server/putus/siling.ts) (`applyCeilings`, line 79).
 
 ## What we measured
 

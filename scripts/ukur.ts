@@ -5,7 +5,7 @@
 //                    [--bench-json bench.json]     and the reading cost from a saved /api/bench response
 //   add --kering to print the sections and write nothing
 // The benchmark, gallery-run, H1 and reader sections are added when their run files exist:
-// bench/results.json, bench/runs/bench.json, bench/runs/gallery.json, bench/runs/h1.json.
+// bench/results.json, bench/runs/bench.json, bench/runs/remeasure.json, bench/runs/gallery.json, bench/runs/h1.json.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import Database from "better-sqlite3";
@@ -14,7 +14,7 @@ import { readingCost, reprice, repricingOf, type ReadingCost } from "../server/b
 import { BENCH_DIR, loadConfig } from "../server/config.js";
 import { loadSets } from "../server/bench/sets.js";
 import { loadBenchConfig } from "../server/bench/variants.js";
-import { benchSection, galleryRunSection, readerSection, type BenchReportFile, type GalleryDecided, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
+import { benchSection, galleryRunSection, readerSection, remeasureSection, type BenchReportFile, type RemeasureFile, type GalleryDecided, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
 import { baselineSection, readingCostSection, replaceSection, type GallerySlice } from "../server/galeri/ukur.js";
 
 const { values } = parseArgs({
@@ -55,7 +55,7 @@ function galleryDecided(file: string, run: GalleryRunFile): GalleryDecided {
 }
 
 const at = new Date().toISOString().slice(0, 10);
-const sections: [string, string][] = [
+const sections: [string, string, string?][] = [
   ["robots-only-baseline", baselineSection(gallery, cfg.public_origin, at)],
   ["reading-cost", readingCostSection(cost, at)],
 ];
@@ -68,6 +68,8 @@ if (report && results) {
   const priced = reprice(benchResultsSchema.parse(results), report.rows, repricingOf(cfg, loadBenchConfig()));
   sections.push(["benchmark", benchSection(priced, report, loadSets().manual, cfg.public_origin)]);
 }
+const remeasured = runFile<RemeasureFile>("runs/remeasure.json");
+if (remeasured) sections.push(["remeasure", remeasureSection(remeasured), "benchmark"]);
 if (galleryRun) sections.push(["gallery-run", galleryRunSection(galleryRun, h1, values.db ? galleryDecided(values.db, galleryRun) : null)]);
 const readerRuns = [
   ...(galleryRun ? [{ name: "Gallery", reader: galleryRun.reader }] : []),
@@ -79,7 +81,7 @@ if (values.kering) {
   console.log(sections.map(([, s]) => s).join("\n\n"));
 } else {
   let doc = existsSync(values.out) ? readFileSync(values.out, "utf8") : "# What we measured\n";
-  for (const [name, s] of sections) doc = replaceSection(doc, name, s);
+  for (const [name, s, after] of sections) doc = replaceSection(doc, name, s, after);
   writeFileSync(values.out, doc);
   console.log(`wrote ${values.out}`);
 }

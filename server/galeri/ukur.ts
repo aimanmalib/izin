@@ -14,11 +14,17 @@ const start = (name: string) => `<!-- izin:${name}:start -->`;
 const end = (name: string) => `<!-- izin:${name}:end -->`;
 
 /** Replaces the named section (markers included) or appends it when the file has none yet. */
-export function replaceSection(doc: string, name: string, body: string): string {
+export function replaceSection(doc: string, name: string, body: string, after?: string): string {
   const block = `${start(name)}\n${body.trim()}\n${end(name)}`;
   const a = doc.indexOf(start(name));
   const b = doc.indexOf(end(name));
   if (a >= 0 && b > a) return doc.slice(0, a) + block + doc.slice(b + end(name).length);
+  // A new section goes right after the named one when it exists, else at the end.
+  const at = after ? doc.indexOf(end(after)) : -1;
+  if (at >= 0) {
+    const cut = at + end(after!).length;
+    return `${doc.slice(0, cut)}\n\n${block}${doc.slice(cut)}`;
+  }
   return `${doc.trimEnd()}\n\n${block}\n`;
 }
 

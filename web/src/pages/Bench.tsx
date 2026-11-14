@@ -17,7 +17,8 @@ export function BenchPage() {
 
   if (bench === "failed") return <p className="wrap problem" role="alert">{t.web.errors.network}</p>;
   if (!bench) return <div className="wrap loading" aria-busy="true" />;
-  const { readability: rd, results: rs, baseline, reading_cost } = bench;
+  const { readability: rd, results: rs, baseline, reading_cost, remeasure: re } = bench;
+  const reShipped = re?.variants.find((v) => v.id === re.shipped);
   // Present when the server priced the saved run's SERV costs again with the current factor.
   const priced = rs && "serv_cost_factor" in rs ? (rs as PricedResults) : null;
 
@@ -117,6 +118,32 @@ export function BenchPage() {
               </table>
             </div>
           </section>
+
+          {re && reShipped ? (
+            <section className="section-tight" aria-labelledby="re-h">
+              <h2 id="re-h">{b.remeasure_head}</h2>
+              <p>
+                {fmt(b.remeasure_line, {
+                  id: reShipped.id,
+                  date: day(re.source_run_at, lang),
+                  ceilings: re.ceilings.join(", "),
+                  pairs: reShipped.after.pairs,
+                  agree: reShipped.after.agree,
+                  false_go: reShipped.after.false_go,
+                  false_no_go: reShipped.after.false_no_go,
+                  agree_before: reShipped.before.agree,
+                  false_go_before: reShipped.before.false_go,
+                  false_no_go_before: reShipped.before.false_no_go,
+                })}
+              </p>
+              {re.variants
+                .filter((v) => v.id !== re.shipped)
+                .map((v) => (
+                  <p key={v.id}>{fmt(b.remeasure_other, { id: v.id, pairs: v.after.pairs, agree: v.after.agree, false_go: v.after.false_go, false_no_go: v.after.false_no_go })}</p>
+                ))}
+              <p className="hint">{b.remeasure_note}</p>
+            </section>
+          ) : null}
         </>
       )}
     </div>

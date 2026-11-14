@@ -46,10 +46,11 @@ const CEILING: Record<string, string> = {
   S3: "a Content Signal restricts AI input",
   S4: "a page blocked the reader",
   S5: "a document was not read in full, or nothing was read",
-  S6: "the decision cited no clause or signal",
-  S7: "the decision step's GO conflicted with a prohibiting clause",
+  S6: "the decision step's GO conflicted with a prohibiting clause",
+  S7: "the decision cited no clause or signal",
   S8: "no valid decision came back",
   S9: "text addressed to AI agents was found and set aside",
+  S10: "robots.txt sets a Crawl-delay for a crawl",
 };
 
 const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : "n/a");
@@ -135,6 +136,40 @@ export function benchSection(results: BenchResults | PricedResults, report: Benc
     }),
     "",
     `Set A agreement, shipped variant: ${sets.A.agree} of ${sets.A.pairs}.`,
+  ];
+  return lines.join("\n");
+}
+
+/** Shape of bench/runs/remeasure.json, written by scripts/remeasure.ts. */
+export interface RemeasureFile {
+  run_at: string;
+  source: { file: string; run_at: string; shipped: string };
+  method: string;
+  ceilings: string[];
+  variants: Record<string, { label: string; before: Share; after: Share; by_set: Record<"A" | "B" | "spot", Share>; changed: { id: string; before: string; after: string; ceilings: string[]; expected: string[] }[] }>;
+}
+
+export const REMEASURE_ADR = "decisions/0020-two-signal-ceilings-and-remeasure.md";
+
+/** The re-measure of the saved run with the current ceilings: counts in "N of M" form, read from the file. */
+export function remeasureSection(r: RemeasureFile): string {
+  const ids = Object.keys(r.variants);
+  const of = (n: number, s: Share) => `${n} of ${s.pairs}`;
+  const lines = [
+    "## Re-measure with the current ceilings",
+    "",
+    `Generated from \`bench/runs/remeasure.json\` (${r.run_at}, \`npm run remeasure\`): the saved final verdicts of the run of ${r.source.run_at} with ceilings ${r.ceilings.join(" and ")} applied in code ([ADR 0020](${REMEASURE_ADR})). No site was fetched and no model was called; the saved run and its frozen evidence are unchanged.`,
+    "",
+    "| Variant | Agree before | Agree after | False GO before | False GO after | False NO-GO before | False NO-GO after |",
+    "|---|---|---|---|---|---|---|",
+    ...ids.map((id) => {
+      const v = r.variants[id]!;
+      return `| ${id}${id === r.source.shipped ? " (shipped)" : ""} | ${of(v.before.agree, v.before)} | ${of(v.after.agree, v.after)} | ${of(v.before.false_go, v.before)} | ${of(v.after.false_go, v.after)} | ${of(v.before.false_no_go, v.before)} | ${of(v.after.false_no_go, v.after)} |`;
+    }),
+    "",
+    "Pairs whose verdict changed:",
+    "",
+    ...ids.flatMap((id) => r.variants[id]!.changed.map((c) => `- ${id} ${c.id}: ${c.before} to ${c.after} (${c.ceilings.map((k) => `${k}, ${CEILING[k] ?? k}`).join("; ")}); expected ${c.expected.join(" or ")}`)),
   ];
   return lines.join("\n");
 }
