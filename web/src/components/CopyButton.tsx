@@ -8,7 +8,7 @@ export function CopyButton({ text, label, done }: { text: string; label: string;
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard refused (insecure context or permission); the text stays visible to copy by hand.
+      // Clipboard refused (insecure context or permission); the text stays visible to copy manually.
     }
   };
   return (

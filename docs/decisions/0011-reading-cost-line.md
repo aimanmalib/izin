@@ -27,7 +27,7 @@ that serves as the fallback reader.
 
 ## Consequences
 
-- No number is written by hand: a price change is a config edit, and the totals follow the ledger.
+- No number is typed in: a price change is a config edit, and the totals follow the ledger.
 - A stored reading is replaced when the same document is read again with the same model and prompt,
   so the line counts the readings kept, not every call ever made. The daily spend table remains the
   record for the spending caps.

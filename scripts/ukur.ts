@@ -1,4 +1,4 @@
-// Regenerates the measured sections of docs/UKUR.md from data, never by hand. Reads the gallery view
+// Regenerates the measured sections of docs/UKUR.md from data, never edited manually. Reads the gallery view
 // either from a database file (opened read-only) or from a saved /api/gallery response.
 //   npm run ukur -- --db data/izin.db              write the sections into docs/UKUR.md
 //   npm run ukur -- --gallery-json gallery.json    same, from a saved /api/gallery response
