@@ -197,7 +197,7 @@ describe("GET /api/health, /api/gallery, /api/bench", () => {
     expect(h.dolphin_share).toBeNull();
   });
 
-  it("lists the gallery sites and the sites that blocked the reader", async () => {
+  it("lists the gallery sites and the sites IzinBot could not read", async () => {
     await setup();
     const g = await app!.inject({ method: "GET", url: "/api/gallery" });
     expect(g.headers["cache-control"]).toBe("no-store");

@@ -4,8 +4,8 @@
   "note": "One collector pass per site: robots.txt, home page and up to the configured number of policy pages. No model was called. Sites that blocked the reader were not retried. Reasons were recomputed from these recorded counts after the rule changed to count policy comments in robots.txt as readable; no site was fetched again.",
   "counts": {
     "sites": 61,
-    "readable": 30,
-    "unreadable": 31
+    "readable": 33,
+    "unreadable": 28
   },
   "sites": [
     {
@@ -239,12 +239,14 @@
       "group": "developer",
       "robots_status": "ok",
       "robots_http": 200,
-      "docs_read": 0,
+      "docs_read": 1,
       "requests": 4,
-      "read_urls": [],
-      "blocked_status": 200,
-      "readable": false,
-      "reason": "blocked"
+      "read_urls": [
+        "https://www.openserv.ai/term-of-services"
+      ],
+      "readable": true,
+      "reason": "read",
+      "run_at": "2026-11-14T15:41:55.391Z"
     },
     {
       "host": "dphn.ai",
@@ -254,9 +256,9 @@
       "docs_read": 0,
       "requests": 4,
       "read_urls": [],
-      "blocked_status": 200,
       "readable": false,
-      "reason": "blocked"
+      "reason": "no_policy_found",
+      "run_at": "2026-11-14T15:41:55.391Z"
     },
     {
       "host": "opentable.com",
@@ -492,12 +494,14 @@
       "group": "travel",
       "robots_status": "ok",
       "robots_http": 200,
-      "docs_read": 0,
-      "requests": 4,
-      "read_urls": [],
-      "blocked_status": 200,
-      "readable": false,
-      "reason": "blocked"
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [
+        "https://www.airasia.com/en/gb/"
+      ],
+      "readable": true,
+      "reason": "read",
+      "run_at": "2026-11-14T15:41:55.391Z"
     },
     {
       "host": "tripadvisor.com",
@@ -635,12 +639,14 @@
       "group": "social",
       "robots_status": "ok",
       "robots_http": 200,
-      "docs_read": 0,
-      "requests": 4,
-      "read_urls": [],
-      "blocked_status": 200,
-      "readable": false,
-      "reason": "blocked"
+      "docs_read": 1,
+      "requests": 3,
+      "read_urls": [
+        "https://discord.com/terms"
+      ],
+      "readable": true,
+      "reason": "read",
+      "run_at": "2026-11-14T15:41:55.391Z"
     },
     {
       "host": "gokite.ai",
@@ -747,6 +753,18 @@
       ],
       "readable": true,
       "reason": "read"
+    }
+  ],
+  "reruns": [
+    {
+      "run_at": "2026-11-14T15:41:55.391Z",
+      "hosts": [
+        "openserv.ai",
+        "dphn.ai",
+        "airasia.com",
+        "discord.com"
+      ],
+      "note": "Read again after a page marker that also appears on ordinary pages was removed from the challenge list. Same user agent, one collector pass each, no model."
     }
   ]
 }

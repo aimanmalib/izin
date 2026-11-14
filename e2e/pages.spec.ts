@@ -43,7 +43,7 @@ test("the header and footer link to the inner pages", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(en.web.bot.h1);
 });
 
-test("the gallery lists every site, opens a verdict's receipt, and lists the sites that blocked the reader", async ({ page }) => {
+test("the gallery lists every site, opens a verdict's receipt, and lists the sites IzinBot could not read", async ({ page }) => {
   await page.goto("/gallery");
   const rows = page.locator(".matrix tbody tr");
   await expect(rows).toHaveCount(gallery.sites.length);

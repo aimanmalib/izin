@@ -1,5 +1,5 @@
 // /gallery: the site by action matrix (verdict colour and word, each opening its receipt), the date
-// each site was read, the method, and the separate list of sites that blocked the reader.
+// each site was read, the method, and the separate list of sites IzinBot could not read.
 import { getBench, getGallery, type Action, type SiteView } from "../api";
 import { BaselineSummary } from "../components/Baseline";
 import { day, PageHead, useView } from "../components/Page";

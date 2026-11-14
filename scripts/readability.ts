@@ -3,13 +3,18 @@
 //   npm run readability -- --kering     list the candidates and what would be skipped, fetch nothing
 //   npm run readability                 run, then write both files
 //   npm run readability -- --pilih      rebuild config/gallery.json from bench/readability.json, fetch nothing
+//   npm run readability -- --hos a,b    read only these candidate hosts again and fold them into both files:
+//                                       their bench entries are replaced, the gallery matrix sites stay as they are
 // A site that blocks IzinBot is recorded as blocked. Nothing here retries with another identity.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { parseArgs } from "node:util";
 import { loadConfig } from "../server/config.js";
 import { collect } from "../server/kumpul/collect.js";
-import { classify, pickGallery, type Candidate, type ReadabilitySite } from "../server/galeri/readability.js";
+import {
+  classify, mergeRerun, pickGallery, rebuildBlocked,
+  type Candidate, type Gallery, type ReadabilityFile, type ReadabilitySite,
+} from "../server/galeri/readability.js";
 
 interface Candidates {
   gallery_size: number;
@@ -24,6 +29,7 @@ const { values } = parseArgs({
     candidates: { type: "string", default: "config/candidates.json" },
     out: { type: "string", default: "bench/readability.json" },
     gallery: { type: "string", default: "config/gallery.json" },
+    hos: { type: "string" },
   },
 });
 
@@ -31,12 +37,22 @@ const cfg = loadConfig();
 const cand = JSON.parse(readFileSync(values.candidates, "utf8")) as Candidates;
 const banned = cfg.do_not_fetch_hosts.map((h) => h.toLowerCase());
 const isBanned = (host: string) => banned.some((d) => host === d || host.endsWith(`.${d}`));
-const hosts = cand.sites.filter((c) => !isBanned(c.host.toLowerCase()));
+const named = values.hos ? values.hos.split(",").map((h) => h.trim().toLowerCase()).filter(Boolean) : null;
+const unknown = (named ?? []).filter((h) => !cand.sites.some((c) => c.host === h));
+if (unknown.length) {
+  console.error(`not candidate hosts: ${unknown.join(", ")}`);
+  process.exit(2);
+}
+const allHosts = cand.sites.filter((c) => !isBanned(c.host.toLowerCase()));
+const hosts = named ? allHosts.filter((c) => named.includes(c.host)) : allHosts;
 const skipped = cand.sites.filter((c) => isBanned(c.host.toLowerCase()));
+
+const galleryComment =
+  "Picked by scripts/readability.ts from bench/readability.json: readable sites in candidate order; blocked_reader lists the sites IzinBot could not read, with the reason.";
 
 function writeGallery(results: ReadabilitySite[]): void {
   const gallery = {
-    _comment: "Picked by scripts/readability.ts from bench/readability.json: readable sites in candidate order; blocked_reader lists the sites the reader could not read.",
+    _comment: galleryComment,
     ...pickGallery(hosts, results, cand.gallery_size),
   };
   mkdirSync(dirname(values.gallery), { recursive: true });
@@ -79,6 +95,22 @@ async function worker(): Promise<void> {
   }
 }
 await Promise.all(Array.from({ length: Math.max(1, cand.concurrency) }, () => worker()));
+
+if (named) {
+  const runAt = new Date().toISOString();
+  const prev = JSON.parse(readFileSync(values.out, "utf8")) as ReadabilityFile;
+  const merged = mergeRerun(prev, results, {
+    run_at: runAt,
+    hosts: hosts.map((c) => c.host),
+    note: "Read again after a page marker that also appears on ordinary pages was removed from the challenge list. Same user agent, one collector pass each, no model.",
+  });
+  writeFileSync(values.out, `${JSON.stringify(merged, null, 2)}\n`);
+  const prevGallery = JSON.parse(readFileSync(values.gallery, "utf8")) as Gallery;
+  const gallery = { _comment: galleryComment, ...rebuildBlocked(prevGallery, allHosts, merged.sites) };
+  writeFileSync(values.gallery, `${JSON.stringify(gallery, null, 2)}\n`);
+  console.log(`readable ${merged.counts.readable} of ${merged.counts.sites}; gallery ${gallery.sites.length} (unchanged); blocked_reader ${gallery.blocked_reader.length}`);
+  process.exit(0);
+}
 
 const order = new Map(hosts.map((c, i) => [c.host, i]));
 results.sort((a, b) => order.get(a.host)! - order.get(b.host)!);

@@ -47,7 +47,7 @@
 .baseline-of { font: 600 1.1rem/1 var(--mono); color: var(--ink-faint); }
 .matrix .muted { display: inline-block; min-width: 1.5rem; text-align: center; }
 
-/* Sites that blocked the reader */
+/* Sites IzinBot could not read */
 .blocked { list-style: none; padding: 0; margin: 0; display: grid; gap: 0 var(--gap); grid-template-columns: minmax(0, 1fr); }
 .blocked li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.15rem 1rem; padding: 0.6rem 0; border-bottom: 1px solid var(--rule); margin: 0; min-width: 0; }
 .blocked .mono { overflow-wrap: anywhere; min-width: 0; }

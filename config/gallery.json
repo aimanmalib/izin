@@ -1,5 +1,5 @@
 {
-  "_comment": "Picked by scripts/readability.ts from bench/readability.json: readable sites in candidate order; blocked_reader lists the sites the reader could not read.",
+  "_comment": "Picked by scripts/readability.ts from bench/readability.json: readable sites in candidate order; blocked_reader lists the sites IzinBot could not read, with the reason.",
   "sites": [
     {
       "host": "ebay.com",
@@ -194,14 +194,8 @@
       "reason": "robots_disallow"
     },
     {
-      "host": "openserv.ai",
-      "reason": "blocked",
-      "status": 200
-    },
-    {
       "host": "dphn.ai",
-      "reason": "blocked",
-      "status": 200
+      "reason": "no_policy_found"
     },
     {
       "host": "opentable.com",
@@ -246,11 +240,6 @@
       "reason": "no_policy_found"
     },
     {
-      "host": "airasia.com",
-      "reason": "blocked",
-      "status": 200
-    },
-    {
       "host": "tripadvisor.com",
       "reason": "blocked",
       "status": 403
@@ -276,11 +265,6 @@
     {
       "host": "youtube.com",
       "reason": "robots_disallow"
-    },
-    {
-      "host": "discord.com",
-      "reason": "blocked",
-      "status": 200
     },
     {
       "host": "reppo.xyz",

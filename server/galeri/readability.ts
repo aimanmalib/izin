@@ -29,6 +29,8 @@ export interface ReadabilitySite {
   /** URLs of the policy pages read in full (no text is kept); robots.txt comments are not listed. */
   read_urls: string[];
   blocked_status?: number;
+  /** Set when this site was read again after the full pass (see `reruns` in the file). */
+  run_at?: string;
 }
 
 export interface Candidate {
@@ -103,4 +105,42 @@ export function pickGallery(candidates: Candidate[], results: ReadabilitySite[],
     }
   }
   return { sites, blocked_reader: blocked };
+}
+
+export interface ReadabilityRerun {
+  run_at: string;
+  hosts: string[];
+  note: string;
+}
+
+export interface ReadabilityFile {
+  run_at: string;
+  user_agent: string;
+  note: string;
+  counts: { sites: number; readable: number; unreadable: number };
+  sites: ReadabilitySite[];
+  reruns?: ReadabilityRerun[];
+}
+
+/**
+ * Folds a second pass over a few hosts into an earlier readability file: the named hosts' entries are
+ * replaced (stamped with the rerun time), every other entry stays as it was, and the counts follow.
+ */
+export function mergeRerun(prev: ReadabilityFile, fresh: ReadabilitySite[], rerun: ReadabilityRerun): ReadabilityFile {
+  const byHost = new Map(fresh.map((r) => [r.host, { ...r, run_at: rerun.run_at }]));
+  const missing = [...byHost.keys()].filter((h) => !prev.sites.some((p) => p.host === h));
+  if (missing.length) throw new Error(`not in the earlier pass: ${missing.join(", ")}`);
+  const sites = prev.sites.map((p) => byHost.get(p.host) ?? p);
+  const readable = sites.filter((r) => r.readable).length;
+  return {
+    ...prev,
+    counts: { sites: sites.length, readable, unreadable: sites.length - readable },
+    sites,
+    reruns: [...(prev.reruns ?? []), rerun],
+  };
+}
+
+/** The gallery after a rerun: the matrix sites stay exactly as they were; only the unread list is rebuilt. */
+export function rebuildBlocked(prev: Gallery, candidates: Candidate[], results: ReadabilitySite[]): Gallery {
+  return { sites: prev.sites, blocked_reader: pickGallery(candidates, results, 0).blocked_reader };
 }

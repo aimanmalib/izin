@@ -1,7 +1,7 @@
 // Readability classification and gallery pick, against synthetic sites on a local server.
 import { afterEach, describe, expect, it } from "vitest";
 import { collect } from "../server/kumpul/collect.js";
-import { classify, pickGallery, type ReadabilitySite } from "../server/galeri/readability.js";
+import { classify, mergeRerun, pickGallery, rebuildBlocked, type ReadabilityFile, type ReadabilitySite } from "../server/galeri/readability.js";
 import { parseConfig } from "../server/config.js";
 import { page, policyText, startSites, testConfig, type Running, type Sites } from "./helpers/sites.js";
 
@@ -125,5 +125,37 @@ describe("pickGallery", () => {
     expect(g.sites.map((x) => x.host)).toEqual(["a.example", "c.example"]);
     expect(g.sites[0]!.policy_hints).toEqual(["https://a.example/terms"]);
     expect(g.blocked_reader).toEqual([{ host: "b.example", reason: "blocked", status: 403 }]);
+  });
+});
+
+describe("rerun of a few hosts", () => {
+  const site = (host: string, readable: boolean, reason: ReadabilitySite["reason"], status?: number): ReadabilitySite => ({
+    host, readable, reason, robots_status: "ok", robots_http: 200, docs_read: readable ? 1 : 0, requests: 3,
+    read_urls: readable ? [`https://${host}/terms`] : [], ...(status ? { blocked_status: status } : {}),
+  });
+  const prev: ReadabilityFile = {
+    run_at: "2026-01-01T00:00:00Z", user_agent: "IzinBot/0.1", note: "first pass",
+    counts: { sites: 3, readable: 1, unreadable: 2 },
+    sites: [site("a.example", true, "read"), site("b.example", false, "blocked", 200), site("c.example", false, "blocked", 403)],
+  };
+  const rerun = { run_at: "2026-01-02T00:00:00Z", hosts: ["b.example"], note: "again" };
+
+  it("replaces only the named entries, stamps them and recounts", () => {
+    const m = mergeRerun(prev, [site("b.example", true, "read")], rerun);
+    expect(m.run_at).toBe(prev.run_at);
+    expect(m.sites.map((s) => [s.host, s.reason, s.run_at])).toEqual([
+      ["a.example", "read", undefined], ["b.example", "read", rerun.run_at], ["c.example", "blocked", undefined],
+    ]);
+    expect(m.counts).toEqual({ sites: 3, readable: 2, unreadable: 1 });
+    expect(m.reruns).toEqual([rerun]);
+    expect(() => mergeRerun(prev, [site("z.example", true, "read")], rerun)).toThrow(/z\.example/);
+  });
+
+  it("keeps the gallery matrix as it was and rebuilds only the unread list", () => {
+    const m = mergeRerun(prev, [site("b.example", true, "read")], rerun);
+    const cands = prev.sites.map((s) => ({ host: s.host }));
+    const g = rebuildBlocked({ sites: [{ host: "a.example", policy_hints: [] }], blocked_reader: [] }, cands, m.sites);
+    expect(g.sites).toEqual([{ host: "a.example", policy_hints: [] }]);
+    expect(g.blocked_reader).toEqual([{ host: "c.example", reason: "blocked", status: 403 }]);
   });
 });
