@@ -154,11 +154,12 @@ describe("spending caps", () => {
   });
 
   it("the total cap holds across days and build scripts skip only the daily cap", async () => {
-    const { rt } = await setup({ cfg: capped() });
+    const cfg = capped();
+    const { rt } = await setup({ cfg });
     rt.guard.record({ serv_usd: 0.02, dolphin_usd: 0 });
     expect(await rt.guard.exhausted("api")).toBe(true);
     expect(await rt.guard.exhausted("bench")).toBe(false);
-    rt.guard.record({ serv_usd: 5, dolphin_usd: 0 });
+    rt.guard.record({ serv_usd: cfg.budget.serv_usd_total, dolphin_usd: 0 });
     expect(await rt.guard.exhausted("bench")).toBe(true);
     expect(rt.guard.leftPct()).toBe(0);
   });

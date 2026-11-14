@@ -48,12 +48,14 @@ describe("G1 plan", () => {
     expect(traps.filter((t) => t.input.detail).length).toBeGreaterThan(0);
   });
 
-  it("estimates an upper cost below the run caps", () => {
+  it("estimates an upper cost that carries the SERV cost factor, with Dolphin below its run cap", () => {
     const e = estimate(cfg, g1, syn, { reader: 4000, decider: 4000 });
     expect(e.dolphin_usd).toBeGreaterThan(0);
     expect(e.serv_usd).toBeGreaterThan(0);
     expect(e.dolphin_usd).toBeLessThanOrEqual(g1.caps_usd.dolphin);
-    expect(e.serv_usd).toBeLessThanOrEqual(g1.caps_usd.serv);
+    // The SERV side scales with the measured factor in config, so the caps check in the script sees the real cost.
+    const doubled = estimate({ ...cfg, budget: { ...cfg.budget, serv_cost_factor: cfg.budget.serv_cost_factor * 2 } }, g1, syn, { reader: 4000, decider: 4000 });
+    expect(doubled.serv_usd).toBeCloseTo(e.serv_usd * 2, 3);
   });
 
   it("takes the median of odd and even lists", () => {
