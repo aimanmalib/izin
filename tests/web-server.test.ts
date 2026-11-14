@@ -119,6 +119,9 @@ describe("/r/<id>.json and /api/site", () => {
     const doubled = costView(rt.db, { ...cfg, budget: { ...cfg.budget, serv_cost_factor: cfg.budget.serv_cost_factor * 2 } });
     expect(cost!.decider_usd).toBeGreaterThan(0);
     expect(doubled!.decider_usd).toBeCloseTo(cost!.decider_usd * 2, 9);
+    // A decision that produced no output (refused, empty credit) is left out of the average.
+    rt.db.prepare("UPDATE checks SET receipt_json = json_set(receipt_json, '$.decider.tokens_out', 0)").run();
+    expect(costView(rt.db, cfg)).toBeNull();
   });
 
   it("rejects an examples file that does not match its shape", () => {

@@ -36,7 +36,8 @@ export interface CostView {
 }
 
 /**
- * Average cost per finished check that reached the decision step, reader and decider apart; null before any.
+ * Average cost per finished check that got an answer from the decision step, reader and decider apart; null before any.
+ * A decision call refused before any output (for example an empty credit) bills nothing and is left out.
  * The decider side is priced again from each receipt's tokens with the current estimate (listed price times
  * the measured SERV factor), so receipts stored under an older factor are not under-counted.
  */
@@ -49,7 +50,8 @@ export function costView(db: Database.Database, cfg: IzinConfig): CostView | nul
               json_extract(receipt_json, '$.decider.tokens_out') AS tout,
               json_extract(receipt_json, '$.decider.cost_usd_estimated') AS stored
        FROM checks
-       WHERE status = 'done' AND receipt_json IS NOT NULL AND json_extract(receipt_json, '$.decider.model') IS NOT NULL`,
+       WHERE status = 'done' AND receipt_json IS NOT NULL AND json_extract(receipt_json, '$.decider.model') IS NOT NULL
+         AND json_extract(receipt_json, '$.decider.tokens_out') > 0`,
     )
     .all();
   if (!rows.length) return null;
