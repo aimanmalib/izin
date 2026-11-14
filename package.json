@@ -28,7 +28,8 @@
     "prime": "tsx scripts/prime.ts",
     "bench": "tsx scripts/bench.ts",
     "bench-merge": "tsx scripts/bench-merge.ts",
-    "mcp-check": "tsx scripts/mcp-check.ts"
+    "mcp-check": "tsx scripts/mcp-check.ts",
+    "video": "tsx scripts/video.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
