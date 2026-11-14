@@ -130,7 +130,7 @@
       "copied": "Copied",
       "agents_note": "Both return a receipt id. A receipt never changes once written.",
       "costs_head": "What it costs",
-      "costs_measured": "Measured over {n} checks: reading costs USD {reader} a check and deciding costs USD {decider} a check, on average.",
+      "costs_measured": "Over {n} checks, on average: reading costs USD {reader} a check and deciding costs about USD {decider} a check (estimated from the tokens each step used).",
       "costs_none": "No check has been measured yet. The figures appear here once checks have run.",
       "tier_free": "Free: {n} checks an hour.",
       "tier_agent": "Agent tier, planned: USD {usd} a check, paid per call.",

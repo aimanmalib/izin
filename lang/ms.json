@@ -130,7 +130,7 @@
       "copied": "Disalin",
       "agents_note": "Kedua-duanya memulangkan id resit. Resit tidak berubah selepas ditulis.",
       "costs_head": "Berapa kosnya",
-      "costs_measured": "Diukur atas {n} semakan: membaca berkos USD {reader} satu semakan dan memutus berkos USD {decider} satu semakan, secara purata.",
+      "costs_measured": "Atas {n} semakan, secara purata: membaca berkos USD {reader} satu semakan dan memutus berkos kira-kira USD {decider} satu semakan (dianggar daripada token yang digunakan setiap langkah).",
       "costs_none": "Belum ada semakan yang diukur. Angka akan muncul di sini selepas semakan dijalankan.",
       "tier_free": "Percuma: {n} semakan sejam.",
       "tier_agent": "Tier ejen, dirancang: USD {usd} satu semakan, dibayar setiap panggilan.",

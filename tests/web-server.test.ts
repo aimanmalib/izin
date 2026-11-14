@@ -111,9 +111,14 @@ describe("/r/<id>.json and /api/site", () => {
     expect(before.tiers.free_checks_per_hour).toBe(testConfig().limits.rate_new_checks_per_ip_hour);
     const { id } = (await app.inject({ method: "POST", url: "/api/check", payload: { url: url("shop.example", "/"), action: "crawl" } })).json();
     await rt.service.queue.wait(id, 10_000);
-    const cost = costView(rt.db);
+    const cost = costView(rt.db, testConfig());
     expect(cost).toMatchObject({ checks: 1 });
     expect(typeof cost!.reader_usd).toBe("number");
+    // The decider side is priced again with the factor in config, not the one stored on the receipt.
+    const cfg = testConfig();
+    const doubled = costView(rt.db, { ...cfg, budget: { ...cfg.budget, serv_cost_factor: cfg.budget.serv_cost_factor * 2 } });
+    expect(cost!.decider_usd).toBeGreaterThan(0);
+    expect(doubled!.decider_usd).toBeCloseTo(cost!.decider_usd * 2, 9);
   });
 
   it("rejects an examples file that does not match its shape", () => {

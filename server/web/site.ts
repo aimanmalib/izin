@@ -1,10 +1,11 @@
 // What the web pages need from the server besides receipts: one-click examples (config/examples.json),
-// the web settings from config, and the measured cost per check from the stored receipts.
+// the web settings from config, and the average cost per check from the stored receipts.
 import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { z } from "zod";
 import { readingCost } from "../belanja/kos.js";
 import { ACTIONS, EXAMPLES_PATH, type IzinConfig } from "../config.js";
+import { estimateCost } from "../putus/serv.js";
 
 const examplesSchema = z
   .object({
@@ -34,19 +35,27 @@ export interface CostView {
   decider_usd: number;
 }
 
-/** Average cost per finished check that reached the decision step, reader and decider apart; null before any. */
-export function costView(db: Database.Database): CostView | null {
-  const row = db
-    .prepare<[], { n: number; reader: number | null; decider: number | null }>(
-      `SELECT COUNT(*) AS n,
-              AVG(COALESCE(json_extract(receipt_json, '$.reader.cost_usd'), 0)) AS reader,
-              AVG(COALESCE(json_extract(receipt_json, '$.decider.cost_usd_estimated'), 0)) AS decider
+/**
+ * Average cost per finished check that reached the decision step, reader and decider apart; null before any.
+ * The decider side is priced again from each receipt's tokens with the current estimate (listed price times
+ * the measured SERV factor), so receipts stored under an older factor are not under-counted.
+ */
+export function costView(db: Database.Database, cfg: IzinConfig): CostView | null {
+  const rows = db
+    .prepare<[], { reader: number | null; model: string; tin: number | null; tout: number | null; stored: number | null }>(
+      `SELECT json_extract(receipt_json, '$.reader.cost_usd') AS reader,
+              json_extract(receipt_json, '$.decider.model') AS model,
+              json_extract(receipt_json, '$.decider.tokens_in') AS tin,
+              json_extract(receipt_json, '$.decider.tokens_out') AS tout,
+              json_extract(receipt_json, '$.decider.cost_usd_estimated') AS stored
        FROM checks
        WHERE status = 'done' AND receipt_json IS NOT NULL AND json_extract(receipt_json, '$.decider.model') IS NOT NULL`,
     )
-    .get();
-  if (!row || row.n === 0) return null;
-  return { checks: row.n, reader_usd: row.reader ?? 0, decider_usd: row.decider ?? 0 };
+    .all();
+  if (!rows.length) return null;
+  const decider = rows.map((r) => estimateCost(cfg, r.model, r.tin ?? 0, r.tout ?? 0) ?? r.stored ?? 0);
+  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  return { checks: rows.length, reader_usd: avg(rows.map((r) => r.reader ?? 0)), decider_usd: avg(decider) };
 }
 
 export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examples) {
@@ -62,7 +71,7 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     detail_max_chars: cfg.limits.detail_max_chars,
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
     examples,
-    cost: costView(db),
+    cost: costView(db, cfg),
     reading_cost: readingCost(db, cfg),
     trap_url: w.trap_url,
     // Numbers the /bot and /docs pages state, read from the same limits the code enforces.
