@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { benchResultsSchema } from "../server/api/views.js";
 import type { Attempt } from "../server/baca/reader.js";
 import { BudgetGuard } from "../server/belanja/guard.js";
-import { benchCases, runBench } from "../server/bench/run.js";
+import { benchCases, checkFrozen, runBench, type FrozenEvidence } from "../server/bench/run.js";
 import { buildReport } from "../server/bench/results.js";
 import { median, pickShipped, share, type VariantScore } from "../server/bench/score.js";
 import { loadSets, syntheticSite } from "../server/bench/sets.js";
@@ -126,6 +126,37 @@ describe("benchmark run", () => {
     expect(report.results.set_b.pairs).toBe(20);
     expect(report.by_set.V2!.B.pairs).toBe(20);
     expect(Object.keys(report.rows.V0!)).toHaveLength(20);
+  });
+
+  it("decides a later run on the frozen evidence alone: nothing fetched or read, same verdicts, no receipts", async () => {
+    const two = sets.labeled.cases.slice(0, 2);
+    synth = await serveSynthetic(two.map((c) => syntheticSite(sets.labeled, c)), defaultPolicy(cfg.limits.fetch_ports));
+    const only = { ...sets, manual: { ...sets.manual, pairs: [] }, labeled: { ...sets.labeled, cases: two } as typeof sets.labeled, spot: { ...sets.spot, pairs: [] } };
+    const cases = benchCases(only, (h) => synth!.url(h));
+    const pipeline = { ...pipelineDeps(cfg, { env: { IZIN_FAKE: "1" } }), policy: synth.policy, sleep: async () => {} };
+    const v2 = bench.variants.filter((v) => v.id === "V2");
+    const first = await runBench(cases, v2, { pipeline, transportFor: () => fakeTransport(), concurrency: 1, onSpend: () => {} });
+    await synth.close();
+    synth = null;
+    // Round-trip through JSON, as the files on disk are read.
+    const frozen = new Map(first.evidence.map((e) => [e.id, JSON.parse(JSON.stringify(e)) as FrozenEvidence]));
+    const seen: string[] = [];
+    const looked: string[] = [];
+    const second = await runBench(cases, v2, {
+      pipeline: { ...pipeline, policy: { ...pipeline.policy, lookup: async (h: string) => (looked.push(h), []) } },
+      transportFor: () => { const t = fakeTransport(); return async (body) => (seen.push(body.messages.at(-1)!.content as string), t(body)); },
+      concurrency: 1,
+      onSpend: () => {},
+      frozen,
+    });
+    expect(looked).toEqual([]);
+    expect(second.reader_attempts).toHaveLength(0);
+    expect(second.evidence).toEqual([...frozen.values()]);
+    const verdicts = (r: typeof first) => Object.fromEntries(r.answers.map((a) => [a.case_id, a.final]));
+    expect(verdicts(second)).toEqual(verdicts(first));
+    expect(second.answers.every((a) => a.receipt_id === null)).toBe(true);
+    for (const e of frozen.values()) if (!e.skip) expect(seen.some((m) => m.includes(JSON.stringify(e.message)))).toBe(true);
+    expect(() => checkFrozen(cases[0]!, { ...frozen.get(cases[0]!.id)!, action: cases[0]!.action === "crawl" ? "purchase" : "crawl" })).toThrow(/does not match/);
   });
 
   it("stops before a paid step once the budget says so", async () => {

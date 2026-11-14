@@ -102,7 +102,17 @@ export async function prepareCheck(input: CheckInput, deps: PipelineDeps): Promi
 }
 
 /** The code ceilings over a decider result (null = not asked). */
-export function outcomeOf(p: PreparedCheck, decider: DeciderResult | null, texts: PipelineTexts) {
+/** What the ceilings need from a prepared check; a benchmark case rebuilt from frozen evidence has exactly this. */
+export interface Decidable {
+  input: { action: Action };
+  signals: PreparedCheck["signals"];
+  message: PreparedCheck["message"];
+  skip: boolean;
+  guard: boolean;
+  collected: { signals: { blocked: { url: string; status: number }[] } };
+}
+
+export function outcomeOf(p: Decidable, decider: DeciderResult | null, texts: PipelineTexts) {
   return applyCeilings(
     {
       action: p.input.action,

@@ -1,11 +1,12 @@
 // The benchmark run (PRD 4.11): each pre-registered pair is collected and read once with the
 // shipped reader, its decider message is frozen as evidence, and every variant decides on that same
 // message. The code ceilings are applied to each answer, so the verdict scored is the one a user
-// would see. Receipts are stored for Set A pairs so the /bench page can link them.
+// would see. Receipts are stored for Set A pairs so the /bench page can link them. A later run can
+// decide on the frozen evidence alone (no site is fetched a second time).
 import type { Action, Verdict } from "../config.js";
 import type { Spend } from "../belanja/guard.js";
 import type { Attempt } from "../baca/reader.js";
-import { finishCheck, outcomeOf, prepareCheck, type CheckInput, type PipelineDeps, type PreparedCheck } from "../pipeline.js";
+import { finishCheck, outcomeOf, prepareCheck, type CheckInput, type Decidable, type PipelineDeps, type PreparedCheck } from "../pipeline.js";
 import { decide, LadderMemory, type DeciderResult, type DeciderTransport } from "../putus/serv.js";
 import { variantConfig, variantSpend, type Variant } from "./variants.js";
 import type { ManualSet, LabeledSet, SpotSet } from "./sets.js";
@@ -58,6 +59,20 @@ export function evidenceOf(c: BenchCase, p: PreparedCheck) {
   };
 }
 
+export type FrozenEvidence = ReturnType<typeof evidenceOf>;
+
+/** A case rebuilt from its frozen evidence: the same decider message, nothing fetched or read again. */
+export function decidableOf(e: FrozenEvidence): Decidable {
+  return { input: { action: e.action }, signals: e.message.signals, message: e.message, skip: e.skip, guard: e.guard, collected: { signals: { blocked: e.blocked } } };
+}
+
+/** The frozen evidence must be for the same pre-registered case; anything else is refused before a paid call. */
+export function checkFrozen(c: BenchCase, e: FrozenEvidence): void {
+  if (e.id !== c.id || e.set !== c.set || e.site !== c.site || e.action !== c.action || e.expected !== c.expected) {
+    throw new Error(`frozen evidence ${e.id} does not match case ${c.id} (${c.site} ${c.action})`);
+  }
+}
+
 export interface VariantAnswer {
   case_id: string;
   variant: string;
@@ -83,6 +98,8 @@ export interface BenchRunDeps {
   /** Checked before each paid step; true stops the run (budget reached). */
   stop?: () => Promise<boolean>;
   log?: (line: string) => void;
+  /** Frozen evidence by case id: these cases are decided on it without collecting or reading, and keep no receipt. */
+  frozen?: Map<string, FrozenEvidence>;
 }
 
 export interface BenchRun {
@@ -103,12 +120,22 @@ export async function runBench(cases: BenchCase[], variants: Variant[], deps: Be
   const log = deps.log ?? (() => {});
   const { cfg } = deps.pipeline;
   const out: BenchRun = { evidence: [], answers: [], reader_attempts: [], stopped: false };
-  const prepared = new Map<string, PreparedCheck>();
+  const prepared = new Map<string, Decidable>();
+  const live = new Map<string, PreparedCheck>();
 
-  await pool(cases, deps.concurrency, async (c) => {
+  for (const c of cases) {
+    const e = deps.frozen?.get(c.id);
+    if (!e) continue;
+    checkFrozen(c, e);
+    prepared.set(c.id, decidableOf(e));
+    out.evidence.push(e);
+  }
+
+  await pool(cases.filter((c) => !prepared.has(c.id)), deps.concurrency, async (c) => {
     if (out.stopped || (await deps.stop?.())) return void (out.stopped = true);
     const p = await prepareCheck(c.input, deps.pipeline);
     prepared.set(c.id, p);
+    live.set(c.id, p);
     const attempts = p.readings.filter((r) => !r.cached).flatMap((r) => r.attempts);
     out.reader_attempts.push(...attempts);
     deps.onSpend({
@@ -134,8 +161,9 @@ export async function runBench(cases: BenchCase[], variants: Variant[], deps: Be
       const spend = variantSpend(cfg, v, r);
       deps.onSpend(spend);
       const outcome = outcomeOf(p, r, deps.pipeline.texts);
-      // Set A receipts are kept for every variant: each names its own decider model.
-      const receipt_id = c.set === "A" ? finishCheck(p, r, deps.pipeline, { saveInputs: v === variants[0] }).id : null;
+      // Set A receipts are kept for every variant read live: each names its own decider model.
+      const full = live.get(c.id);
+      const receipt_id = c.set === "A" && full ? finishCheck(full, r, deps.pipeline, { saveInputs: v === variants[0] }).id : null;
       out.answers.push({
         case_id: c.id, variant: v.id, serv_verdict: outcome.serv_verdict, final: outcome.final, ceilings: outcome.ceilings,
         failure: r?.failure ?? null, rung: r?.rung ?? null, calls: r?.attempts.length ?? 0, ms: r?.ms ?? 0,
