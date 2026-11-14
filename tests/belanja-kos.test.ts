@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { readingCost, reprice, repricingOf, type ReadingCost } from "../server/belanja/kos.js";
+import { readingCost, receiptCostNow, reprice, repricingOf, type ReadingCost } from "../server/belanja/kos.js";
 import { loadBenchConfig } from "../server/bench/variants.js";
 import { loadConfig, type IzinConfig } from "../server/config.js";
 import { readingCostSection, replaceSection } from "../server/galeri/ukur.js";
@@ -140,5 +140,26 @@ describe("pricing a saved benchmark run again with the current SERV factor", () 
       readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name)) : /\.tsx?$/.test(e.name) ? [join(dir, e.name)] : []));
     const offenders = [...files("server"), ...files("web/src")].filter((f) => /serv_cost_factor\s*[:=]\s*\d|\b170\b/.test(readFileSync(f, "utf8")));
     expect(offenders).toEqual([]);
+  });
+});
+
+describe("a receipt's cost on the receipt page", () => {
+  // A receipt signed under an older factor: 1,000 in and 100 out on list-model is USD 0.0003 at list price.
+  const old = {
+    reader: { cost_usd: 0.0001 },
+    decider: { model: "list-model-serv-multipath", tokens_in: 1000, tokens_out: 100, cost_usd_estimated: 0.0009 },
+  };
+
+  it("prices the decision tokens again with the current factor, not the stored figure", () => {
+    const at = (f: number) => receiptCostNow({ ...cfg, budget: { ...cfg.budget, serv_cost_factor: f } }, old);
+    expect(at(39)).toBeCloseTo(0.0001 + 0.0003 * 39, 6);
+    expect(at(10)).toBeCloseTo(0.0001 + 0.003, 6);
+    expect(at(39)).not.toBeCloseTo(0.0001 + 0.0009, 6);
+  });
+
+  it("keeps the stored figure for an unlisted model and is null without a decision", () => {
+    expect(receiptCostNow(cfg, { ...old, decider: { ...old.decider, model: "unlisted" } })).toBeCloseTo(0.001, 6);
+    expect(receiptCostNow(cfg, { ...old, decider: { ...old.decider, model: null, cost_usd_estimated: null } })).toBeNull();
+    expect(receiptCostNow(cfg, { ...old, decider: { ...old.decider, model: "unlisted", cost_usd_estimated: null } })).toBeNull();
   });
 });

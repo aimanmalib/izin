@@ -71,6 +71,9 @@ describe("POST /api/check and GET /api/receipt/:id", () => {
     expect(out.status).toBe("done");
     expect(out.receipt).toMatchObject({ id, action: "crawl", verdict: "NO_GO" });
     expect(out.receipt.receipt_sha256).toMatch(/^[0-9a-f]{64}$/);
+    // The cost worked out now travels beside the stored receipt, never inside it.
+    expect(out).toHaveProperty("cost_usd_now");
+    expect(out.receipt).not.toHaveProperty("cost_usd_now");
   });
 
   it("answers 400 for bad input and private addresses, 404 for an unknown id", async () => {

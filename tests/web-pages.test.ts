@@ -134,3 +134,23 @@ describe("benchmark view", () => {
     expect(v.readability?.user_agent).toBe(loadConfig().user_agent);
   });
 });
+
+describe("who read a receipt's documents", () => {
+  const reader = (model: string | null, per_doc: { doc: string; reader: string | null; status: "read"; cached: boolean }[]) => ({
+    reader: { provider: model ? "dolphin" : null, model, prompt_version: "reader.v1", tokens_in: 0, tokens_out: 0, cost_usd: 0, ms: 0, per_doc },
+  });
+
+  it("names the saved reader for a reading served from the store, not 'Not read by a model'", async () => {
+    const { readerLine } = await import("../web/src/pages/Receipt.js");
+    const saved = reader(null, [{ doc: "d1", reader: "dolphin:org-x/Reader-Model-1", status: "read", cached: true }]);
+    expect(readerLine(saved)).toEqual({ provider: "dolphin", model: "Reader-Model-1", saved: true });
+    const en = JSON.parse(readFileSync("lang/en.json", "utf8")).web.receipt_page;
+    expect(en.read_saved.replace("{model}", "M").replace("{provider}", "Dolphin")).toBe("Read by M on Dolphin (saved reading)");
+  });
+
+  it("uses the reader of the check itself when there is one, and nothing when no document was read", async () => {
+    const { readerLine } = await import("../web/src/pages/Receipt.js");
+    expect(readerLine(reader("Reader-Model-2", []))).toEqual({ provider: "dolphin", model: "Reader-Model-2", saved: false });
+    expect(readerLine(reader(null, [{ doc: "d1", reader: null, status: "read", cached: false }]))).toBeNull();
+  });
+});

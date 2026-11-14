@@ -1,6 +1,7 @@
 // HTTP API. Every /api/ answer carries Cache-Control: no-store (set in app.ts).
 import type { FastifyInstance, FastifyReply } from "fastify";
 import type { ClientIp } from "./clientip.js";
+import type { Receipt } from "../resit/receipt.js";
 import type { CheckService, SubmitResult } from "./service.js";
 
 export interface HealthInfo {
@@ -17,6 +18,8 @@ export interface ApiDeps {
   health: HealthInfo;
   gallery: () => unknown;
   bench: () => unknown;
+  /** The receipt's cost worked out now (see receiptCostNow); the stored receipt is sent unchanged beside it. */
+  costNow: (r: Receipt) => number | null;
 }
 
 export function sendSubmit(reply: FastifyReply, r: SubmitResult) {
@@ -41,7 +44,7 @@ export function registerApi(app: FastifyInstance, d: ApiDeps): void {
   app.get<{ Params: { id: string } }>("/api/receipt/:id", async (req, reply) => {
     const r = d.service.result(req.params.id);
     if (!r) return reply.code(404).send({ error: "not_found" });
-    return r;
+    return r.receipt ? { ...r, cost_usd_now: d.costNow(r.receipt) } : r;
   });
 
   app.get("/api/gallery", async () => d.gallery());

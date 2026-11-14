@@ -8,7 +8,21 @@ import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT, type Strings } from "../i18n";
 import { NotFound } from "./NotFound";
 
-type State = { kind: "loading" } | { kind: "running" } | { kind: "error" } | { kind: "not_found" } | { kind: "done"; receipt: R };
+type State = { kind: "loading" } | { kind: "running" } | { kind: "error" } | { kind: "not_found" } | { kind: "done"; receipt: R; costNow: number | null };
+
+/**
+ * Who read the documents. A check whose reading came from the saved store has no reader model of its own, so the
+ * reader recorded for each document (for example "dolphin:org/Model") names it, marked as a saved reading.
+ */
+export function readerLine(r: Pick<R, "reader">): { provider: string; model: string; saved: boolean } | null {
+  if (r.reader.model) return { provider: r.reader.provider ?? "", model: r.reader.model, saved: false };
+  const doc = r.reader.per_doc.find((d) => d.cached && d.reader);
+  if (!doc?.reader) return null;
+  const at = doc.reader.indexOf(":");
+  const provider = at > 0 ? doc.reader.slice(0, at) : "";
+  const model = doc.reader.slice(at + 1).split("/").pop() ?? "";
+  return model ? { provider, model, saved: true } : null;
+}
 
 function age(s: number): string {
   if (s < 3600) return `${Math.max(1, Math.round(s / 60))} min`;
@@ -27,7 +41,7 @@ export function ReceiptPage({ id, pollMs, stepMs }: { id: string; pollMs: number
       const r = await getReceipt(id);
       if (stop) return;
       if (r === "not_found") return setState({ kind: "not_found" });
-      if (r?.status === "done" && r.receipt) return setState({ kind: "done", receipt: r.receipt });
+      if (r?.status === "done" && r.receipt) return setState({ kind: "done", receipt: r.receipt, costNow: r.cost_usd_now ?? null });
       if (r?.status === "error") return setState({ kind: "error" });
       setState({ kind: "running" });
       timer = setTimeout(() => void tick(), pollMs);
@@ -53,10 +67,10 @@ export function ReceiptPage({ id, pollMs, stepMs }: { id: string; pollMs: number
       </section>
     );
   }
-  return <ReceiptView r={state.receipt} t={t} />;
+  return <ReceiptView r={state.receipt} costNow={state.costNow} t={t} />;
 }
 
-function ReceiptView({ r, t }: { r: R; t: Strings }) {
+function ReceiptView({ r, costNow, t }: { r: R; costNow: number | null; t: Strings }) {
   const { lang } = useT();
   const p = t.web.receipt_page;
   const decisive = r.clauses.filter((c) => c.decisive);
@@ -64,7 +78,8 @@ function ReceiptView({ r, t }: { r: R; t: Strings }) {
   const noRefetch = new URLSearchParams(location.search).has("nr");
   const when = new Date(r.created_at).toLocaleString(lang === "ms" ? "ms-MY" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }) + " UTC";
   const link = `${location.origin}/r/${r.id}`;
-  const providerName = r.reader.provider === "dolphin" ? p.provider_dolphin : p.provider_serv;
+  const read = readerLine(r);
+  const providerName = read?.provider === "dolphin" ? p.provider_dolphin : p.provider_serv;
   const stop = r.signals.robots_stop;
 
   return (
@@ -156,7 +171,7 @@ function ReceiptView({ r, t }: { r: R; t: Strings }) {
 
         <section className="prov">
           <p>
-            {r.reader.model ? fmt(p.read_by, { model: r.reader.model, provider: providerName }) : p.read_none}
+            {read ? fmt(read.saved ? p.read_saved : p.read_by, { model: read.model, provider: providerName }) : p.read_none}
             {" · "}
             {r.decider.model ? fmt(p.decided_by, { model: r.decider.model }) : p.decided_none}
             {" · "}
@@ -165,7 +180,7 @@ function ReceiptView({ r, t }: { r: R; t: Strings }) {
           <p className="hint">
             {fmt(p.tokens, {
               rin: r.reader.tokens_in, rout: r.reader.tokens_out, din: r.decider.tokens_in, dout: r.decider.tokens_out,
-              cost: r.totals.cost_usd_estimated === null ? "·" : r.totals.cost_usd_estimated.toFixed(5),
+              cost: costNow === null ? "·" : costNow.toFixed(4),
               secs: (r.totals.ms / 1000).toFixed(1),
             })}
           </p>

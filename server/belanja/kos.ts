@@ -4,6 +4,7 @@
 import type Database from "better-sqlite3";
 import type { BenchResults } from "../api/views.js";
 import type { IzinConfig } from "../config.js";
+import { estimateCost } from "../putus/serv.js";
 
 export interface ReadingCost {
   readings: number;
@@ -113,4 +114,20 @@ export function reprice(results: BenchResults, rows: RunRows, p: Repricing): Pri
     total_cost_usd_at_run: results.total_cost_usd,
     serv_cost_factor: { at_run: p.factor_at_run, now: p.factor_now },
   };
+}
+
+/**
+ * A receipt's cost as the receipt page shows it: its reading cost plus its decision tokens priced with the current
+ * estimate (listed price times the current SERV factor). The stored receipt keeps the figure it was signed with;
+ * this is worked out each time it is shown, so a receipt made under an older factor is not under-counted.
+ * Null when the receipt had no decision step with a known price and stored none.
+ */
+export function receiptCostNow(
+  cfg: IzinConfig,
+  r: { reader: { cost_usd: number }; decider: { model: string | null; tokens_in: number; tokens_out: number; cost_usd_estimated: number | null } | null },
+): number | null {
+  const d = r.decider;
+  if (!d || !d.model) return null;
+  const decider = estimateCost(cfg, d.model, d.tokens_in, d.tokens_out) ?? d.cost_usd_estimated;
+  return decider === null ? null : Math.round((r.reader.cost_usd + decider) * 1e6) / 1e6;
 }

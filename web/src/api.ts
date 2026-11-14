@@ -33,12 +33,12 @@ export const getHealth = () => getJson<{ ok: boolean; cache_only: boolean }>("/a
 export const getGallery = () => getJson<GalleryView>("/api/gallery");
 export const getBench = () => getJson<BenchView>("/api/bench");
 
-export async function getReceipt(id: string): Promise<{ status: JobStatus; receipt?: Receipt } | "not_found" | null> {
+export async function getReceipt(id: string): Promise<{ status: JobStatus; receipt?: Receipt; cost_usd_now?: number | null } | "not_found" | null> {
   try {
     const res = await fetch(`/api/receipt/${encodeURIComponent(id)}`, { headers: { accept: "application/json" } });
     if (res.status === 404) return "not_found";
     if (!res.ok) return null;
-    return (await res.json()) as { status: JobStatus; receipt?: Receipt };
+    return (await res.json()) as { status: JobStatus; receipt?: Receipt; cost_usd_now?: number | null };
   } catch {
     return null;
   }
