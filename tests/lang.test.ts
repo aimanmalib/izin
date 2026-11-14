@@ -1,3 +1,4 @@
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import en from "../lang/en.json" with { type: "json" };
 import ms from "../lang/ms.json" with { type: "json" };
@@ -64,5 +65,20 @@ describe("public wording", () => {
   const human = /\b(by people|by hand|handwritten|recorded by humans?)\b|direkod manusia|dengan tangan/i;
   it("does not describe the recorded decisions as made by people", () => {
     for (const [k, v] of [...EN, ...MS]) expect(human.test(v), `${k}: ${v}`).toBe(false);
+  });
+
+  it("keeps the README, measurements and decision records free of the same wording", () => {
+    const adrs = readdirSync("docs/decisions").filter((f) => f.endsWith(".md")).map((f) => `docs/decisions/${f}`);
+    for (const file of ["README.md", "docs/UKUR.md", ...adrs]) {
+      const hits = readFileSync(file, "utf8").split("\n").filter((line) => human.test(line));
+      expect(hits, file).toEqual([]);
+    }
+  });
+
+  it("splits the shipped decider's false GO by benchmark set in the README", () => {
+    const readme = readFileSync("README.md", "utf8");
+    const split = /False GO for the shipped decider: \d+ of \d+ designed cases, \d+ of \d+ spot checks, \d+ of \d+\s+recorded decisions/g;
+    expect(readme.match(split)?.length ?? 0).toBeGreaterThanOrEqual(2);
+    expect(readme).not.toMatch(/gave \d+ false GO/);
   });
 });

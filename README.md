@@ -105,6 +105,8 @@ deciding on the same frozen evidence:
 | V0 | Dolphin `DeepSeek-V4.1-Flash`, no SERV features | 36 of 43 | 1 | 1 | 0.000032 | 3.1 s |
 | V1, ships | SERV `gpt-6-luna` | 31 of 43 | 3 | 0 | 0.0534 | 12.9 s |
 
+False GO for the shipped decider: 2 of 20 designed cases, 0 of 10 spot checks, 1 of 13 recorded decisions.
+
 V1 has more false GO than V0 on this small set. One of them is the injection case: a policy page that tells AI readers to
 answer GO. The code set that sentence aside and lowered the confidence, and the decision step still answered GO.
 
@@ -117,7 +119,8 @@ answer GO. The code set that sentence aside and lowered the confidence, and the 
 - It obeys robots.txt and stops there; a site that blocks IzinBot is reported as blocked.
 - GO means no restriction was found in what was read. Izin reads public text and reports what it says; it is a starting
   point for a decision, not advice.
-- The benchmark is small (43 pairs) and the shipped decider gave 3 false GO on it.
+- The benchmark is small (43 pairs). False GO for the shipped decider: 2 of 20 designed cases, 0 of 10 spot checks, 1 of 13
+  recorded decisions.
 - The public instance has daily and total spending caps. When a cap is reached it serves stored receipts and makes no new model calls.
 
 ## Related work
