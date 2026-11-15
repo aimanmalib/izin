@@ -37,8 +37,12 @@ check is exactly that shape: two inputs, one answer, a receipt.
 - The workflow ran end to end on 15 Nov 2026 by firing its trigger as the owner: the platform
   handed the task to the agent through the tunnel and the task finished with Izin's JSON answer
   for `ebay.com` and `purchase`, unchanged.
-- A paid call from a buyer's wallet has not been made. The capability logic is unit tested with a
-  stand-in API (`tests/openserv-check.test.ts`).
+- The first paid call was made on 15 Nov 2026 06:56 UTC through the paywall, from a second wallet of
+  the operator as a test (the platform refuses a payment from the payee's own address). USD 0.05 in
+  USDC settled on Base in transaction
+  `0x20bc7ffa9241e44c67d51df4f945966946c7314f4807d1b74b27d3970d701847` and the task returned the
+  answer for `ebay.com` and `purchase`. No outside buyer has paid yet.
+- The capability logic is unit tested with a stand-in API (`tests/openserv-check.test.ts`).
 
 ## Consequences
 

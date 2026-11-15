@@ -59,9 +59,10 @@ from a saved receipt makes no model call, so each repeat lookup lowers the cost 
 [Izin: check one agent action](https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9). A buyer,
 or another agent, sends a page URL and an action and gets the verdict, the quoted clauses and the receipt link. The agent
 is a small separate process ([`openserv/agent.ts`](openserv/agent.ts)) that asks the same public API as any other client,
-so the limits and the spending cap apply to it too. The listing is priced in real USDC; a paid call from a buyer's wallet
-has not been made yet, and the workflow was run end to end by firing its trigger as the owner
-([ADR 0023](docs/decisions/0023-openserv-agent-on-the-x402-market.md)).
+so the limits and the spending cap apply to it too. The listing is priced in real USDC. The first paid call was made on 15 Nov 2026 from a second
+wallet of mine, as a test: USD 0.05 settled on Base and the eBay answer came back
+([transaction](https://basescan.org/tx/0x20bc7ffa9241e44c67d51df4f945966946c7314f4807d1b74b27d3970d701847),
+[ADR 0023](docs/decisions/0023-openserv-agent-on-the-x402-market.md)).
 
 **On this site.** The paid route answers HTTP 402 with x402 payment terms. An x402 client signs the payment and retries:
 
