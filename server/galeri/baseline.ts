@@ -9,13 +9,19 @@ export type RobotsOnly = "allowed" | "disallowed" | "no_robots";
 /**
  * How a pair was decided: "decider" when the decision step gave a valid answer, "code" when the
  * code decided without calling it (decider_skipped: no clause to weigh, or nothing readable), and
- * "none" when no valid decision came back (unavailable, or ceiling S8). The receipt still says ASK
- * for "none"; the gallery shows it as not decided.
+ * "none" when no valid decision is in force: the step was unavailable, or ceiling S8 (a citation
+ * that is not on the list) lowered its verdict. A S8 whose verdict stands (a NO-GO that a robots
+ * signal supports) is still the decision step's answer. The gallery shows "none" as not decided.
  */
 export type DecidedBy = "decider" | "code" | "none";
 
-export function decidedBy(d: { serv_verdict: string | null; ceilings: readonly string[]; flags: readonly string[] }): DecidedBy {
-  if (d.serv_verdict && !d.ceilings.includes("S8")) return "decider";
+export function decidedBy(d: {
+  verdict: string | null;
+  serv_verdict: string | null;
+  ceilings: readonly string[];
+  flags: readonly string[];
+}): DecidedBy {
+  if (d.serv_verdict && (!d.ceilings.includes("S8") || d.verdict === d.serv_verdict)) return "decider";
   return d.flags.includes("decider_skipped") ? "code" : "none";
 }
 
@@ -67,7 +73,7 @@ export interface BaselineCounts {
 }
 
 export function baselineCell(r: BaselineReceipt, restricting: readonly Stance[]): BaselineCell {
-  return { robots_only: robotsOnly(r), words_restrict: wordsRestrict(r, restricting), decided: decidedBy(r.decided_by) };
+  return { robots_only: robotsOnly(r), words_restrict: wordsRestrict(r, restricting), decided: decidedBy({ ...r.decided_by, verdict: r.verdict }) };
 }
 
 export function baselineCounts(cells: readonly BaselineCell[]): BaselineCounts {

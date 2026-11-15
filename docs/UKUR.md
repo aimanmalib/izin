@@ -11,7 +11,7 @@ Pairs where robots.txt allows the URL but a quoted clause from the site (a robot
 
 An ASK that comes only from a block, an unreadable page, an unavailable decision step, or a code ceiling that lowered the decision step's GO is not counted.
 
-Pairs the decision step answered with a valid decision: **122** of 144. robots.txt allows the URL in 108 of them, and in **72 of 108** a quoted clause restricts or forbids the action. The gallery shows a pair with no valid decision as not decided.
+Pairs the decision step answered with a valid decision: **123** of 144. robots.txt allows the URL in 108 of them, and in **72 of 108** a quoted clause restricts or forbids the action. The gallery shows a pair with no valid decision as not decided.
 
 Counted pairs:
 
@@ -199,12 +199,12 @@ Generated 2026-11-15 from the receipts the gallery shows today. Each pair shows 
 
 Pairs with a receipt: **144**. GO 2, ASK 93, NO-GO 49.
 
-The decision step gave a valid answer on **122** of them. On 18 the code decided without calling it (no clause to weigh, or nothing readable), and those stay at ASK. On 4 no valid decision came back (ceiling S8: no answer, or an answer citing a clause that is not in the text).
+The decision step gave a valid answer on **123** of them. On 18 the code decided without calling it (no clause to weigh, or nothing readable), and those stay at ASK. On 3 no valid decision came back (ceiling S8: no answer, or an answer citing a clause that is not in the text).
 
 | Receipt day (UTC) | Receipts | GO | ASK | NO-GO | Decision step answered | Decided by code | No valid decision | Decider model |
 |---|---|---|---|---|---|---|---|---|
 | 2026-11-10 | 41 | 0 | 22 | 19 | 41 | 0 | 0 | `gpt-6-luna-serv-multipath` (41) |
-| 2026-11-14 | 81 | 0 | 51 | 30 | 77 | 0 | 4 | `gpt-6-luna` (77) |
+| 2026-11-14 | 81 | 0 | 51 | 30 | 78 | 0 | 3 | `gpt-6-luna` (78) |
 | 2026-11-15 | 22 | 2 | 20 | 0 | 4 | 18 | 0 | `gpt-6-luna` (4) |
 <!-- izin:gallery-now:end -->
 

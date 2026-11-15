@@ -102,8 +102,8 @@ out partway through, so 41 of 144 receipts carry a valid decision; the others st
 
 **Gallery now, 15 Nov 2026:** runs on 14 and 15 Nov decided the pairs left without a decision and checked some pairs
 again after ceiling S11, so the gallery shows 144 receipts from three runs. GO 2, ASK 93, NO-GO 49. The decision step
-gave a valid answer on 122. On 18 the code decided without calling it (no clause to weigh, or nothing readable) and kept
-ASK; on 4 the answer cited a clause that is not in the text, so ceiling S8 applied.
+gave a valid answer on 123. On 18 the code decided without calling it (no clause to weigh, or nothing readable) and kept
+ASK; on 3 the answer cited a clause that is not in the text, so ceiling S8 applied.
 
 **Words against directives** (current gallery receipts): a robots.txt parser alone answers "allowed" for 126 of the 144
 pairs. In **72 of those 126**, a

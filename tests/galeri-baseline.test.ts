@@ -100,7 +100,10 @@ describe("headline count: robots allows, the site's words restrict", () => {
 });
 
 describe("how a pair was decided", () => {
-  const by = (o: Parameters<typeof receipt>[0]) => decidedBy(receipt(o).decided_by);
+  const by = (o: Parameters<typeof receipt>[0]) => {
+    const r = receipt(o);
+    return decidedBy({ ...r.decided_by, verdict: r.verdict });
+  };
   it("is decider when the decision step gave a valid answer", () => {
     expect(by({ verdict: "NO_GO" })).toBe("decider");
     expect(by({ verdict: "ASK", serv: "GO", ceilings: ["S5"] })).toBe("decider");
@@ -111,6 +114,13 @@ describe("how a pair was decided", () => {
   it("is none when no valid decision came back (unavailable, or ceiling S8)", () => {
     expect(by({ verdict: "ASK", serv: null, flags: ["decider_unavailable"] })).toBe("none");
     expect(by({ verdict: "ASK", serv: "GO", ceilings: ["S8"] })).toBe("none");
+    expect(by({ verdict: "ASK", serv: "NO_GO", ceilings: ["S1", "S8"], flags: ["bad_citation"] })).toBe("none");
+  });
+  it("is decider when a bad citation (S8) leaves the decision step's verdict standing", () => {
+    expect(by({ verdict: "NO_GO", serv: "NO_GO", ceilings: ["S1", "S8"], flags: ["bad_citation"] })).toBe("decider");
+    expect(by({ verdict: "ASK", serv: "ASK", ceilings: ["S8"], flags: ["bad_citation"] })).toBe("decider");
+    const cell = baselineCell(receipt({ verdict: "NO_GO", serv: "NO_GO", disallowed: true, ceilings: ["S1", "S8"], flags: ["bad_citation"] }), RESTRICT);
+    expect(cell.decided).toBe("decider");
   });
   it("counts only pairs the decision step answered in the decided line", () => {
     const cells = [
