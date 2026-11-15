@@ -25,7 +25,8 @@ users." A parser skips that comment. Izin quotes it.
      -d '{"url":"https://www.ebay.com/","action":"purchase"}'
    ```
 
-4. An agent can also pay for a saved answer per call, over x402 on a testnet. See [Who pays, and how](#who-pays-and-how).
+4. An agent can also pay per call: on the [OpenServ x402 Agent Market](https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9),
+   or over x402 on a testnet. See [Who pays, and how](#who-pays-and-how).
 
 The six actions are `read_page`, `crawl`, `train`, `account`, `purchase` and `post`. Endpoints, limits and error codes are
 on [/docs](https://izin.sasateguh.com/docs).
@@ -48,13 +49,21 @@ the team wants an answer it can keep: what the site's own words say about that a
 |---|---|---|
 | Free | 6 new checks an hour | live |
 | Agent, answer from a saved receipt | USD 0.01 a call | live on the Base Sepolia testnet, paid over x402 |
-| Agent, fresh reading and decision | USD 0.05 a call | planned |
+| Agent, fresh reading and decision | USD 0.05 a call | live on the OpenServ x402 Agent Market, paid in USDC on Base |
 | Watch | USD 5 a month per 100 sites, re-read nightly | planned |
 
 A decision is saved and reused for 7 days. A fresh decision costs about 1 US cent on SERV (see below); an answer
 from a saved receipt makes no model call, so each repeat lookup lowers the cost of an answer.
 
-The paid route answers HTTP 402 with x402 payment terms. An x402 client signs the payment and retries:
+**On OpenServ.** Izin is an OpenServ agent (agent 4961) with one capability, `check`, sold per call on the Agent Market:
+[Izin: check one agent action](https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9). A buyer,
+or another agent, sends a page URL and an action and gets the verdict, the quoted clauses and the receipt link. The agent
+is a small separate process ([`openserv/agent.ts`](openserv/agent.ts)) that asks the same public API as any other client,
+so the limits and the spending cap apply to it too. The listing is priced in real USDC; a paid call from a buyer's wallet
+has not been made yet, and the workflow was run end to end by firing its trigger as the owner
+([ADR 0023](docs/decisions/0023-openserv-agent-on-the-x402-market.md)).
+
+**On this site.** The paid route answers HTTP 402 with x402 payment terms. An x402 client signs the payment and retries:
 
 ```sh
 curl -si 'https://izin.sasateguh.com/api/paid/check?url=https://www.ebay.com/&action=purchase'
@@ -177,7 +186,8 @@ answers, with no site fetched and no model called:
 - The benchmark is small (43 pairs). False GO for the shipped decider in the run: 2 of 20 designed cases, 0 of 10 spot
   checks, 1 of 13 recorded decisions; 0 of 43 after the re-measure with the current ceilings.
 - The public instance has daily and total spending caps. When a cap is reached it serves stored receipts and makes no new model calls.
-- The paid route runs on a testnet and sells saved answers only. Nothing on the site takes real money.
+- The paid route on this site runs on a testnet and sells saved answers only. The listing on the OpenServ Agent Market
+  is priced in real USDC; it answers through the same API, so a rate limit or the spending cap can refuse a check there too.
 
 ## Related work
 

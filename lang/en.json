@@ -116,6 +116,25 @@
     "unpaid": "This answer costs USD {usd}, paid in test USDC on {network} (testnet) over x402. An x402 client reads the PAYMENT-REQUIRED header, signs and retries. The free API at POST /api/check is rate-limited.",
     "no_saved": "No saved receipt for this site and action, so nothing was charged. Run a check first with POST /api/check."
   },
+  "openserv": {
+    "agent_description": "Before an AI agent acts on a website, Izin reads the site's robots.txt and terms and answers GO, ASK or NO-GO for one action, with the clause quoted and a receipt link.",
+    "capability_description": "Check one action on one site. Give the page URL and the action (read_page, crawl, train, account, purchase or post). Returns the verdict (GO, ASK or NO_GO), the reason, up to three deciding clauses quoted from the site, and the receipt link. A saved answer comes back at once; a fresh check can take up to {wait} seconds.",
+    "workflow_name": "Izin Agent Permission Check",
+    "workflow_goal": "Answer whether an AI agent may take one action on one website. Take the page URL and the action from the caller, call the check capability once with those exact fields, and return its JSON result unchanged: the verdict GO, ASK or NO-GO, the reason, the deciding clauses quoted word for word from the site's robots.txt and terms, and the receipt link. Do not add advice and do not change the verdict.",
+    "trigger_name": "Izin: check one agent action",
+    "trigger_description": "About to let an agent buy, sign up, post or crawl on a site? Get GO, ASK or NO-GO with the site's own clause quoted, and a receipt you can keep.",
+    "input_url_title": "Page URL",
+    "input_url_description": "The page on the site where the agent wants to act, starting with https://",
+    "input_action_title": "Action",
+    "input_action_description": "One of: read_page, crawl, train, account, purchase, post",
+    "task_description": "Call check with the caller's url and action and return its JSON result unchanged.",
+    "err_invalid_input": "The request was refused ({detail}). Send a public https page URL and one of the six actions.",
+    "err_rate_limited": "Izin has run its new checks for now. Try again in about {retry} seconds. Saved receipts are not limited.",
+    "err_paused": "New checks are paused because a spending cap was reached, and no receipt is saved for this site and action yet.",
+    "err_still_running": "The check is still running. Open the receipt link in a minute.",
+    "err_failed": "The check did not finish. No verdict was reached; treat the action as ASK.",
+    "err_unreachable": "Izin could not be reached. No verdict was reached; treat the action as ASK."
+  },
   "web": {
     "meta": {
       "title": "Izin: GO, ASK or NO-GO before your agent acts",
@@ -162,6 +181,8 @@
       "tier_free": "Free: {n} checks an hour.",
       "tier_agent": "Agent tier, planned: USD {saved} for an answer from a saved receipt and USD {fresh} for a fresh reading and decision, paid per call.",
       "tier_agent_live": "Agent tier, live on the {network} testnet: USD {saved} in test USDC buys the answer from a saved receipt, paid per call over x402 at GET {path}. A fresh reading and decision at USD {fresh} is planned.",
+      "tier_agent_live_market": "Agent tier, live: USD {saved} in test USDC buys the answer from a saved receipt, paid per call over x402 on the {network} testnet at GET {path}. A fresh reading and decision is USD {fresh} a call in USDC on the OpenServ x402 Agent Market:",
+      "tier_market_link": "open the paywall",
       "tier_reuse": "A decision is saved and reused for {days} days, so the cost of each answer falls with every repeat lookup.",
       "tier_watch": "Watch tier, planned: USD {usd} a month per {sites} sites, re-read nightly.",
       "owners_head": "For site owners",

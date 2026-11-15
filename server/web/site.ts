@@ -80,6 +80,8 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     tiers: { free_checks_per_hour: cfg.limits.rate_new_checks_per_ip_hour, reuse_days: cfg.limits.cached_receipt_days, ...w.tiers },
     // The paid route (x402 on a test network): live only when the server registered it.
     paid: { live: paidLive, path: x.path, network: x.network, network_name: x.network_name, price_usd: w.tiers.agent_usd_per_saved_answer },
+    // The listing on the OpenServ x402 Agent Market (openserv/agent.ts); null until it exists.
+    market: { paywall_url: cfg.openserv.paywall_url },
     detail_max_chars: cfg.limits.detail_max_chars,
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
     examples,

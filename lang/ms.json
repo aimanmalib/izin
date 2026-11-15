@@ -116,6 +116,25 @@
     "unpaid": "Jawapan ini berharga USD {usd}, dibayar dengan USDC ujian di {network} (testnet) melalui x402. Klien x402 membaca pengepala PAYMENT-REQUIRED, menandatangan dan mencuba semula. API percuma di POST /api/check dihadkan kadarnya.",
     "no_saved": "Tiada resit tersimpan untuk laman dan tindakan ini, jadi tiada caj dikenakan. Jalankan semakan dahulu dengan POST /api/check."
   },
+  "openserv": {
+    "agent_description": "Sebelum ejen AI bertindak di sesebuah laman, Izin membaca robots.txt dan terma laman itu lalu menjawab GO, ASK atau NO-GO untuk satu tindakan, dengan klausa dipetik dan pautan resit.",
+    "capability_description": "Semak satu tindakan di satu laman. Beri URL halaman dan tindakan (read_page, crawl, train, account, purchase atau post). Memulangkan keputusan (GO, ASK atau NO_GO), sebab, hingga tiga klausa penentu yang dipetik dari laman itu, dan pautan resit. Jawapan tersimpan dipulangkan serta-merta; semakan baharu boleh mengambil masa hingga {wait} saat.",
+    "workflow_name": "Semakan Izin Ejen",
+    "workflow_goal": "Jawab sama ada ejen AI boleh mengambil satu tindakan di satu laman web. Ambil URL halaman dan tindakan daripada pemanggil, panggil keupayaan check sekali dengan medan yang sama, dan pulangkan hasil JSON-nya tanpa diubah: keputusan GO, ASK atau NO-GO, sebab, klausa penentu yang dipetik perkataan demi perkataan dari robots.txt dan terma laman itu, dan pautan resit. Jangan tambah nasihat dan jangan ubah keputusan.",
+    "trigger_name": "Izin: semak satu tindakan ejen",
+    "trigger_description": "Mahu membenarkan ejen membeli, mendaftar, menyiar atau mengikis di sesebuah laman? Dapatkan GO, ASK atau NO-GO dengan klausa laman itu sendiri dipetik, dan resit untuk disimpan.",
+    "input_url_title": "URL halaman",
+    "input_url_description": "Halaman di laman tempat ejen mahu bertindak, bermula dengan https://",
+    "input_action_title": "Tindakan",
+    "input_action_description": "Salah satu: read_page, crawl, train, account, purchase, post",
+    "task_description": "Panggil check dengan url dan action pemanggil dan pulangkan hasil JSON-nya tanpa diubah.",
+    "err_invalid_input": "Permintaan ditolak ({detail}). Hantar URL halaman https awam dan salah satu daripada enam tindakan.",
+    "err_rate_limited": "Izin sudah menjalankan semakan baharunya buat masa ini. Cuba lagi dalam kira-kira {retry} saat. Resit tersimpan tidak dihadkan.",
+    "err_paused": "Semakan baharu dihentikan sementara kerana had belanja dicapai, dan belum ada resit tersimpan untuk laman dan tindakan ini.",
+    "err_still_running": "Semakan masih berjalan. Buka pautan resit dalam seminit.",
+    "err_failed": "Semakan tidak selesai. Tiada keputusan dicapai; anggap tindakan itu ASK.",
+    "err_unreachable": "Izin tidak dapat dihubungi. Tiada keputusan dicapai; anggap tindakan itu ASK."
+  },
   "web": {
     "meta": {
       "title": "Izin: GO, ASK atau NO-GO sebelum ejen anda bertindak",
@@ -162,6 +181,8 @@
       "tier_free": "Percuma: {n} semakan sejam.",
       "tier_agent": "Tier ejen, dirancang: USD {saved} untuk jawapan dari resit tersimpan dan USD {fresh} untuk bacaan dan keputusan baharu, dibayar setiap panggilan.",
       "tier_agent_live": "Tier ejen, hidup di testnet {network}: USD {saved} dalam USDC ujian membeli jawapan dari resit tersimpan, dibayar setiap panggilan melalui x402 di GET {path}. Bacaan dan keputusan baharu pada USD {fresh} masih dirancang.",
+      "tier_agent_live_market": "Tier ejen, hidup: USD {saved} dalam USDC ujian membeli jawapan dari resit tersimpan, dibayar setiap panggilan melalui x402 di testnet {network} di GET {path}. Bacaan dan keputusan baharu berharga USD {fresh} satu panggilan dalam USDC di Pasaran Ejen x402 OpenServ:",
+      "tier_market_link": "buka paywall",
       "tier_reuse": "Satu keputusan disimpan dan dipakai semula selama {days} hari, jadi kos setiap jawapan turun dengan setiap carian ulangan.",
       "tier_watch": "Tier pantau, dirancang: USD {usd} sebulan untuk {sites} laman, dibaca semula setiap malam.",
       "owners_head": "Untuk pemilik laman",

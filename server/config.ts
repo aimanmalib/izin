@@ -229,6 +229,18 @@ export const configSchema = z
         max_timeout_s: z.number().int().min(10).max(600),
       })
       .strict(),
+    // Izin as an OpenServ agent on the x402 Agent Market (openserv/agent.ts, ADR 0023). That is a separate
+    // process; the server validates the values and shows the paywall link once the listing exists.
+    openserv: z
+      .object({
+        agent_name: z.string().regex(/^[a-z][a-z0-9-]*$/),
+        workflow_timeout_s: z.number().int().min(60).max(900),
+        poll_ms: z.number().int().min(250).max(10_000),
+        wait_s: z.number().int().min(10).max(600),
+        pay_to_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+        paywall_url: z.url().nullable(),
+      })
+      .strict(),
     // Robots-only baseline: which quoted stances count as "the site's words restrict" (ADR 0010).
     baseline: z.object({ restricting_stances: z.array(z.enum(STANCES)).min(1) }).strict(),
     // Reading cost line: Dolphin tokens from the ledger priced again at a listed SERV model (ADR 0011).

@@ -11,6 +11,7 @@ deploy/*_TAG
 deploy/.uptime-state
 # Rebuilt inside the image or not needed at run time.
 node_modules
+openserv/node_modules
 dist
 web/dist
 test-results

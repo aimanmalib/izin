@@ -128,9 +128,16 @@ export function Home({ site }: { site: SiteView }) {
             <ul className="tiers">
               <li>{fmt(h.tier_free, { n: site.tiers.free_checks_per_hour })}</li>
               <li>
-                {site.paid.live
-                  ? fmt(h.tier_agent_live, { network: site.paid.network_name, saved: site.paid.price_usd, path: site.paid.path, fresh: site.tiers.agent_usd_per_fresh_check })
-                  : fmt(h.tier_agent, { saved: site.tiers.agent_usd_per_saved_answer, fresh: site.tiers.agent_usd_per_fresh_check })}{" "}
+                {site.paid.live && site.market.paywall_url ? (
+                  <>
+                    {fmt(h.tier_agent_live_market, { network: site.paid.network_name, saved: site.paid.price_usd, path: site.paid.path, fresh: site.tiers.agent_usd_per_fresh_check })}{" "}
+                    <a href={site.market.paywall_url} rel="noopener">{h.tier_market_link}</a>.
+                  </>
+                ) : site.paid.live ? (
+                  fmt(h.tier_agent_live, { network: site.paid.network_name, saved: site.paid.price_usd, path: site.paid.path, fresh: site.tiers.agent_usd_per_fresh_check })
+                ) : (
+                  fmt(h.tier_agent, { saved: site.tiers.agent_usd_per_saved_answer, fresh: site.tiers.agent_usd_per_fresh_check })
+                )}{" "}
                 {fmt(h.tier_reuse, { days: site.tiers.reuse_days })}
               </li>
               <li>{fmt(h.tier_watch, { usd: site.tiers.watch_usd_per_month, sites: site.tiers.watch_sites })}</li>

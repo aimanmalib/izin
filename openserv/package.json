@@ -1,0 +1,22 @@
+{
+  "name": "izin-openserv",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Izin as an OpenServ agent: one capability, sold per call on the x402 Agent Market.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "scripts": {
+    "start": "node --import tsx agent.ts",
+    "plan": "node --import tsx agent.ts --kering"
+  },
+  "dependencies": {
+    "@openserv-labs/client": "2.5.3",
+    "@openserv-labs/sdk": "2.4.1",
+    "openai": "5.23.2",
+    "tsx": "4.23.15",
+    "zod": "3.25.76"
+  }
+}
