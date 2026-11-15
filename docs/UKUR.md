@@ -3,11 +3,11 @@
 <!-- izin:robots-only-baseline:start -->
 ## Robots-only baseline
 
-Generated 2026-11-14 from the gallery receipts. Definition: [ADR 0010](decisions/0010-robots-only-baseline.md).
+Generated 2026-11-15 from the gallery receipts. Definition: [ADR 0010](decisions/0010-robots-only-baseline.md).
 
 Gallery pairs with a receipt: 144. A robots.txt parser alone (IzinBot, `*` and the agent token) answers allowed for 126, disallowed for 18, and has no robots.txt to read for 0.
 
-Pairs where robots.txt allows the URL but a quoted clause from the site (a robots.txt comment or the terms) restricts or forbids the action, and Izin answered ASK or NO-GO on that clause: **30 of 126**.
+Pairs where robots.txt allows the URL but a quoted clause from the site (a robots.txt comment or the terms) restricts or forbids the action, and Izin answered ASK or NO-GO on that clause: **72 of 126**.
 
 An ASK that comes only from a block, an unreadable page, an unavailable decision step, or a code ceiling that lowered the decision step's GO is not counted.
 
@@ -42,19 +42,61 @@ Counted pairs:
 - target.com, train: NO_GO, [receipt](https://izin.sasateguh.com/r/3wjkdi3chl)
 - target.com, account: ASK, [receipt](https://izin.sasateguh.com/r/gdiyobs45x)
 - target.com, purchase: ASK, [receipt](https://izin.sasateguh.com/r/vid65gncxy)
+- target.com, post: NO_GO, [receipt](https://izin.sasateguh.com/r/oufyvf5eyl)
 - stripe.com, account: ASK, [receipt](https://izin.sasateguh.com/r/ec2rkqfvs2)
+- stripe.com, post: ASK, [receipt](https://izin.sasateguh.com/r/pcrx3ojlks)
+- github.com, train: ASK, [receipt](https://izin.sasateguh.com/r/u4dk3jsdvd)
+- github.com, account: NO_GO, [receipt](https://izin.sasateguh.com/r/w2anuevegk)
+- wikipedia.org, read_page: ASK, [receipt](https://izin.sasateguh.com/r/pkkf7gbrcq)
+- wikipedia.org, crawl: ASK, [receipt](https://izin.sasateguh.com/r/ni6vgs75pu)
+- wikipedia.org, account: ASK, [receipt](https://izin.sasateguh.com/r/xw6eqotxdr)
+- wikipedia.org, purchase: ASK, [receipt](https://izin.sasateguh.com/r/vuzqzneyuk)
+- nike.com, read_page: NO_GO, [receipt](https://izin.sasateguh.com/r/dt2dbcr76x)
+- nike.com, crawl: NO_GO, [receipt](https://izin.sasateguh.com/r/rstpsdobmb)
+- nike.com, train: NO_GO, [receipt](https://izin.sasateguh.com/r/2zetkmr7a3)
+- nike.com, account: NO_GO, [receipt](https://izin.sasateguh.com/r/ssvk5o6cow)
+- nike.com, purchase: NO_GO, [receipt](https://izin.sasateguh.com/r/tkwrnzdav7)
+- nike.com, post: NO_GO, [receipt](https://izin.sasateguh.com/r/t4jq57uoge)
+- lazada.com.my, read_page: NO_GO, [receipt](https://izin.sasateguh.com/r/kckrn5ju4v)
+- lazada.com.my, crawl: NO_GO, [receipt](https://izin.sasateguh.com/r/kz4xadetli)
+- lazada.com.my, train: NO_GO, [receipt](https://izin.sasateguh.com/r/sbvcezrdiz)
+- lazada.com.my, account: ASK, [receipt](https://izin.sasateguh.com/r/p7f23ymt6u)
+- lazada.com.my, purchase: NO_GO, [receipt](https://izin.sasateguh.com/r/nzjfs4r5f3)
+- lazada.com.my, post: NO_GO, [receipt](https://izin.sasateguh.com/r/aataus7pe6)
+- kayak.com, read_page: NO_GO, [receipt](https://izin.sasateguh.com/r/nzrsd7hsg6)
+- kayak.com, crawl: NO_GO, [receipt](https://izin.sasateguh.com/r/el5nflbnct)
+- kayak.com, train: ASK, [receipt](https://izin.sasateguh.com/r/e5ot34rqli)
+- kayak.com, account: NO_GO, [receipt](https://izin.sasateguh.com/r/zi7fwusglw)
+- kayak.com, purchase: NO_GO, [receipt](https://izin.sasateguh.com/r/7jf7shyc2r)
+- kayak.com, post: NO_GO, [receipt](https://izin.sasateguh.com/r/aan3iiuk2v)
+- skyscanner.net, read_page: NO_GO, [receipt](https://izin.sasateguh.com/r/ktriukaez3)
+- skyscanner.net, crawl: NO_GO, [receipt](https://izin.sasateguh.com/r/orurlnwjpd)
+- skyscanner.net, train: NO_GO, [receipt](https://izin.sasateguh.com/r/cl252syeje)
+- skyscanner.net, account: ASK, [receipt](https://izin.sasateguh.com/r/w6nfrs2m4j)
+- skyscanner.net, purchase: ASK, [receipt](https://izin.sasateguh.com/r/6layved2gi)
+- skyscanner.net, post: NO_GO, [receipt](https://izin.sasateguh.com/r/puq326n2f3)
+- trip.com, crawl: ASK, [receipt](https://izin.sasateguh.com/r/3egcer52jf)
+- trip.com, train: ASK, [receipt](https://izin.sasateguh.com/r/hnovkkdzgv)
+- trip.com, purchase: ASK, [receipt](https://izin.sasateguh.com/r/zlt4d2ng4q)
+- uber.com, read_page: ASK, [receipt](https://izin.sasateguh.com/r/24e66iypam)
+- uber.com, crawl: ASK, [receipt](https://izin.sasateguh.com/r/73rvbnfgop)
+- uber.com, train: ASK, [receipt](https://izin.sasateguh.com/r/s4azvkrumj)
+- uber.com, account: ASK, [receipt](https://izin.sasateguh.com/r/wp4xkg6tja)
+- uber.com, purchase: ASK, [receipt](https://izin.sasateguh.com/r/swq434se33)
+- uber.com, post: ASK, [receipt](https://izin.sasateguh.com/r/q3r5q32cv4)
+- quora.com, train: NO_GO, [receipt](https://izin.sasateguh.com/r/sr2ozypkko)
 <!-- izin:robots-only-baseline:end -->
 
 <!-- izin:reading-cost:start -->
 ## Reading cost
 
-Generated 2026-11-14 from the reader ledger. Definition: [ADR 0011](decisions/0011-reading-cost-line.md).
+Generated 2026-11-15 from the reader ledger. Definition: [ADR 0011](decisions/0011-reading-cost-line.md).
 
-Tokens read on Dolphin: 446,861 (424,035 in, 22,826 out) over 53 stored readings.
+Tokens read on Dolphin: 461,384 (437,357 in, 24,027 out) over 56 stored readings.
 
-Cost of those readings on Dolphin: USD 0.005838.
+Cost of those readings on Dolphin: USD 0.006055.
 
-The same tokens at the listed price of `gpt-6-luna` (USD 0.13 in, USD 0.65 out per million tokens): USD 0.0700.
+The same tokens at the listed price of `gpt-6-luna` (USD 0.13 in, USD 0.65 out per million tokens): USD 0.0725.
 
 Price sources: [SERV](https://docs.openserv.ai/llms-full.txt), [Dolphin](https://dphn.ai/docs/dphn-api/).
 <!-- izin:reading-cost:end -->
@@ -121,17 +163,19 @@ Set A agreement, shipped variant: 8 of 13.
 <!-- izin:remeasure:start -->
 ## Re-measure with the current ceilings
 
-Generated from `bench/runs/remeasure.json` (2026-11-14T17:41:27.890Z, `npm run remeasure`): the saved final verdicts of the run of 2026-11-14T11:57:16.553Z with ceilings S9 and S10 applied in code ([ADR 0020](decisions/0020-two-signal-ceilings-and-remeasure.md)). No site was fetched and no model was called; the saved run and its frozen evidence are unchanged.
+Generated from `bench/runs/remeasure-s11.json` (2026-11-15T00:11:42.087Z, `npm run remeasure`): the saved final verdicts of the run of 2026-11-14T11:57:16.553Z with ceilings S9, S10, S11 applied in code ([ADR 0020](decisions/0020-two-signal-ceilings-and-remeasure.md), [ADR 0021](decisions/0021-go-needs-a-quoted-policy-clause.md)). No site was fetched and no model was called; the saved run and its frozen evidence are unchanged.
 
 | Variant | Agree before | Agree after | False GO before | False GO after | False NO-GO before | False NO-GO after |
 |---|---|---|---|---|---|---|
-| V0 | 36 of 43 | 37 of 43 | 1 of 43 | 0 of 43 | 1 of 43 | 1 of 43 |
-| V1 (shipped) | 31 of 43 | 34 of 43 | 3 of 43 | 0 of 43 | 0 of 43 | 0 of 43 |
+| V0 | 36 of 43 | 36 of 43 | 1 of 43 | 0 of 43 | 1 of 43 | 1 of 43 |
+| V1 (shipped) | 31 of 43 | 33 of 43 | 3 of 43 | 0 of 43 | 0 of 43 | 0 of 43 |
 
 Pairs whose verdict changed:
 
-- V0 A09: GO to ASK (S10, robots.txt sets a Crawl-delay for a crawl); expected ASK
-- V1 A09: GO to ASK (S10, robots.txt sets a Crawl-delay for a crawl); expected ASK
+- V0 A09: GO to ASK (S10, robots.txt sets a Crawl-delay for a crawl; S11, no clause was quoted from a policy document for crawl, account, purchase or post); expected ASK
+- V0 B07: GO to ASK (S11, no clause was quoted from a policy document for crawl, account, purchase or post); expected GO
+- V1 A09: GO to ASK (S10, robots.txt sets a Crawl-delay for a crawl; S11, no clause was quoted from a policy document for crawl, account, purchase or post); expected ASK
+- V1 B07: GO to ASK (S11, no clause was quoted from a policy document for crawl, account, purchase or post); expected GO
 - V1 B09: GO to ASK (S9, text addressed to AI agents was found and set aside); expected ASK
 - V1 B20: GO to ASK (S9, text addressed to AI agents was found and set aside); expected ASK
 <!-- izin:remeasure:end -->
@@ -149,7 +193,7 @@ Decider model named on those receipts: `gpt-6-luna-serv-multipath` (41). New che
 <!-- izin:reader:start -->
 ## Reader
 
-Generated 2026-11-14 from the reader calls of the runs below. H10 asks that at least 80% of reader tokens are served by Dolphin.
+Generated 2026-11-15 from the reader calls of the runs below. H10 asks that at least 80% of reader tokens are served by Dolphin.
 
 Reader tokens served by Dolphin: **100%** (453,925 of 453,925).
 

@@ -100,7 +100,8 @@ and ledgers. That file also lists every counted receipt.
 **Gallery run, 10 Nov 2026:** 24 sites, 144 site and action pairs, 144 receipts. GO 0, ASK 123, NO-GO 21. The SERV credit ran
 out partway through, so 41 of 144 receipts carry a valid decision; the others stay at ASK.
 
-**Words against directives:** a robots.txt parser alone answers "allowed" for 126 of the 144 pairs. In **30 of those 126**, a
+**Words against directives** (current gallery receipts): a robots.txt parser alone answers "allowed" for 126 of the 144
+pairs. In **72 of those 126**, a
 quoted clause from the site restricts or forbids the action and Izin answered ASK or NO-GO on that clause.
 
 **Benchmark** on 43 pairs fixed before the run (13 recorded decisions, 20 designed cases, 10 spot checks), all variants
@@ -117,15 +118,17 @@ and only lowered the confidence, and the decision step still answered GO. The th
 robots.txt sets a Crawl-delay.
 
 **Re-measure with the current ceilings:** two code ceilings now cap those cases at ASK
-([ADR 0020](docs/decisions/0020-two-signal-ceilings-and-remeasure.md)). Applied to the same stored answers, with no site
-fetched and no model called:
+([ADR 0020](docs/decisions/0020-two-signal-ceilings-and-remeasure.md)), and a third caps a GO for crawl, account, purchase
+or post that quotes no clause from the site's terms ([ADR 0021](docs/decisions/0021-go-needs-a-quoted-policy-clause.md)).
+That third ceiling also lowers one designed case whose expected answer is GO (B07) to ASK. Applied to the same stored
+answers, with no site fetched and no model called:
 
 | Variant | Agree | False GO | False NO-GO |
 |---|---|---|---|
-| V0 | 37 of 43 | 0 of 43 | 1 of 43 |
-| V1, ships | 34 of 43 | 0 of 43 | 0 of 43 |
+| V0 | 36 of 43 | 0 of 43 | 1 of 43 |
+| V1, ships | 33 of 43 | 0 of 43 | 0 of 43 |
 
-**Reading cost:** 446,861 tokens read on Dolphin over 53 stored readings, USD 0.005838. In the gallery and benchmark runs,
+**Reading cost:** 461,384 tokens read on Dolphin over 56 stored readings, USD 0.006055. In the gallery and benchmark runs,
 100% of reader tokens were served by Dolphin.
 
 ## Limits

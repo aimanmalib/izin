@@ -9,9 +9,9 @@ The decision step may answer GO when nothing it was shown restricts the action. 
 public page that default is reasonable. For crawling, creating an account, buying or posting, it
 turned out too weak in the gallery:
 
-- On some sites the page Izin found as "terms" was a menu, a footer or a legal index page. It was
+- On some sites the page Izin found as "terms" was a menu, a footer or an index of other policy pages. It was
   read in full and held no clause about the action, and the decision step answered GO.
-- On one site the gallery pointed Izin at a legal index page instead of the terms of service,
+- On one site the gallery pointed Izin at an index of policy pages instead of the terms of service,
   which do prohibit automated access.
 - On one site the terms page only renders in a browser. It was found but its text could not be
   read, and because a robots.txt comment had been read the receipt did not report the terms as
@@ -50,5 +50,8 @@ by one for the shipped variant. The numbers are in `docs/UKUR.md`.
 
 - Fewer GO answers. An ASK names what was read, which tells the operator where to look.
 - A site whose terms permit the action in plain words still gets GO, with that clause quoted.
+- The eventbrite.com terms of service answered IzinBot with HTTP 403 when the gallery cells were
+  decided again, so those cells are ASK with the block named on the receipt; Izin does not work
+  around a block.
 - Undo: revert the S11 lines in `server/putus/siling.ts` and the skip rule in `server/pipeline.ts`;
   saved receipts are not changed either way.
