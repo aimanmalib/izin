@@ -3,6 +3,8 @@
 Before an AI agent acts on a website, Izin answers GO, ASK or NO-GO for one action and quotes the clause from the site's
 robots.txt and terms.
 
+[Live demo](https://izin.sasateguh.com) · [OpenServ x402 Agent Market listing](https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9) · [API and MCP](https://izin.sasateguh.com/docs) · [What we measured](docs/UKUR.md)
+
 **See a real answer:** [buy or book on ebay.com, NO-GO](https://izin.sasateguh.com/r/yddnqgirk6). eBay's robots.txt
 directives leave the home page open to crawlers, and a comment in the same file says "Checkouts are strictly for human
 users." A parser skips that comment. Izin quotes it.
