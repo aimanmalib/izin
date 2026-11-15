@@ -9,11 +9,11 @@ export class IpRateLimit {
   ) {}
 
   /** Seconds until this address may start a new check, or 0 when it may now. */
-  retryAfter(ip: string): number {
+  retryAfter(ip: string, perHour: number = this.perHour): number {
     const t = this.now();
     const recent = (this.seen.get(ip) ?? []).filter((x) => t - x < 3_600_000);
     this.seen.set(ip, recent);
-    if (recent.length < this.perHour) return 0;
+    if (recent.length < perHour) return 0;
     return Math.max(1, Math.ceil((recent[0]! + 3_600_000 - t) / 1000));
   }
 

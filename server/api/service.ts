@@ -67,7 +67,8 @@ export class CheckService {
     return forbiddingSentence(sentence, "read_page", scoped) !== null;
   }
 
-  async submit(body: unknown, source: CheckSource, ip: string): Promise<SubmitResult> {
+  /** `perHour` replaces the per-address allowance for a caller that has its own (the market agent). */
+  async submit(body: unknown, source: CheckSource, ip: string, perHour?: number): Promise<SubmitResult> {
     const { cfg, jobs, guard } = this.d;
     let req: CheckRequest;
     try {
@@ -88,7 +89,7 @@ export class CheckService {
       if (e instanceof InvalidInput) return { kind: "invalid", code: e.code };
       throw e;
     }
-    const ipWait = this.rate.retryAfter(ip);
+    const ipWait = this.rate.retryAfter(ip, perHour);
     if (ipWait) return { kind: "rate_limited", retry_after_s: ipWait, scope: "ip" };
     if (guard.state().day.new_checks >= cfg.limits.rate_new_checks_per_day) {
       return { kind: "rate_limited", retry_after_s: secondsToUtcMidnight(this.now()), scope: "day" };

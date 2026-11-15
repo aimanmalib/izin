@@ -69,6 +69,8 @@
     "reason_ai_train": "The site's robots.txt signals ai-train=no.",
     "ai_text_found": "a person should read the quoted pages first: they contain text addressed to AI agents, which Izin set aside",
     "crawl_delay_wait": "wait {seconds} seconds between requests (robots.txt Crawl-delay)",
+    "ask_terms_silent": "ask the site whether an automated agent may do this: the terms Izin read do not say",
+    "ask_terms_unread": "read the site's terms yourself or paste them into Izin: it could not read them in full",
     "reason_no_policy_clause": "Izin read {read} and found no clause from the site's terms it could quote for this action. Silence is not permission, so the answer is ASK.",
     "reason_no_terms_read": "Izin could not read the site's terms. It read only {read}, so no clause from the site's terms could be quoted. Silence is not permission, so the answer is ASK.",
     "read_chars": "characters",

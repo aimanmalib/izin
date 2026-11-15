@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 // HTTP API. Every /api/ answer carries Cache-Control: no-store (set in app.ts).
 import type { FastifyInstance, FastifyReply } from "fastify";
 import type { ClientIp } from "./clientip.js";
@@ -15,11 +16,21 @@ export interface HealthInfo {
 export interface ApiDeps {
   service: CheckService;
   clientIp: ClientIp;
+  /** The market agent's key and its hourly allowance; absent when no key is set in the environment. */
+  market?: { key: string; perHour: number };
   health: HealthInfo;
   gallery: () => unknown;
   bench: () => unknown;
   /** The receipt's cost worked out now (see receiptCostNow); the stored receipt is sent unchanged beside it. */
   costNow: (r: Receipt) => number | null;
+}
+
+export const MARKET_KEY_HEADER = "x-izin-market-key";
+
+function sameKey(a: string, b: string): boolean {
+  const x = createHash("sha256").update(a).digest();
+  const y = createHash("sha256").update(b).digest();
+  return timingSafeEqual(x, y);
 }
 
 export function sendSubmit(reply: FastifyReply, r: SubmitResult) {
@@ -37,6 +48,11 @@ export function sendSubmit(reply: FastifyReply, r: SubmitResult) {
 
 export function registerApi(app: FastifyInstance, d: ApiDeps): void {
   app.post("/api/check", async (req, reply) => {
+    // The agent behind the market listing calls from one address for every buyer, so it has its own allowance.
+    const sent = req.headers[MARKET_KEY_HEADER];
+    if (d.market && typeof sent === "string" && sameKey(sent, d.market.key)) {
+      return sendSubmit(reply, await d.service.submit(req.body, "api", "market", d.market.perHour));
+    }
     const r = await d.service.submit(req.body, "api", d.clientIp(req.socket.remoteAddress, req.headers));
     return sendSubmit(reply, r);
   });

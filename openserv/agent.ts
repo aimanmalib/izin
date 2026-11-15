@@ -21,7 +21,7 @@ const read = (rel: string) => readFileSync(fileURLToPath(new URL(rel, import.met
 const cfg = JSON.parse(read("../config/izin.json")) as {
   public_origin: string;
   web: { tiers: { agent_usd_per_fresh_check: number } };
-  openserv: { agent_name: string; workflow_timeout_s: number; poll_ms: number; wait_s: number; pay_to_env: string };
+  openserv: { agent_name: string; workflow_timeout_s: number; poll_ms: number; wait_s: number; pay_to_env: string; market_key_env: string };
 };
 const t = (JSON.parse(read("../lang/en.json")) as { openserv: Record<string, string> }).openserv;
 const systemPrompt = read("../prompts/openserv-agent.v1.md").trim();
@@ -30,7 +30,7 @@ const o = cfg.openserv;
 const price = String(cfg.web.tiers.agent_usd_per_fresh_check);
 const payTo = process.env[o.pay_to_env]?.trim() ?? "";
 const payout = /^0x[0-9a-fA-F]{40}$/.test(payTo) ? { walletAddress: payTo } : {};
-const api: IzinApi = { origin: cfg.public_origin, fetch, pollMs: o.poll_ms, waitMs: o.wait_s * 1000 };
+const api: IzinApi = { origin: cfg.public_origin, fetch, pollMs: o.poll_ms, waitMs: o.wait_s * 1000, marketKey: () => process.env[o.market_key_env]?.trim() || undefined };
 
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ""));
 

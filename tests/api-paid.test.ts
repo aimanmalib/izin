@@ -189,6 +189,19 @@ describe("paid route on", () => {
   });
 });
 
+describe("market agent allowance", () => {
+  it("gives a call that carries the market key its own hourly allowance, and no one else", async () => {
+    const key = "k".repeat(32);
+    const { app: target, cfg, url } = await setup({ IZIN_MARKET_KEY: key });
+    const site = url("shop.example", "/");
+    const post = (detail: string, headers: Record<string, string> = {}) => target.inject({ method: "POST", url: "/api/check", headers, payload: { url: site, action: "crawl", detail } });
+    for (let i = 0; i < cfg.limits.rate_new_checks_per_ip_hour; i++) expect((await post(`run ${i}`)).statusCode).toBe(202);
+    expect((await post("one more")).statusCode).toBe(429);
+    expect((await post("wrong key", { "x-izin-market-key": "n".repeat(32) })).statusCode).toBe(429);
+    expect((await post("from the market", { "x-izin-market-key": key })).statusCode).toBe(202);
+  });
+});
+
 describe("paid texts", () => {
   it("say testnet in every sentence about paying, in both languages", () => {
     for (const t of [en, ms]) {

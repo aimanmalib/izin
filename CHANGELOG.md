@@ -5,6 +5,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-11-15
+
+### Changed
+
+- An ASK always says what to do next: ask the site when its terms are silent, or read the terms yourself when Izin
+  could not.
+- Calls from the OpenServ market listing have an hourly allowance of their own, so a paying buyer is not refused
+  because of other callers.
+
 ## [1.0.1] - 2026-11-15
 
 Small fixes from a review of the public site, before submission.
@@ -61,7 +70,8 @@ The feature freeze ([ADR 0018](docs/decisions/0018-feature-freeze-v0.9.0.md)).
   cap the answer at ASK ([ADR 0020](docs/decisions/0020-two-signal-ceilings-and-remeasure.md)).
 - A one-container deploy with rollback, and spending-cap alerts sent once per cap.
 
-[Unreleased]: https://github.com/aimanmalib/izin/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/aimanmalib/izin/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/aimanmalib/izin/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/aimanmalib/izin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/aimanmalib/izin/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/aimanmalib/izin/releases/tag/v0.9.0

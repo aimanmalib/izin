@@ -86,6 +86,7 @@ describe("failures never end in GO", () => {
     expect(receipt.verdict).toBe("ASK");
     expect(receipt.decided_by.flags).toContain("decider_skipped");
     expect(receipt.missing.join(" ")).toMatch(/reading step failed/);
+    expect(receipt.conditions).toEqual([expect.stringMatching(/^read the site's terms yourself/)]);
   });
 
   it("S11: terms read but no clause at all for a crawl -> ASK, and the decider is never called", async () => {
@@ -101,6 +102,8 @@ describe("failures never end in GO", () => {
     expect(receipt.decided_by).toMatchObject({ serv_verdict: null, flags: ["decider_skipped"] });
     expect(receipt.decided_by.ceilings).toContain("S11");
     expect(receipt.reason).toMatch(/\/terms \([\d,]+ characters\)/);
+    // An ASK with nothing else to do still says what to do next.
+    expect(receipt.conditions).toEqual([expect.stringMatching(/^ask the site whether an automated agent may do this/)]);
   });
 
   it("S11 does not touch read_page: the same quiet terms still go to the decider", async () => {

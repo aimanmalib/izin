@@ -241,6 +241,9 @@ export const configSchema = z
         poll_ms: z.number().int().min(250).max(10_000),
         wait_s: z.number().int().min(10).max(600),
         pay_to_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+        // The listing's agent sends this key so that paid calls have their own hourly allowance (ADR 0023).
+        market_key_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+        market_checks_per_hour: z.number().int().min(1).max(10_000),
         paywall_url: z.url().nullable(),
       })
       .strict(),

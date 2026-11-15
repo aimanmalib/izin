@@ -12,6 +12,8 @@ export interface IzinApi {
   /** Time between receipt polls and the longest wait for a running check. */
   pollMs: number;
   waitMs: number;
+  /** Sent with a new check so the listing has its own hourly allowance; read when the check starts. */
+  marketKey?: () => string | undefined;
   sleep?: (ms: number) => Promise<void>;
   now?: () => number;
 }
@@ -99,11 +101,12 @@ async function waitForReceipt(api: IzinApi, id: string, saved: boolean): Promise
 
 export async function checkOnIzin(api: IzinApi, input: { url: string; action: string }): Promise<Outcome> {
   if (!(ACTIONS as readonly string[]).includes(input.action)) return { ok: false, error: "invalid_input", detail: "invalid_action" };
+  const key = api.marketKey?.();
   let res: Response;
   try {
     res = await api.fetch(`${api.origin}/api/check`, {
       method: "POST",
-      headers: { "content-type": "application/json", accept: "application/json" },
+      headers: { "content-type": "application/json", accept: "application/json", ...(key ? { "x-izin-market-key": key } : {}) },
       body: JSON.stringify({ url: input.url, action: input.action }),
     });
   } catch {

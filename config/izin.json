@@ -218,7 +218,7 @@
     "pay_to_env": "IZIN_X402_PAY_TO",
     "max_timeout_s": 60
   },
-  "openserv": { "agent_name": "izin", "workflow_timeout_s": 600, "poll_ms": 1500, "wait_s": 110, "pay_to_env": "IZIN_X402_PAY_TO", "paywall_url": "https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9" },
+  "openserv": { "agent_name": "izin", "workflow_timeout_s": 600, "poll_ms": 1500, "wait_s": 110, "pay_to_env": "IZIN_X402_PAY_TO", "market_key_env": "IZIN_MARKET_KEY", "market_checks_per_hour": 60, "paywall_url": "https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9" },
   "baseline": { "restricting_stances": ["prohibits", "restricts", "requires"] },
   "reading_cost": {
     "compare_model": "gpt-6-luna",

@@ -34,6 +34,9 @@ export interface CeilingTexts {
   ai_text_found: string;
   /** S10 condition; {seconds} is the robots.txt Crawl-delay. */
   crawl_delay_wait: string;
+  /** Conditions for an ASK that would otherwise list nothing to do: the terms were read and are silent, or could not be read. */
+  ask_terms_silent: string;
+  ask_terms_unread: string;
   /** S11 reason; {read} lists what was read (URL and characters), {chars} is the word after a count. */
   reason_no_policy_clause: string;
   /** S11 reason when no terms document was read at all, only robots.txt comments or other pages. */
@@ -233,6 +236,12 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   if (s11 && s.docs_read > 0 && (servVerdict === "GO" || (!decision && input.decider === "skipped"))) reason = noClauseReason(s, t);
   if (action === "read_page" && final === "GO" && s.robots.fetched && !quotesPolicy(s, input.clauses)) reason = t.reason_read_page_no_clause;
   if (final === "NO_GO" && servVerdict !== "NO_GO") reason = caps.some((c) => c.code === "S2") ? t.reason_ai_train : t.reason_robots;
+
+  // An ASK always says what to do next.
+  if (final === "ASK" && conditions.length === 0) {
+    const readInFull = s.docs.some((d) => POLICY_KINDS.has(d.kind)) && !s.unreadable.length && !input.blocked.length;
+    conditions.push(readInFull ? t.ask_terms_silent : t.ask_terms_unread);
+  }
 
   return { serv_verdict: servVerdict, ceilings, final, flags, confidence, reason, conditions, missing: mergeMissing(missing, (w) => t.unreadable_why[w] ?? w), decisive_clause_ids: decisive };
 }

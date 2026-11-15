@@ -201,7 +201,7 @@ answers, with no site fetched and no model called:
 | V0 | 36 of 43 | 0 of 43 | 1 of 43 |
 | V1, ships | 33 of 43 | 0 of 43 | 0 of 43 |
 
-**Reading cost:** 462,675 tokens read on Dolphin over 57 stored readings, USD 0.006070. In the gallery and benchmark runs,
+**Reading cost:** 462,675 tokens read on Dolphin over 57 stored readings, USD 0.006070. (The live site keeps counting, so its figure is a little higher.) In the gallery and benchmark runs,
 100% of reader tokens were served by Dolphin.
 
 ## Limits
@@ -218,7 +218,8 @@ answers, with no site fetched and no model called:
   so ([ADR 0024](docs/decisions/0024-open-model-decides-when-serv-is-out.md)). When the Dolphin cap is reached it serves
   stored receipts only.
 - The paid route on this site runs on a testnet and sells saved answers only. The listing on the OpenServ Agent Market
-  is priced in real USDC; it answers through the same API, so a rate limit or the spending cap can refuse a check there too.
+  is priced in real USDC; it answers through the same API with an hourly allowance of its own, and the spending cap
+  can still refuse a check there.
 
 ## Related work
 

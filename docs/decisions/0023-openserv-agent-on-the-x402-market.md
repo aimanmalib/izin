@@ -49,6 +49,10 @@ check is exactly that shape: two inputs, one answer, a receipt.
   [8004scan](https://8004scan.io/agents/base/1189473). The public listing data now carries the id
   (`erc8004AgentId`). The identity says who the agent is and where to call it; it carries no
   reputation yet.
+- The agent calls the public API from one address for every buyer, so paying buyers shared the six new checks an hour
+  that one address gets. The agent now sends a key (`openserv.market_key_env`) and the API gives calls that carry it
+  an hourly allowance of their own (`openserv.market_checks_per_hour`). The daily limit and the spending cap still
+  apply. The key is a deployment value and is not in the repository.
 - The capability logic is unit tested with a stand-in API (`tests/openserv-check.test.ts`).
 
 ## Consequences

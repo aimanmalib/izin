@@ -115,6 +115,19 @@ describe("checkOnIzin", () => {
     expect(await checkOnIzin(down.api, { url: "https://shop.example/", action: "crawl" })).toEqual({ ok: false, error: "unreachable" });
   });
 
+  it("sends the market key with a new check when one is set", async () => {
+    const seen: (string | null)[] = [];
+    const { api } = fakeApi({}, {
+      marketKey: () => "secret-key",
+      fetch: (async (_input: string | URL | Request, init?: RequestInit) => {
+        seen.push(new Headers(init?.headers).get("x-izin-market-key"));
+        return new Response(JSON.stringify({ error: "budget_exhausted" }), { status: 503 });
+      }) as typeof fetch,
+    });
+    await checkOnIzin(api, { url: "https://shop.example/", action: "crawl" });
+    expect(seen).toEqual(["secret-key"]);
+  });
+
   it("treats a failed check as no verdict", async () => {
     const { api } = fakeApi({
       "/api/check": [{ status: 202, body: { id: "abcdefghij", status: "queued", cached: false } }],

@@ -13,7 +13,7 @@ import { createRuntime, type Runtime } from "./runtime.js";
 import { loadExamples, siteView } from "./web/site.js";
 import { registerStatic } from "./web/static.js";
 
-export const VERSION = "1.0.1";
+export const VERSION = "1.0.2";
 
 export interface AppOpts {
   clientIp?: ClientIp;
@@ -44,9 +44,11 @@ export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config)
   if (payTo) {
     registerPaid(app, { cfg: config, service: rt.service, payTo, texts: paidTexts(), ...(opts.facilitator ? { facilitator: opts.facilitator } : {}) });
   }
+  const marketKey = (opts.env ?? process.env)[config.openserv.market_key_env]?.trim() ?? "";
   registerApi(app, {
     service: rt.service,
     clientIp,
+    ...(marketKey.length >= 24 ? { market: { key: marketKey, perHour: config.openserv.market_checks_per_hour } } : {}),
     health: {
       version: VERSION,
       reader: () => rt.readerLabel,
