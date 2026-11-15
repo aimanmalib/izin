@@ -11,6 +11,8 @@ Pairs where robots.txt allows the URL but a quoted clause from the site (a robot
 
 An ASK that comes only from a block, an unreadable page, an unavailable decision step, or a code ceiling that lowered the decision step's GO is not counted.
 
+Pairs the decision step answered with a valid decision: **122** of 144. robots.txt allows the URL in 108 of them, and in **72 of 108** a quoted clause restricts or forbids the action. The gallery shows a pair with no valid decision as not decided.
+
 Counted pairs:
 
 - ebay.com, read_page: ASK, [receipt](https://izin.sasateguh.com/r/zz3xqsl4g5)
