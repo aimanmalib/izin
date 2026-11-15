@@ -62,6 +62,27 @@ describe("prime", () => {
     expect(primeToRun(cfg, rt.jobs, plan, later)).toHaveLength(1);
   });
 
+  it("with fresh, checks a named site again and keeps the example's saved receipt", async () => {
+    const { cfg, rt, pipeline, url } = await setup();
+    const file = { examples: [{ key: "buy", site: url, action: "purchase" as const, receipt_id: null }], prime: [{ site: url, action: "account" as const }] };
+    const plan = primePlan(cfg, file);
+    let t = Date.parse("2026-01-01T00:00:00.000Z");
+    const now = () => new Date(t);
+    const clocked = { ...pipeline, now };
+    const first = await runPrime(plan, { cfg, jobs: rt.jobs, pipeline: clocked, stop: async () => false, now });
+    expect(primeToRun(cfg, rt.jobs, plan, now())).toHaveLength(0);
+    expect(primeToRun(cfg, rt.jobs, plan, now(), true).map((e) => e.action)).toEqual(["account"]);
+    t += 60_000;
+    const again = await runPrime(plan, { cfg, jobs: rt.jobs, pipeline: clocked, stop: async () => false, now, fresh: true });
+    expect(again[0]).toMatchObject({ reused: true, receipt_id: first[0]!.receipt_id });
+    expect(again[1]).toMatchObject({ reused: false, error: null });
+    expect(again[1]!.receipt_id).not.toBe(first[1]!.receipt_id);
+    expect(rt.store.getReceipt(first[1]!.receipt_id!)).not.toBeNull();
+    const site = plan[1]!.site;
+    expect(rt.jobs.findRecentDone(site, "account", new Date(0))?.id).toBe(again[1]!.receipt_id);
+    expect(rt.jobs.findCached(new URL(url).origin, "account", new Date(0))?.id).toBe(again[1]!.receipt_id);
+  });
+
   it("leaves an entry without a receipt when the budget cap is reached", async () => {
     const { cfg, rt, pipeline, url } = await setup();
     const plan = primePlan(cfg, { examples: [], prime: [{ site: url, action: "crawl" }] });

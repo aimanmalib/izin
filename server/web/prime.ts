@@ -1,6 +1,7 @@
 // Pre-computed checks for the one-click examples and a short list of named sites (PRD 4.11 timing):
 // a receipt saved in the last `cached_receipt_days` for the same site and action is reused, as the
-// API does when new checks are paused; otherwise one live check runs and its receipt is saved.
+// API does when new checks are paused; otherwise one live check runs and its receipt is saved. A
+// fresh run checks the named sites again (their saved receipts stay; the API returns the newest).
 import type { Action, IzinConfig } from "../config.js";
 import { registrableDomain } from "../kumpul/discover.js";
 import { decideAndFinish, prepareCheck, type PipelineDeps } from "../pipeline.js";
@@ -39,22 +40,35 @@ export function primePlan(cfg: IzinConfig, file: ExamplesFile): PrimeEntry[] {
   return out;
 }
 
-/** Entries without a recent saved receipt: the ones a run would pay for. */
-export function primeToRun(cfg: IzinConfig, jobs: CheckJobs, plan: PrimeEntry[], now: Date): PrimeEntry[] {
+/** With `fresh`, a named site (not a one-click example) is checked again even with a saved receipt. */
+function mustRun(e: PrimeEntry, fresh: boolean): boolean {
+  return fresh && e.key === null;
+}
+
+/** Entries without a recent saved receipt, or forced by `fresh`: the ones a run would pay for. */
+export function primeToRun(cfg: IzinConfig, jobs: CheckJobs, plan: PrimeEntry[], now: Date, fresh = false): PrimeEntry[] {
   const since = new Date(now.getTime() - cfg.limits.cached_receipt_days * DAY_MS);
-  return plan.filter((e) => !jobs.findRecentDone(e.site, e.action, since));
+  return plan.filter((e) => mustRun(e, fresh) || !jobs.findRecentDone(e.site, e.action, since));
 }
 
 export async function runPrime(
   plan: PrimeEntry[],
-  deps: { cfg: IzinConfig; jobs: CheckJobs; pipeline: PipelineDeps; stop: () => Promise<boolean>; now?: () => Date; log?: (line: string) => void },
+  deps: {
+    cfg: IzinConfig;
+    jobs: CheckJobs;
+    pipeline: PipelineDeps;
+    stop: () => Promise<boolean>;
+    now?: () => Date;
+    log?: (line: string) => void;
+    fresh?: boolean;
+  },
 ): Promise<PrimeRow[]> {
   const now = deps.now ?? (() => new Date());
   const rows: PrimeRow[] = [];
   for (const e of plan) {
     const t0 = Date.now();
     const since = new Date(now().getTime() - deps.cfg.limits.cached_receipt_days * DAY_MS);
-    const recent = deps.jobs.findRecentDone(e.site, e.action, since);
+    const recent = mustRun(e, deps.fresh ?? false) ? null : deps.jobs.findRecentDone(e.site, e.action, since);
     let row: PrimeRow;
     if (recent) {
       const verdict = deps.pipeline.store?.getReceipt(recent.id)?.verdict ?? null;

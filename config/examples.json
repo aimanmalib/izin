@@ -6,6 +6,8 @@
   ],
   "prime": [
     { "site": "https://openserv.ai/", "action": "account" },
+    { "site": "https://openserv.ai/", "action": "read_page" },
+    { "site": "https://openserv.ai/", "action": "post" },
     { "site": "https://dphn.ai/", "action": "account" },
     { "site": "https://gokite.ai/", "action": "read_page" },
     { "site": "https://reppo.xyz/", "action": "post" }
