@@ -42,6 +42,13 @@ check is exactly that shape: two inputs, one answer, a receipt.
   USDC settled on Base in transaction
   `0x20bc7ffa9241e44c67d51df4f945966946c7314f4807d1b74b27d3970d701847` and the task returned the
   answer for `ebay.com` and `purchase`. No outside buyer has paid yet.
+- The listing has an on-chain identity. On 15 Nov 2026 it was registered in the ERC-8004 Identity
+  Registry on Base through the platform client (`openserv/identity.ts`), from a wallet made for
+  that purpose whose key stays in the state folder. Agent id `8453:1189473`, transaction
+  `0xd9016472c02706b75fcc8d830a193a9ed725cc82fc98052fa9cbd48ce777d8c4`,
+  [8004scan](https://8004scan.io/agents/base/1189473). The public listing data now carries the id
+  (`erc8004AgentId`). The identity says who the agent is and where to call it; it carries no
+  reputation yet.
 - The capability logic is unit tested with a stand-in API (`tests/openserv-check.test.ts`).
 
 ## Consequences

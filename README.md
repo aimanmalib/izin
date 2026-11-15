@@ -64,7 +64,8 @@ is a small separate process ([`openserv/agent.ts`](openserv/agent.ts)) that asks
 so the limits and the spending cap apply to it too. The listing is priced in real USDC. The first paid call was made on 15 Nov 2026 from a second
 wallet of mine, as a test: USD 0.05 settled on Base and the eBay answer came back
 ([transaction](https://basescan.org/tx/0x20bc7ffa9241e44c67d51df4f945966946c7314f4807d1b74b27d3970d701847),
-[ADR 0023](docs/decisions/0023-openserv-agent-on-the-x402-market.md)).
+[ADR 0023](docs/decisions/0023-openserv-agent-on-the-x402-market.md)). The listing also has an on-chain identity,
+registered in the ERC-8004 registry on Base: [agent 1189473 on 8004scan](https://8004scan.io/agents/base/1189473).
 
 **On this site.** The paid route answers HTTP 402 with x402 payment terms. An x402 client signs the payment and retries:
 
