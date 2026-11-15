@@ -72,6 +72,8 @@ export function useCheckRun(pollMs: number) {
   return { busy, running, failed, problem, setProblem, start };
 }
 
+export type CheckRun = ReturnType<typeof useCheckRun>;
+
 export function ProblemLine({ problem }: { problem: Problem }) {
   const { t } = useT();
   if (!problem) return null;

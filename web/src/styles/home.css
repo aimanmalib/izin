@@ -1,8 +1,8 @@
 /* Front page */
-.hero { padding-block: clamp(2rem, 6vw, 4.5rem) var(--section); }
+.hero { padding-block: clamp(1.5rem, 6vw, 4rem) var(--section); }
 .hero-grid { display: grid; gap: clamp(1.5rem, 4vw, 3.5rem); grid-template-columns: minmax(0, 1fr); align-items: start; }
 .hero-copy, .hero-check { min-width: 0; }
-.lede { font-size: clamp(1.05rem, 0.5vw + 0.95rem, 1.25rem); color: var(--ink-soft); max-width: 36rem; }
+.lede { font-size: clamp(1.05rem, 0.5vw + 0.95rem, 1.25rem); color: var(--ink-soft); max-width: 36rem; margin-bottom: 0; }
 @media (min-width: 960px) {
   .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
   .hero-copy { position: sticky; top: 2rem; padding-top: 0.5rem; }
@@ -58,14 +58,47 @@ fieldset:disabled .chip span { opacity: 0.6; }
 @keyframes pulse { 50% { box-shadow: 0 0 0 5px var(--accent-soft); } }
 .live-note { color: var(--ink-faint); font-size: 0.88rem; margin: 0; }
 
-.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1rem; }
-.examples-head { color: var(--ink-faint); font-size: 0.9rem; margin-right: 0.25rem; }
+/* Under the lede: the one-click examples, then one saved answer set like a clause on a receipt. */
+.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1.15rem; }
+.examples-head { color: var(--ink-soft); font-size: 0.9rem; margin-right: 0.25rem; }
 .example {
   font: 500 0.9rem/1.2 var(--sans); color: var(--accent); background: var(--accent-soft); border: 0;
   border-radius: var(--pill); padding: 0.5rem 0.85rem; cursor: pointer; text-decoration: none; max-width: 100%;
 }
 .example:hover { background: #d5dbf3; }
 .example:disabled { opacity: 0.55; cursor: not-allowed; }
+/* On a phone the examples are one row that scrolls sideways out to the screen edge, so the answer
+   under them stays in the first screen. The block padding keeps focus rings from being clipped. */
+@media (max-width: 639px) {
+  .examples {
+    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    margin: 1rem calc(-1 * var(--gutter)) -0.25rem; padding: 0.25rem 2.75rem 0.25rem var(--gutter);
+    scroll-padding-inline: var(--gutter) 2.75rem;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.75rem), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 2.75rem), transparent);
+  }
+  .examples::-webkit-scrollbar { display: none; }
+  .examples > * { flex: none; }
+}
+
+.sample { margin-top: 1rem; max-width: 36rem; min-width: 0; }
+.sample-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.75rem; margin: 0 0 0.6rem; }
+.sample-for {
+  flex: 1 1 11rem; min-width: 0; font: 600 1.15rem/1.2 var(--serif); letter-spacing: -0.01em;
+  overflow-wrap: anywhere; text-wrap: balance;
+}
+.sample .clause { margin: 0; }
+.sample .clause figcaption { justify-content: space-between; }
+.sample-source { font-style: normal; color: var(--ink-soft); overflow-wrap: anywhere; }
+.sample figcaption a { padding-block: 0.25rem; }
+@media (max-width: 639px) {
+  .sample-for { font-size: 1.05rem; }
+  .sample .quote { padding: 0.75rem 0.9rem; }
+  .sample .quote p { font-size: 0.86rem; line-height: 1.55; }
+}
+.sample-no_go .quote { border-left-color: var(--nogo); }
+.sample-ask .quote { border-left-color: var(--ask); }
+.sample-go .quote { border-left-color: var(--go); }
 
 /* Sections */
 .band { background: var(--paper-sunk); padding-block: var(--section); border-block: 1px solid var(--rule); }

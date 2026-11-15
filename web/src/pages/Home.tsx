@@ -1,11 +1,14 @@
-// The front page: the check box first, then how it works, the gallery excerpt, agent access,
-// costs, a note for site owners and the limits.
-import { useEffect, useState } from "react";
+// The front page: the question, the one-click examples and one saved answer beside the check box,
+// then how it works, the gallery excerpt, agent access, costs, a note for site owners and the limits.
+import { useEffect, useRef, useState } from "react";
 import { getGallery, getHealth, type Action, type SiteView } from "../api";
-import { CheckForm } from "../components/CheckForm";
+import { CheckForm, type CheckFormHandle } from "../components/CheckForm";
 import { CopyButton } from "../components/CopyButton";
+import { Examples } from "../components/Examples";
 import { usd } from "../components/Page";
 import { ReadingCost } from "../components/ReadingCost";
+import { Sample } from "../components/Sample";
+import { useCheckRun } from "../components/useCheckRun";
 import { VerdictBadge } from "../components/Verdict";
 import { fmt, useT } from "../i18n";
 import { linkClick } from "../router";
@@ -18,6 +21,8 @@ export function Home({ site }: { site: SiteView }) {
   const h = t.web.home;
   const [paused, setPaused] = useState(false);
   const [gallery, setGallery] = useState<GalleryRows>([]);
+  const run = useCheckRun(site.poll_ms);
+  const form = useRef<CheckFormHandle>(null);
 
   useEffect(() => {
     void getHealth().then((r) => setPaused(!!r?.cache_only)).catch(() => {});
@@ -37,10 +42,12 @@ export function Home({ site }: { site: SiteView }) {
           <div className="hero-copy">
             <h1>{h.h1}</h1>
             <p className="lede">{h.sub}</p>
+            <Examples examples={site.examples} disabled={!!run.running} onFill={(ex) => form.current?.fill(ex)} />
+            {site.sample ? <Sample sample={site.sample} /> : null}
           </div>
           <div className="hero-check">
             {paused ? <p className="banner" role="status">{h.cache_only}</p> : null}
-            <CheckForm site={site} paused={paused} />
+            <CheckForm site={site} paused={paused} run={run} ref={form} />
           </div>
         </div>
       </section>

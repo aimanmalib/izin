@@ -1,13 +1,19 @@
 // The check box: URL, one of six actions, optional detail, optional agent token, optional pasted
 // terms. A new check shows the live steps and opens its receipt when done; a cached one opens at once.
-import { useRef, useState, type FormEvent } from "react";
+// The page owns the run, so the one-click examples beside the form know when a check is under way.
+import { useImperativeHandle, useRef, useState, type FormEvent, type Ref } from "react";
 import type { Action, SiteView } from "../api";
 import { fmt, useT } from "../i18n";
-import { linkClick } from "../router";
+import type { Example } from "./Examples";
 import { LiveSteps } from "./LiveSteps";
-import { ProblemLine, receiptPath, useCheckRun } from "./useCheckRun";
+import { ProblemLine, type CheckRun } from "./useCheckRun";
 
-export function CheckForm({ site, paused }: { site: SiteView; paused: boolean }) {
+/** What the page can ask of the form: put an example's site and action in it. */
+export interface CheckFormHandle {
+  fill: (ex: Example) => void;
+}
+
+export function CheckForm({ site, paused, run, ref }: { site: SiteView; paused: boolean; run: CheckRun; ref?: Ref<CheckFormHandle> }) {
   const { t } = useT();
   const f = t.web.form;
   const [url, setUrl] = useState("");
@@ -16,7 +22,7 @@ export function CheckForm({ site, paused }: { site: SiteView; paused: boolean })
   const [agent, setAgent] = useState("");
   const [paste, setPaste] = useState(false);
   const [terms, setTerms] = useState("");
-  const { busy, running, failed, problem, setProblem, start } = useCheckRun(site.poll_ms);
+  const { busy, running, failed, problem, setProblem, start } = run;
   const [filled, setFilled] = useState(false);
   const urlRef = useRef<HTMLInputElement>(null);
 
@@ -42,14 +48,15 @@ export function CheckForm({ site, paused }: { site: SiteView; paused: boolean })
     });
   };
 
-  const fillExample = (ex: SiteView["examples"][number]) => {
-    setUrl(ex.site);
-    setAction(ex.action);
-    setFilled(true);
-    setProblem(null);
-    urlRef.current?.focus();
-  };
-  const exampleLabel = (key: string) => (f as Record<string, string>)[`example_${key}`] ?? key;
+  useImperativeHandle(ref, () => ({
+    fill(ex) {
+      setUrl(ex.site);
+      setAction(ex.action);
+      setFilled(true);
+      setProblem(null);
+      urlRef.current?.focus();
+    },
+  }), [setProblem]);
 
   return (
     <div className="check">
@@ -117,21 +124,6 @@ export function CheckForm({ site, paused }: { site: SiteView; paused: boolean })
       </form>
 
       {running ? <LiveSteps stepMs={site.step_ms} failed={failed} /> : null}
-
-      {site.examples.length ? (
-        <div className="examples">
-          <span className="examples-head">{f.examples}</span>
-          {site.examples.map((ex) =>
-            ex.receipt_id ? (
-              <a key={ex.key} className="example" href={receiptPath(ex.receipt_id)} onClick={linkClick}>{exampleLabel(ex.key)}</a>
-            ) : (
-              <button key={ex.key} type="button" className="example" onClick={() => fillExample(ex)} disabled={!!running}>
-                {exampleLabel(ex.key)}
-              </button>
-            ),
-          )}
-        </div>
-      ) : null}
     </div>
   );
 }

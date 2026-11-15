@@ -163,7 +163,10 @@
     "home": {
       "h1": "Ejen anda boleh membayar. Bolehkah ia membeli di sini?",
       "sub": "Izin membaca peraturan laman itu sendiri, robots.txt dan termanya, dan menjawab GO, ASK atau NO-GO untuk satu tindakan, dengan klausa dipetik.",
-      "cache_only": "Semakan baharu dihentikan buat sementara kerana had belanja telah dicapai. Resit tersimpan dan contoh di bawah masih boleh dibuka.",
+      "sample_label": "Satu jawapan tersimpan",
+      "sample_for": "{action} di {site}",
+      "sample_open": "Buka resit tersimpan",
+      "cache_only": "Semakan baharu dihentikan buat sementara kerana had belanja telah dicapai. Resit tersimpan dan contoh di halaman ini masih boleh dibuka.",
       "steps_head": "Bagaimana satu semakan berjalan",
       "step1": "Model terbuka di Dolphin membaca setiap perkataan.",
       "step2": "SERV Reasoning membuat keputusan.",

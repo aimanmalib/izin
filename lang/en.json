@@ -163,7 +163,10 @@
     "home": {
       "h1": "Your agent can pay. Is it allowed to buy here?",
       "sub": "Izin reads the site's own rules, its robots.txt and its terms, and answers GO, ASK or NO-GO for one action, with the clause quoted.",
-      "cache_only": "New checks are paused for now because a spending cap was reached. Saved receipts and the examples below still open.",
+      "sample_label": "A saved answer",
+      "sample_for": "{action} on {site}",
+      "sample_open": "Open the saved receipt",
+      "cache_only": "New checks are paused for now because a spending cap was reached. Saved receipts and the examples on this page still open.",
       "steps_head": "How a check runs",
       "step1": "An open model on Dolphin reads every word.",
       "step2": "SERV Reasoning makes the call.",
