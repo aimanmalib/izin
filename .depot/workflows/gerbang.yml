@@ -1,7 +1,6 @@
-# stack=npm → .depot/workflows/gerbang.yml
-# Gerbang izin di Depot CI (mesin jauh) — dipanggil oleh ~/bin/gerbang-depot.sh (autopilot gerbang_jauh / deploy), bukan push/PR.
-# Dijana `~/bin/depot-workflow.sh` dari ~/ops/depot/templat/gerbang-npm.yml (stack: Node + npm, package-lock.json).
-# Tiada rahsia: nilai sintetik dalam `env`; pelari Depot TIADA /etc/machine-id.
+# Remote gate: the same script as the local gate and the public CI, run on a larger machine on request.
+# Manual dispatch only. It does not run on push or on a pull request.
+# No secrets: the job uses recorded fixtures and synthetic values.
 name: gerbang
 on: workflow_dispatch
 jobs:
