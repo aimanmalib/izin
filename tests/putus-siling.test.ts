@@ -189,6 +189,46 @@ describe("applyCeilings", () => {
     expect(o.reason).toContain("https://shop.example/terms (2,000 characters)");
   });
 
+  it("S11 names each URL once: six robots.txt comment blocks of one file are one entry with their total size", () => {
+    // Shape of /r/5pppwplbgz: robots.txt read as six comment blocks, the terms page needs a browser.
+    const sizes = [208, 290, 227, 232, 212, 241];
+    const docs = sizes.map((chars, i) => ({ id: `d${i + 1}`, url: "https://shop.example/robots.txt", kind: "robots_comments" as const, chars, truncated: false }));
+    const s = signals({ docs_read: 6, docs, unreadable: [{ url: "https://shop.example/terms", why: "needs_browser" }] });
+    const o = run({ action: "purchase", signals: s, clauses: [], decision: null, decider: "skipped" });
+    expect(o.reason.split("https://shop.example/robots.txt").length - 1).toBe(1);
+    expect(o.reason).toBe(texts.reason_no_terms_read.replace("{read}", `https://shop.example/robots.txt (1,410 characters, ${texts.read_robots_comments})`));
+    expect(o.reason).toContain("could not read the site's terms");
+  });
+
+  it("S11 with terms read says no clause from the site's terms, even when robots.txt comments were read too", () => {
+    const s = signals({
+      docs_read: 2,
+      docs: [
+        { id: "d1", url: "https://shop.example/terms", kind: "policy", chars: 900, truncated: false },
+        { id: "d2", url: "https://shop.example/robots.txt", kind: "robots_comments", chars: 100, truncated: false },
+      ],
+    });
+    const o = run({ action: "post", signals: s, clauses: [], decision: decision("GO") });
+    expect(o.reason).toBe(texts.reason_no_policy_clause.replace("{read}", `https://shop.example/terms (900 characters), https://shop.example/robots.txt (100 characters, ${texts.read_robots_comments})`));
+    expect(o.reason).toContain("from the site's terms");
+  });
+
+  it("a read_page GO with no clause from a policy document carries a reason written by code, and stays GO", () => {
+    const robots = signals({ docs: [{ id: "r1", url: "https://shop.example/robots.txt", kind: "robots_comments", chars: 300, truncated: false }] });
+    const o = run({ action: "read_page", signals: robots, clauses: [], decision: decision("GO", [], { reason: "The terms were read in full." }) });
+    expect(o).toMatchObject({ final: "GO", ceilings: [], reason: texts.reason_read_page_no_clause });
+    const quoted = run({ action: "read_page", clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) });
+    expect(quoted).toMatchObject({ final: "GO", reason: "Model reason." });
+  });
+
+  it("missing has one line per URL: a page that answered 403 and was not read is one line", () => {
+    const url = "https://shop.example/help/terms-of-service/";
+    const s = signals({ docs_read: 0, docs: [], unreadable: [{ url, why: "blocked" }] });
+    const o = run({ action: "crawl", signals: s, blocked: [{ url, status: 403 }], clauses: [], decision: null, decider: "skipped" });
+    expect(o.missing.filter((m) => m.startsWith(url))).toEqual([`${url} (HTTP 403, ${texts.unreadable_why.blocked})`]);
+    expect(o.missing).toContain(texts.nothing_read);
+  });
+
   it("R6: an ASK citing a general ban and a specific permission stands (code only caps, never raises)", () => {
     const clauses = [clause("c1", "prohibits"), clause("c2", "permits", "api_required")];
     const o = run({ clauses, decision: decision("ASK", ["c1", "c2"], { conditions: ["use the public API"] }) });

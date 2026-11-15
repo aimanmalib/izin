@@ -5,6 +5,7 @@ import { getReceipt, type Receipt as R } from "../api";
 import { CopyButton } from "../components/CopyButton";
 import { LiveSteps } from "../components/LiveSteps";
 import { VerdictBadge } from "../components/Verdict";
+import { mergeMissing } from "../../../server/putus/siling";
 import { fmt, useT, type Strings } from "../i18n";
 import { NotFound } from "./NotFound";
 
@@ -22,6 +23,26 @@ export function readerLine(r: Pick<R, "reader">): { provider: string; model: str
   const provider = at > 0 ? doc.reader.slice(0, at) : "";
   const model = doc.reader.slice(at + 1).split("/").pop() ?? "";
   return model ? { provider, model, saved: true } : null;
+}
+
+/** The cost line under a receipt. A check that never called the decider says so, with the reader's cost alone. */
+export function costLine(
+  r: Pick<R, "reader" | "decider" | "totals">,
+  costNow: number | null,
+  p: { tokens: string; tokens_no_decider: string },
+): string {
+  const secs = (r.totals.ms / 1000).toFixed(1);
+  const rin = r.reader.tokens_in, rout = r.reader.tokens_out;
+  if (!r.decider.model) {
+    const cost = r.reader.cost_usd ? r.reader.cost_usd.toFixed(4) : "0";
+    return fmt(p.tokens_no_decider, { rin, rout, cost, secs });
+  }
+  return fmt(p.tokens, { rin, rout, din: r.decider.tokens_in, dout: r.decider.tokens_out, cost: costNow === null ? "·" : costNow.toFixed(4), secs });
+}
+
+/** "What we could not read": one line per URL, with stored state codes in words. */
+export function missingLines(missing: readonly string[], why: Record<string, string>): string[] {
+  return mergeMissing(missing, (s) => why[s] ?? s);
 }
 
 function age(s: number): string {
@@ -118,7 +139,7 @@ function ReceiptView({ r, costNow, t }: { r: R; costNow: number | null; t: Strin
         {r.missing.length ? (
           <section aria-labelledby="miss">
             <h2 id="miss">{p.missing}</h2>
-            <ul>{r.missing.map((m) => <li key={m}>{m}</li>)}</ul>
+            <ul>{missingLines(r.missing, t.receipt.unreadable_why).map((m) => <li key={m}>{m}</li>)}</ul>
           </section>
         ) : null}
 
@@ -177,13 +198,7 @@ function ReceiptView({ r, costNow, t }: { r: R; costNow: number | null; t: Strin
             {" · "}
             {r.decided_by.ceilings.length ? fmt(p.ceilings, { codes: r.decided_by.ceilings.join(", ") }) : p.ceilings_none}
           </p>
-          <p className="hint">
-            {fmt(p.tokens, {
-              rin: r.reader.tokens_in, rout: r.reader.tokens_out, din: r.decider.tokens_in, dout: r.decider.tokens_out,
-              cost: costNow === null ? "·" : costNow.toFixed(4),
-              secs: (r.totals.ms / 1000).toFixed(1),
-            })}
-          </p>
+          <p className="hint">{costLine(r, costNow, p)}</p>
           <p className="hash"><span>{p.hash}</span> <code className="mono break">{r.receipt_sha256}</code></p>
           <p className="receipt-links">
             <CopyButton text={link} label={p.copy} done={p.copied} />

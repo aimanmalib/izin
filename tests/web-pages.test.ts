@@ -154,3 +154,34 @@ describe("who read a receipt's documents", () => {
     expect(readerLine(reader(null, [{ doc: "d1", reader: null, status: "read", cached: false }]))).toBeNull();
   });
 });
+
+describe("receipt footer and unread pages", () => {
+  const pages = () => JSON.parse(readFileSync("lang/en.json", "utf8")) as { web: { receipt_page: { tokens: string; tokens_no_decider: string } }; receipt: { unreadable_why: Record<string, string> } };
+  const shape = (model: string | null) => ({
+    reader: { provider: null, model: null, prompt_version: "reader.v1", tokens_in: 0, tokens_out: 0, cost_usd: 0, ms: 0, per_doc: [] },
+    decider: { model, config_rung: null, prompt_guard: null, prompt_version: "decider.v1", tokens_in: model ? 1200 : 0, tokens_out: model ? 80 : 0, cost_usd_estimated: model ? 0.01 : 0, ms: 0 },
+    totals: { ms: 7300 },
+  });
+
+  it("gives a check with no decider call a complete cost line, not an empty 'USD ·'", async () => {
+    const { costLine } = await import("../web/src/pages/Receipt.js");
+    const p = pages().web.receipt_page;
+    const line = costLine(shape(null) as never, null, p);
+    expect(line).not.toContain("USD ·");
+    expect(line).toBe(p.tokens_no_decider.replace("{rin}", "0").replace("{rout}", "0").replace("{cost}", "0").replace("{secs}", "7.3"));
+    expect(costLine(shape("decider-model-x") as never, 0.0123, p)).toContain("USD 0.0123");
+  });
+
+  it("shows one line per URL for receipts saved with a 403 line and a blocked line for the same page", async () => {
+    const { missingLines } = await import("../web/src/pages/Receipt.js");
+    const why = pages().receipt.unreadable_why;
+    const u = "https://events.example/help/terms-of-service/";
+    expect(missingLines([`${u} (HTTP 403)`, "no policy document could be read in full", `${u} (${why.blocked})`], why)).toEqual([
+      `${u} (HTTP 403, ${why.blocked})`,
+      "no policy document could be read in full",
+    ]);
+    // Older receipts: a free-text line from the decision step beside a coded line for the same URL, the code in words.
+    const t = "https://shop.example/legal/terms";
+    expect(missingLines([`Terms document at ${t} could not be read.`, `${t} (robots_disallow)`], why)).toEqual([`${t} (${why.robots_disallow})`]);
+  });
+});

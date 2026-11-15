@@ -36,7 +36,13 @@ export interface CeilingTexts {
   crawl_delay_wait: string;
   /** S11 reason; {read} lists what was read (URL and characters), {chars} is the word after a count. */
   reason_no_policy_clause: string;
+  /** S11 reason when no terms document was read at all, only robots.txt comments or other pages. */
+  reason_no_terms_read: string;
   read_chars: string;
+  /** Reason for a read_page GO with no clause from a policy document: written by code, not by the decider. */
+  reason_read_page_no_clause: string;
+  /** Marks a URL whose text came from robots.txt comments. */
+  read_robots_comments: string;
   /** S5 missing lines: the plain-language state of each policy page found but not read. */
   unreadable_why: Record<string, string>;
 }
@@ -92,10 +98,51 @@ export function signalCeilings(action: Action, s: DeciderSignals, clauses: Pick<
   return caps;
 }
 
-/** S11 reason: what was read, with its size, and that no clause could be quoted from it. */
+/** S11 reason: each URL read once, with its size, and that no clause from the site's terms could be quoted. */
 function noClauseReason(s: DeciderSignals, t: CeilingTexts): string {
-  const read = s.docs.map((d) => `${d.url} (${d.chars.toLocaleString("en-US")} ${t.read_chars})`).join(", ");
-  return t.reason_no_policy_clause.replace("{read}", read);
+  const byUrl = new Map<string, { chars: number; robots: boolean }>();
+  for (const d of s.docs) {
+    const e = byUrl.get(d.url) ?? { chars: 0, robots: false };
+    byUrl.set(d.url, { chars: e.chars + d.chars, robots: e.robots || d.kind === "robots_comments" });
+  }
+  const read = [...byUrl]
+    .map(([url, e]) => `${url} (${e.chars.toLocaleString("en-US")} ${t.read_chars}${e.robots ? `, ${t.read_robots_comments}` : ""})`)
+    .join(", ");
+  const terms = s.docs.some((d) => POLICY_KINDS.has(d.kind));
+  return (terms ? t.reason_no_policy_clause : t.reason_no_terms_read).replace("{read}", read);
+}
+
+const LINE = /^(https?:\/\/\S+) \((.+)\)$/;
+const firstUrl = (line: string) => /https?:\/\/[^\s,;()]+/.exec(line)?.[0]?.replace(/[.:]+$/, "");
+
+/**
+ * One line per URL in "What we could not read". Lines of the form "URL (state)" for the same URL are joined
+ * ("URL (HTTP 403, the page blocked the reader)"); a free-text line about a URL that already has such a line is
+ * dropped. `state` turns a stored state code into words (the page uses it for receipts saved before the words).
+ */
+export function mergeMissing(lines: readonly string[], state: (s: string) => string = (s) => s): string[] {
+  const coded = new Set(lines.map((l) => LINE.exec(l)?.[1]).filter(Boolean));
+  const out: string[] = [];
+  const at = new Map<string, { i: number; states: string[] }>();
+  for (const line of lines) {
+    const m = LINE.exec(line);
+    const url = m?.[1] ?? firstUrl(line);
+    if (!url) {
+      if (!out.includes(line)) out.push(line);
+      continue;
+    }
+    if (!m && coded.has(url)) continue;
+    const words = m ? m[2]!.split(", ").map(state) : [];
+    const seen = at.get(url);
+    if (!seen) {
+      at.set(url, { i: out.length, states: words });
+      out.push(m ? `${url} (${words.join(", ")})` : line);
+      continue;
+    }
+    for (const w of words) if (!seen.states.includes(w)) seen.states.push(w);
+    if (m) out[seen.i] = `${url} (${seen.states.join(", ")})`;
+  }
+  return out;
 }
 
 const ORDER: Verdict[] = ["NO_GO", "ASK", "GO"];
@@ -184,7 +231,8 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   if (!decision) reason = input.decider === "skipped" ? t.reason_decider_skipped : input.decider === "guard_tripped" ? t.reason_guard_tripped : t.reason_decider_unavailable;
   const s11 = late.some((c) => c.code === "S11");
   if (s11 && s.docs_read > 0 && (servVerdict === "GO" || (!decision && input.decider === "skipped"))) reason = noClauseReason(s, t);
+  if (action === "read_page" && final === "GO" && s.robots.fetched && !quotesPolicy(s, input.clauses)) reason = t.reason_read_page_no_clause;
   if (final === "NO_GO" && servVerdict !== "NO_GO") reason = caps.some((c) => c.code === "S2") ? t.reason_ai_train : t.reason_robots;
 
-  return { serv_verdict: servVerdict, ceilings, final, flags, confidence, reason, conditions, missing, decisive_clause_ids: decisive };
+  return { serv_verdict: servVerdict, ceilings, final, flags, confidence, reason, conditions, missing: mergeMissing(missing, (w) => t.unreadable_why[w] ?? w), decisive_clause_ids: decisive };
 }

@@ -126,7 +126,7 @@ describe("failures never end in GO", () => {
     const { receipt } = await check(openSite({ "/terms": { status: 403, body: "Forbidden" } }), crawl);
     expect(receipt.verdict).toBe("ASK");
     expect(receipt.decided_by.ceilings).toContain("S4");
-    expect(receipt.missing.some((m) => m.endsWith("/terms (HTTP 403)"))).toBe(true);
+    expect(receipt.missing.some((m) => /\/terms \(HTTP 403[,)]/.test(m))).toBe(true);
   });
 
   it("robots.txt disallows the URL -> NO_GO for crawl", async () => {

@@ -8,6 +8,7 @@ import { runCheck, type CheckInput } from "../server/pipeline.js";
 import { ReceiptStore } from "../server/resit/store.js";
 import { pipelineDeps } from "../server/wiring.js";
 import type { Action } from "../server/config.js";
+import en from "../lang/en.json" with { type: "json" };
 import { page, policyText, startSites, testConfig, type Running, type Sites } from "./helpers/sites.js";
 
 let s: Running | null = null;
@@ -135,7 +136,8 @@ describe("receipt", () => {
     // The terms were not read on purpose, so silence cannot become GO.
     expect(receipt.verdict).not.toBe("GO");
     expect(receipt.decided_by.ceilings).toContain("S5");
-    expect(receipt.missing).toContain(`${receipt.url} (stopped_at_robots_txt)`);
+    // The decision step's line and the code's line for the same URL are one line, the state in words.
+    expect(receipt.missing).toEqual([`${receipt.url} (${en.receipt.unreadable_why.stopped_at_robots_txt})`]);
   });
 
   it("a crawl the robots rules disallow is NO_GO from robots.txt alone", async () => {
