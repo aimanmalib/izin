@@ -1,9 +1,11 @@
 // One guarded GET: fixed IzinBot user agent, every redirect hop re-checked by the SSRF guard,
-// connection pinned to the checked address, size and time limits, no retries.
+// connection pinned to the checked address, size and time limits, no retries. A compressed body
+// is decoded here, so every later step sees the page and not its transport form.
 import { createHash } from "node:crypto";
 import { isIP, type LookupFunction } from "node:net";
 import { Agent, request } from "undici";
 import type { IzinConfig } from "../config.js";
+import { contentCoding, decodeCapped, readCapped } from "./coding.js";
 import { checkUrl, SsrfError, type NetPolicy } from "./ssrf.js";
 
 export type FetchState = "ok" | "blocked" | "not_found" | "timeout" | "too_large" | "error" | "refused";
@@ -40,17 +42,6 @@ function pinnedAgent(address: string): Agent {
       }) as LookupFunction,
     },
   });
-}
-
-async function readCapped(body: AsyncIterable<Buffer>, max: number): Promise<{ buf: Buffer; over: boolean }> {
-  const chunks: Buffer[] = [];
-  let size = 0;
-  for await (const chunk of body) {
-    size += chunk.length;
-    if (size > max) return { buf: Buffer.concat(chunks), over: true };
-    chunks.push(chunk);
-  }
-  return { buf: Buffer.concat(chunks), over: false };
 }
 
 function result(url: string, partial: Partial<FetchResult> & Pick<FetchResult, "state">): FetchResult {
@@ -110,13 +101,18 @@ export async function fetchGuarded(rawUrl: string, opts: FetchOptions): Promise<
         continue;
       }
       const contentType = String(res.headers["content-type"] ?? "");
-      const { buf, over } = await readCapped(res.body as AsyncIterable<Buffer>, l.response_max_bytes);
-      if (over) res.body.destroy();
+      const wire = await readCapped(res.body as AsyncIterable<Buffer>, l.response_max_bytes);
+      if (wire.over) res.body.destroy();
+      // The cap holds twice: on the bytes received and on the bytes they decode to.
+      const coding = wire.buf.length ? contentCoding(res.headers["content-encoding"]) : null;
+      const decoded = coding ? await decodeCapped(wire.buf, coding, l.response_max_bytes) : { ...wire, failed: false };
+      const buf = decoded.buf;
       const base = { final_url: current.href, status: res.statusCode, content_type: contentType, body: buf };
-      if (over) return result(rawUrl, { ...base, state: "too_large" });
+      if (wire.over || decoded.over) return result(rawUrl, { ...base, state: "too_large" });
       if (looksBlocked(cfg, res.statusCode, buf)) return result(rawUrl, { ...base, state: "blocked" });
       if (res.statusCode === 404 || res.statusCode === 410) return result(rawUrl, { ...base, state: "not_found" });
       if (res.statusCode < 200 || res.statusCode >= 300) return result(rawUrl, { ...base, state: "error", note: "status" });
+      if (decoded.failed) return result(rawUrl, { ...base, state: "error", note: `content-encoding ${coding}` });
       return result(rawUrl, { ...base, state: "ok" });
     } catch (e) {
       if (signal.aborted) return result(rawUrl, { final_url: current.href, state: "timeout" });
