@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- Source of web/public/og.png, the link preview card (1200 x 630). Render it again after an edit:
+     npx playwright screenshot --viewport-size=1200,630 scripts/og/card.html web/public/og.png -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Izin link preview card</title>
+<style>
+  :root { --paper: #f4f1ea; --raised: #fbfaf6; --ink: #1a1c21; --soft: #4b4f58; --faint: #6e717a; --rule: #d9d2c3; --nogo: #a1251d; --nogo-soft: #f6dfdb; --accent: #2b44a8; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; }
+  body { background: linear-gradient(180deg, var(--nogo-soft) 0, var(--paper) 46%); color: var(--ink); font-family: "Bitstream Charter", "Iowan Old Style", Georgia, serif; padding: 56px 72px 52px; display: flex; flex-direction: column; }
+  header { display: flex; align-items: center; gap: 16px; font: 700 34px/1 "Bitstream Charter", Georgia, serif; }
+  header svg { width: 52px; height: 52px; }
+  header .site { margin-left: auto; font: 500 24px/1 "DejaVu Sans Mono", monospace; color: var(--soft); }
+  h1 { font-size: 76px; line-height: 1.04; letter-spacing: -0.02em; margin-top: 50px; }
+  .row { display: flex; align-items: center; gap: 36px; margin-top: 44px; }
+  .quote { flex: 1; background: var(--raised); border: 1px solid var(--rule); border-left: 6px solid var(--nogo); border-radius: 10px; padding: 22px 28px; }
+  .quote p { font: 400 26px/1.35 "DejaVu Sans Mono", monospace; }
+  .quote cite { display: block; margin-top: 10px; font: normal 21px/1.2 "DejaVu Sans", sans-serif; color: var(--faint); }
+  .pill { flex: none; display: inline-flex; align-items: center; gap: 14px; border: 3px solid var(--nogo); background: var(--nogo-soft); color: var(--nogo); border-radius: 999px; padding: 14px 34px; font: 800 44px/1 "DejaVu Sans", sans-serif; letter-spacing: 0.06em; }
+  .pill i { width: 34px; height: 8px; border-radius: 4px; background: var(--nogo); }
+  footer { margin-top: auto; font: 400 25px/1.3 "DejaVu Sans", sans-serif; color: var(--soft); }
+</style>
+</head>
+<body>
+  <header>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#1a1c21"/><rect x="27.5" y="27" width="9" height="25" rx="2.5" fill="#f4f1ea"/><circle cx="32" cy="16.5" r="6" fill="#5b7cf0"/></svg>
+    Izin
+    <span class="site">izin.sasateguh.com</span>
+  </header>
+  <h1>Your agent can pay.<br />Is it allowed to buy here?</h1>
+  <div class="row">
+    <div class="quote">
+      <p># Checkouts are strictly for human users.</p>
+      <cite>A comment in ebay.com/robots.txt. Parsers skip it.</cite>
+    </div>
+    <span class="pill"><i></i>NO-GO</span>
+  </div>
+  <footer>GO, ASK or NO-GO before an agent acts on a site, with the clause quoted.</footer>
+</body>
+</html>
