@@ -3,7 +3,7 @@
 // possible when the decider returned a valid GO. Codes S1 to S11 are listed on every receipt.
 import type { Action, Verdict } from "../config.js";
 import type { Confidence, Decision } from "./decision.js";
-import type { DeciderClause, DeciderSignals } from "./message.js";
+import type { DeciderClause, DeciderSignals, DocRef } from "./message.js";
 
 /** Actions where silence is not permission: a GO needs a clause quoted from a policy document (S11). */
 export const QUOTE_REQUIRED: readonly Action[] = ["crawl", "account", "purchase", "post"];
@@ -37,10 +37,17 @@ export interface CeilingTexts {
   /** Conditions for an ASK that would otherwise list nothing to do: the terms were read and are silent, or could not be read. */
   ask_terms_silent: string;
   ask_terms_unread: string;
+  /** Conditions for an ASK where the decision step gave no answer: it refused the request, or it failed. */
+  ask_guard_refused: string;
+  ask_decider_unavailable: string;
   /** S11 reason; {read} lists what was read (URL and characters), {chars} is the word after a count. */
   reason_no_policy_clause: string;
   /** S11 reason when no terms document was read at all, only robots.txt comments or other pages. */
   reason_no_terms_read: string;
+  /** Reason when no terms document was read and a page answered with a block: {host} and {status} of that page. */
+  reason_blocked: string;
+  /** Reason when no terms document was read and terms pages were found; {unread} lists each page and why it was not read. */
+  reason_terms_unread: string;
   read_chars: string;
   /** Reason for a read_page GO with no clause from a policy document: written by code, not by the decider. */
   reason_read_page_no_clause: string;
@@ -101,18 +108,50 @@ export function signalCeilings(action: Action, s: DeciderSignals, clauses: Pick<
   return caps;
 }
 
+/**
+ * Whether a listed document's text was read. A page listed as unreadable was not (it needs a browser, the
+ * reading step failed, the site signals ai-input=no); a page cut at the maximum length was read up to there.
+ */
+const wasRead = (s: DeciderSignals, d: Pick<DocRef, "url">): boolean => !s.unreadable.some((u) => u.url === d.url && u.why !== "truncated");
+
+/** Whether the text of at least one policy document (fetched terms, or terms the caller pasted) was read. */
+const termsRead = (s: DeciderSignals): boolean => s.docs.some((d) => POLICY_KINDS.has(d.kind) && wasRead(s, d));
+
 /** S11 reason: each URL read once, with its size, and that no clause from the site's terms could be quoted. */
-function noClauseReason(s: DeciderSignals, t: CeilingTexts): string {
+function noClauseReason(s: DeciderSignals, t: CeilingTexts): string | null {
   const byUrl = new Map<string, { chars: number; robots: boolean }>();
   for (const d of s.docs) {
+    if (!wasRead(s, d)) continue;
     const e = byUrl.get(d.url) ?? { chars: 0, robots: false };
     byUrl.set(d.url, { chars: e.chars + d.chars, robots: e.robots || d.kind === "robots_comments" });
   }
+  if (!byUrl.size) return null;
   const read = [...byUrl]
     .map(([url, e]) => `${url} (${e.chars.toLocaleString("en-US")} ${t.read_chars}${e.robots ? `, ${t.read_robots_comments}` : ""})`)
     .join(", ");
-  const terms = s.docs.some((d) => POLICY_KINDS.has(d.kind));
-  return (terms ? t.reason_no_policy_clause : t.reason_no_terms_read).replace("{read}", read);
+  return (termsRead(s) ? t.reason_no_policy_clause : t.reason_no_terms_read).replace("{read}", read);
+}
+
+const hostOf = (url: string): string => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+};
+
+/**
+ * What kept Izin from the site's terms when no policy document was read: a page that answered with a block
+ * leads (its host and HTTP status); without one, the terms pages that were found and not read, each with its
+ * state in words. Null when neither applies. robots.txt is not a terms page and is not named here.
+ */
+function stoppedReason(input: CeilingInput, t: CeilingTexts): string | null {
+  const s = input.signals;
+  const b = input.blocked[0];
+  if (b) return t.reason_blocked.replace("{host}", hostOf(b.url)).replace("{status}", String(b.status));
+  const robots = new Set(s.docs.filter((d) => d.kind === "robots_comments").map((d) => d.url));
+  const unread = mergeMissing(s.unreadable.filter((u) => !robots.has(u.url)).map((u) => `${u.url} (${t.unreadable_why[u.why] ?? u.why})`));
+  return unread.length ? t.reason_terms_unread.replace("{unread}", unread.join(", ")) : null;
 }
 
 const LINE = /^(https?:\/\/\S+) \((.+)\)$/;
@@ -232,15 +271,27 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
 
   let reason = decision?.reason ?? "";
   if (!decision) reason = input.decider === "skipped" ? t.reason_decider_skipped : input.decider === "guard_tripped" ? t.reason_guard_tripped : t.reason_decider_unavailable;
+  // Code writes the reason when no decision was requested, or when a GO was lowered. With no policy document
+  // read it names what stopped the reading (a block, or the pages found and not read) and never says the
+  // terms are silent; otherwise S11 says what was read and that no clause from the terms could be quoted.
   const s11 = late.some((c) => c.code === "S11");
-  if (s11 && s.docs_read > 0 && (servVerdict === "GO" || (!decision && input.decider === "skipped"))) reason = noClauseReason(s, t);
+  if ((!decision && input.decider === "skipped") || (servVerdict === "GO" && final !== "GO")) {
+    const written = (termsRead(s) ? null : stoppedReason(input, t)) ?? (s11 && s.docs_read > 0 ? noClauseReason(s, t) : null);
+    if (written) reason = written;
+  }
   if (action === "read_page" && final === "GO" && s.robots.fetched && !quotesPolicy(s, input.clauses)) reason = t.reason_read_page_no_clause;
   if (final === "NO_GO" && servVerdict !== "NO_GO") reason = caps.some((c) => c.code === "S2") ? t.reason_ai_train : t.reason_robots;
 
-  // An ASK always says what to do next.
-  if (final === "ASK" && conditions.length === 0) {
-    const readInFull = s.docs.some((d) => POLICY_KINDS.has(d.kind)) && !s.unreadable.length && !input.blocked.length;
-    conditions.push(readInFull ? t.ask_terms_silent : t.ask_terms_unread);
+  // An ASK always says what to do next. When the decision step gave no answer the condition says so, whatever
+  // else is listed. "The terms do not say" is kept for terms read in full with nothing blocked or unread.
+  if (final === "ASK") {
+    const stopped = flags.includes("guard_tripped") ? t.ask_guard_refused : flags.includes("decider_unavailable") ? t.ask_decider_unavailable : null;
+    if (stopped) {
+      if (!conditions.includes(stopped)) conditions.push(stopped);
+    } else if (conditions.length === 0) {
+      const readInFull = termsRead(s) && !s.unreadable.length && !input.blocked.length;
+      conditions.push(readInFull ? t.ask_terms_silent : t.ask_terms_unread);
+    }
   }
 
   return { serv_verdict: servVerdict, ceilings, final, flags, confidence, reason, conditions, missing: mergeMissing(missing, (w) => t.unreadable_why[w] ?? w), decisive_clause_ids: decisive };

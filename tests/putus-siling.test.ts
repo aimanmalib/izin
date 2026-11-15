@@ -190,14 +190,18 @@ describe("applyCeilings", () => {
   });
 
   it("S11 names each URL once: six robots.txt comment blocks of one file are one entry with their total size", () => {
-    // Shape of /r/5pppwplbgz: robots.txt read as six comment blocks, the terms page needs a browser.
+    // robots.txt read as six comment blocks, and no terms page found.
     const sizes = [208, 290, 227, 232, 212, 241];
     const docs = sizes.map((chars, i) => ({ id: `d${i + 1}`, url: "https://shop.example/robots.txt", kind: "robots_comments" as const, chars, truncated: false }));
-    const s = signals({ docs_read: 6, docs, unreadable: [{ url: "https://shop.example/terms", why: "needs_browser" }] });
-    const o = run({ action: "purchase", signals: s, clauses: [], decision: null, decider: "skipped" });
+    const o = run({ action: "purchase", signals: signals({ docs_read: 6, docs }), clauses: [], decision: null, decider: "skipped" });
     expect(o.reason.split("https://shop.example/robots.txt").length - 1).toBe(1);
     expect(o.reason).toBe(texts.reason_no_terms_read.replace("{read}", `https://shop.example/robots.txt (1,410 characters, ${texts.read_robots_comments})`));
     expect(o.reason).toContain("could not read the site's terms");
+    // Shape of /r/5pppwplbgz: the same robots.txt, and a terms page that needs a browser. The reason names that page.
+    const terms = "https://shop.example/terms";
+    const unread = run({ action: "purchase", signals: signals({ docs_read: 6, docs, unreadable: [{ url: terms, why: "needs_browser" }] }), clauses: [], decision: null, decider: "skipped" });
+    expect(unread.reason).toBe(texts.reason_terms_unread.replace("{unread}", `${terms} (${texts.unreadable_why.needs_browser})`));
+    expect(unread.reason).not.toContain("Silence is not permission");
   });
 
   it("S11 with terms read says no clause from the site's terms, even when robots.txt comments were read too", () => {
@@ -251,5 +255,109 @@ describe("applyCeilings", () => {
         }
       }
     }
+  });
+});
+
+// ADR 0026. Each case is the shape of a stored receipt; the verdicts are the same as before, the sentences are not.
+describe("an ASK names what stopped it", () => {
+  const skipped: Partial<CeilingInput> = { clauses: [], decision: null, decider: "skipped" };
+
+  it("a policy page that needs a browser is not described as read (shape of /r/pqj44plvwn)", () => {
+    const url = "https://shop.example/policies/terms/";
+    const stub = { id: "d1", url, kind: "policy" as const, chars: 33, truncated: false };
+    // As stored on that receipt (the stub counted as read), and as a new check counts it (not read).
+    for (const docs_read of [1, 0]) {
+      const o = run({ action: "purchase", signals: signals({ docs_read, docs: [stub], unreadable: [{ url, why: "needs_browser" }] }), ...skipped });
+      expect(o).toMatchObject({ final: "ASK", serv_verdict: null, flags: ["decider_skipped"] });
+      expect(o.ceilings).toEqual(expect.arrayContaining(["S5", "S11"]));
+      expect(o.reason).toBe(texts.reason_terms_unread.replace("{unread}", `${url} (${texts.unreadable_why.needs_browser})`));
+      expect(o.reason).not.toMatch(/Izin read|33 characters|found no clause|Silence is not permission/);
+      expect(o.conditions).toEqual([texts.ask_terms_unread]);
+    }
+    expect(texts.reason_terms_unread).toContain("{unread}");
+  });
+
+  it("the list of what was read leaves out a page that was not read and keeps one cut at the maximum length", () => {
+    const s = signals({
+      docs_read: 2,
+      docs: [
+        { id: "d1", url: "https://shop.example/terms", kind: "policy", chars: 2000, truncated: false },
+        { id: "d2", url: "https://shop.example/aup", kind: "policy", chars: 41, truncated: false },
+        { id: "d3", url: "https://shop.example/long", kind: "policy", chars: 600000, truncated: true },
+      ],
+      unreadable: [{ url: "https://shop.example/aup", why: "needs_browser" }, { url: "https://shop.example/long", why: "truncated" }],
+    });
+    const o = run({ action: "post", signals: s, ...skipped });
+    expect(o.reason).toBe(texts.reason_no_policy_clause.replace("{read}", "https://shop.example/terms (2,000 characters), https://shop.example/long (600,000 characters)"));
+    expect(o.conditions).toEqual([texts.ask_terms_unread]);
+    // A page cut at the maximum length was read: alone, it is still what the reason says Izin read.
+    const cut = signals({ docs: [s.docs[2]!], unreadable: [s.unreadable[1]!] });
+    expect(run({ action: "post", signals: cut, ...skipped }).reason).toBe(texts.reason_no_policy_clause.replace("{read}", "https://shop.example/long (600,000 characters)"));
+  });
+
+  it("a refused decision says so in the condition, not that the terms do not say (shape of /r/bgdke2n72s)", () => {
+    const refused: Partial<CeilingInput> = { clauses: [clause("c1", "prohibits")], decision: null, decider: "guard_tripped" };
+    const o = run(refused);
+    expect(o).toMatchObject({ final: "ASK", ceilings: ["S8"], flags: ["guard_tripped"], reason: texts.reason_guard_tripped });
+    expect(o.conditions).toEqual([texts.ask_guard_refused]);
+    // The condition is listed even when another one is, and once.
+    const wait = run({ ...refused, signals: signals({}, { crawl_delay: 2 }) });
+    expect(wait.conditions).toEqual([texts.crawl_delay_wait.replace("{seconds}", "2"), texts.ask_guard_refused]);
+    // A decision step that failed is not silence in the terms either.
+    const down = run({ clauses: [clause("c1", "prohibits")], decision: null, decider: "unavailable" });
+    expect(down).toMatchObject({ final: "ASK", flags: ["decider_unavailable"], reason: texts.reason_decider_unavailable });
+    expect(down.conditions).toEqual([texts.ask_decider_unavailable]);
+    // A NO_GO from robots.txt needs no such condition.
+    expect(run({ ...refused, signals: signals({}, { disallow_for_agent: true }) })).toMatchObject({ final: "NO_GO", conditions: [] });
+  });
+
+  it("keeps 'the terms do not say' for terms read in full, a decision that ran or had nothing to weigh, and nothing blocked or unread", () => {
+    expect(run({ action: "account", ...skipped }).conditions).toEqual([texts.ask_terms_silent]);
+    expect(run({ action: "train", clauses: [], decision: decision("ASK") }).conditions).toEqual([texts.ask_terms_silent]);
+    const robotsOnly = signals({ docs: [{ id: "r1", url: "https://shop.example/robots.txt", kind: "robots_comments", chars: 300, truncated: false }] });
+    const not = [
+      run({ decision: null, decider: "guard_tripped" }),
+      run({ decision: null, decider: "unavailable" }),
+      run({ action: "account", blocked: [{ url: "https://shop.example/help", status: 403 }], ...skipped }),
+      run({ action: "account", signals: signals({ unreadable: [{ url: "https://shop.example/aup", why: "timeout" }] }), ...skipped }),
+      run({ action: "account", signals: robotsOnly, ...skipped }),
+    ];
+    for (const o of not) {
+      expect(o.final).toBe("ASK");
+      expect(o.conditions).toHaveLength(1);
+      expect(o.conditions).not.toContain(texts.ask_terms_silent);
+    }
+  });
+
+  it("a block is reported as a block: the reason names the host and the HTTP status (shape of /r/3surw7lepl)", () => {
+    const blocked = [{ url: "https://shop.example/", status: 403 }];
+    const o = run({ action: "purchase", signals: signals({ blocked_reader: true, docs_read: 0, docs: [] }), blocked, ...skipped });
+    expect(o).toMatchObject({ final: "ASK", serv_verdict: null, flags: ["decider_skipped"], ceilings: ["S4", "S5", "S11"] });
+    expect(o.reason).toBe(texts.reason_blocked.replace("{host}", "shop.example").replace("{status}", "403"));
+    expect(o.reason).toMatch(/^shop\.example answered IzinBot with HTTP 403/);
+    expect(o.reason).not.toBe(texts.reason_decider_skipped);
+    expect(o.conditions).toEqual([texts.ask_terms_unread]);
+    expect(o.missing).toContain("https://shop.example/ (HTTP 403)");
+    for (const slot of ["{host}", "{status}"]) expect(texts.reason_blocked).toContain(slot);
+    // robots.txt comments were read and the pages were blocked: the block still leads, with no word about silence.
+    const robots = signals({ blocked_reader: true, docs: [{ id: "r1", url: "https://shop.example/robots.txt", kind: "robots_comments", chars: 300, truncated: false }] });
+    const viaRobots = run({ action: "purchase", signals: robots, blocked, ...skipped });
+    expect(viaRobots.reason).toBe(o.reason);
+    expect(viaRobots.reason).not.toContain("Silence is not permission");
+    // Terms that were read are still what the reason is about when some other page was blocked.
+    const read = run({ action: "purchase", blocked: [{ url: "https://shop.example/help", status: 429 }], ...skipped });
+    expect(read.reason).toBe(texts.reason_no_policy_clause.replace("{read}", "https://shop.example/terms (2,000 characters)"));
+    // The verdict logic is untouched: a crawl robots.txt disallows is NO_GO with the robots reason, blocked or not.
+    expect(run({ signals: signals({ blocked_reader: true, docs_read: 0, docs: [] }, { disallow_for_agent: true }), blocked, ...skipped })).toMatchObject({ final: "NO_GO", reason: texts.reason_robots });
+  });
+
+  it("a GO lowered to ASK with no terms read gets the code's reason, not the model's", () => {
+    const robots = signals({ blocked_reader: true, docs: [{ id: "r1", url: "https://shop.example/robots.txt", kind: "robots_comments", chars: 300, truncated: false }] });
+    const o = run({ action: "read_page", signals: robots, blocked: [{ url: "https://shop.example/terms", status: 403 }], clauses: [{ ...clause("c1", "permits"), doc: "r1" }], decision: decision("GO", ["c1"]) });
+    expect(o).toMatchObject({ final: "ASK", serv_verdict: "GO", ceilings: ["S4"] });
+    expect(o.reason).toBe(texts.reason_blocked.replace("{host}", "shop.example").replace("{status}", "403"));
+    // An ASK the decision step gave keeps the decision step's reason.
+    const ask = run({ action: "read_page", signals: robots, blocked: [{ url: "https://shop.example/terms", status: 403 }], clauses: [], decision: decision("ASK") });
+    expect(ask.reason).toBe("Model reason.");
   });
 });
