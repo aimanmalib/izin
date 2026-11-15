@@ -5,10 +5,14 @@
 <p align="center"><a href="https://github.com/aimanmalib/izin/actions/workflows/ci.yml"><img src="https://github.com/aimanmalib/izin/actions/workflows/ci.yml/badge.svg" alt="CI"></a> <a href="https://github.com/aimanmalib/izin/releases/latest"><img src="https://img.shields.io/github/v/release/aimanmalib/izin" alt="Latest release"></a> <a href="https://github.com/aimanmalib/izin/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a> <a href="https://izin.sasateguh.com"><img src="https://img.shields.io/badge/demo-live-brightgreen" alt="Live demo"></a></p>
 
 <p align="center"><b>Ask the site before your agent acts.</b> · <i>Tanya laman itu dahulu sebelum ejen anda bertindak.</i><br>
-<a href="https://izin.sasateguh.com">live demo</a> · <a href="https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9">OpenServ x402 Agent Market listing</a> · <a href="https://izin.sasateguh.com/docs">API and MCP</a> · <a href="https://github.com/aimanmalib/izin/releases/latest">video, 87 s</a> · <a href="docs/UKUR.md">what we measured</a> · <a href="#documentation">documentation</a> · <a href="CHANGELOG.md">changelog</a> · Built in Malaysia by <a href="https://aimanmalib.com">Aiman Malib</a></p>
+<a href="https://izin.sasateguh.com">live demo</a> · <a href="https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9">OpenServ x402 Agent Market listing</a> · <a href="https://izin.sasateguh.com/docs">API and MCP</a> · <a href="https://youtu.be/U0_YkMaHXzA">video, 87 s</a> · <a href="docs/UKUR.md">what we measured</a> · <a href="#documentation">documentation</a> · <a href="CHANGELOG.md">changelog</a> · Built in Malaysia by <a href="https://aimanmalib.com">Aiman Malib</a></p>
 
 Before an AI agent acts on a website, Izin answers GO, ASK or NO-GO for one action and quotes the clause from the site's
 robots.txt and terms.
+
+![Izin checks buying on ebay.com: the robots.txt comment a parser skips, one site and one action, then NO-GO with the clause quoted](docs/media/hero.gif)
+
+The [narrated demo video](https://youtu.be/U0_YkMaHXzA) is 87 seconds and is also attached to the [latest release](https://github.com/aimanmalib/izin/releases/latest).
 
 [Bahasa Melayu: README.ms.md](README.ms.md)
 
@@ -267,7 +271,7 @@ Built for SERV Hackathon 02 (Dolphin track), November 2026, by [@aimanmalib_](ht
 ## AI disclosure
 
 Built with Claude Code. The code, tests and text in this repository were written by an AI coding agent working under my
-rules. The problem comes from my own work. I decide what ships. The narration in the demo video is an AI clone of my own voice.
+rules. The problem comes from my own work. I decide what ships. The narration in the demo video is an AI clone of my own voice; its music is by Sascha Ende, ende.app (CC BY 4.0).
 
 ## Disclaimer
 

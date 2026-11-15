@@ -27,7 +27,7 @@ The version submitted to SERV Hackathon 02. Everything after the v0.9.0 feature 
 - A GO is capped at ASK when no clause was quoted from the site's terms (S11,
   [ADR 0021](docs/decisions/0021-go-needs-a-quoted-policy-clause.md)).
 - The gallery shows pairs with no valid decision as not decided, and a receipt with no decider call shows a whole cost line.
-- The demo video was cut again and now has narration.
+- The demo video was cut again and now has narration, a quiet music bed and credits on its end card.
 
 ## [0.9.0] - 2026-11-14
 
