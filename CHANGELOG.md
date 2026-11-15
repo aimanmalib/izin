@@ -13,6 +13,7 @@ All notable changes to this project are documented here. The format follows
 ### Changed
 
 - The receipt heading for unread pages and unconfirmed facts reads "What is missing or unread".
+- A site typed with and without `www.` gets the same saved answer, the newest of the two.
 - A bolder favicon, with an `.ico` and a touch icon, and a clearer link preview card with its own preview tags for X.
 
 ## [1.0.3] - 2026-11-15

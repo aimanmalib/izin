@@ -130,6 +130,18 @@ describe("job queue", () => {
     return { db, jobs, add, queue: new JobQueue(jobs, 2, timeoutMs) };
   };
 
+  it("answers a host with and without www from the newest of the two", () => {
+    const { jobs } = setup();
+    const bare = parseCheckRequest(cfg, { url: "https://a.example/", action: "purchase" });
+    const www = parseCheckRequest(cfg, { url: "https://www.a.example/", action: "purchase" });
+    jobs.insertQueued("old", bare, "api", new Date("2026-11-15T10:00:00Z"));
+    jobs.insertQueued("new", www, "api", new Date("2026-11-15T12:00:00Z"));
+    const since = new Date("2026-11-15T00:00:00Z");
+    expect(jobs.findCached(bare.origin, "purchase", since)?.id).toBe("new");
+    expect(jobs.findCached(www.origin, "purchase", since)?.id).toBe("new");
+    expect(jobs.findCached("https://other.example", "purchase", since)).toBeNull();
+  });
+
   it("runs at most two checks at once", async () => {
     const { add, queue } = setup();
     let running = 0;

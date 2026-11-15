@@ -39,17 +39,21 @@ export class CheckJobs {
     return this.db.prepare("UPDATE checks SET status = 'error' WHERE status IN ('queued', 'running')").run().changes;
   }
 
-  /** Same origin and action, no detail, agent or pasted terms, newer than `since`; pending rows count. */
+  /**
+   * Same origin and action, no detail, agent or pasted terms, newer than `since`; pending rows count.
+   * A host with and without a leading "www." is one origin here, so both spellings give the newest answer.
+   */
   findCached(origin: string, action: Action, since: Date): JobRow | null {
+    const twin = origin.includes("://www.") ? origin.replace("://www.", "://") : origin.replace("://", "://www.");
     return (
       this.db
-        .prepare<[string, string, string], JobRow>(
+        .prepare<[string, string, string, string], JobRow>(
           `SELECT id, status, created_at FROM checks
-           WHERE origin = ? AND action = ? AND detail IS NULL AND agent IS NULL AND pasted = 0
+           WHERE origin IN (?, ?) AND action = ? AND detail IS NULL AND agent IS NULL AND pasted = 0
              AND status IN ('queued', 'running', 'done') AND created_at >= ?
            ORDER BY created_at DESC LIMIT 1`,
         )
-        .get(origin, action, since.toISOString()) ?? null
+        .get(origin, twin, action, since.toISOString()) ?? null
     );
   }
 
