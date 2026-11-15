@@ -2,7 +2,7 @@
   "examples": [
     { "key": "ebay_buy", "site": "https://www.ebay.com/", "action": "purchase", "receipt_id": "yddnqgirk6" },
     { "key": "walmart_buy", "site": "https://walmart.com/", "action": "purchase", "receipt_id": "u5ge2ipvmz" },
-    { "key": "booking_buy", "site": "https://booking.com/", "action": "purchase", "receipt_id": "nfra5ziw4b" },
+    { "key": "amazon_pasted", "site": "https://www.amazon.com/", "action": "purchase", "receipt_id": "vlavdzpusl" },
     { "key": "google_crawl", "site": "https://www.google.com/", "action": "crawl", "receipt_id": "x55jmlxgd4" },
     { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": "kclke25oah" }
   ],

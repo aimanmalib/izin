@@ -39,6 +39,10 @@ without human review.
 have a section for agents. Izin quotes it and lists the two things to confirm first: the agent is expressly authorized
 by the customer, and it meets Walmart's registration and technical requirements.
 
+**When a site blocks the reader:** Amazon's terms page answers IzinBot with HTTP 403, and Izin reports that as a
+block. Its terms have a section for agents, so a person can paste it: [buy or book on amazon.com, ASK](https://izin.sasateguh.com/r/vlavdzpusl)
+quotes the requirement that an agent names itself in its user agent string. The receipt says the terms were pasted.
+
 **Why two models.** The open model on Dolphin reads every word cheaply, and anyone can repeat the reading. SERV Reasoning
 makes the call: it answers in a strict schema that cites clause ids, its Prompt Guard refuses a request that tries to
 talk it into GO (the [trap](https://izin.sasateguh.com/trap) shows this live), and on the benchmark it gave no false

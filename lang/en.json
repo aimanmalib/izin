@@ -226,6 +226,7 @@
       "example_walmart_buy": "Walmart, Buy or book",
       "example_booking_buy": "Booking.com, Buy or book",
       "example_google_crawl": "Google, Crawl or scrape",
+      "example_amazon_pasted": "Amazon, terms pasted",
       "example_trap": "The trap page",
       "example_filled": "Filled in. Press Check to run it."
     },
@@ -274,6 +275,7 @@
       "robots_stop": "robots.txt says:",
       "no_refetch": "This site's robots.txt forbids automated access, so Izin did not fetch it again and shows the receipt from the last read.",
       "ledger": "Fetch ledger",
+      "pasted_note": "The terms were pasted by the person who ran this check. Izin did not fetch them from the site, so the quotes below are checked against the pasted text only.",
       "ledger_url": "URL",
       "ledger_status": "Status",
       "ledger_sha": "SHA-256",

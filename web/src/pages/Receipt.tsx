@@ -168,6 +168,7 @@ function ReceiptView({ r, costNow, t }: { r: R; costNow: number | null; t: Strin
         <section aria-labelledby="led">
           <h2 id="led">{p.ledger}</h2>
           <p>{fmt(p.fetched, { what: t.receipt.fetched[r.fetched.scope] })}</p>
+          {r.signals.docs.some((d) => d.kind === "pasted") ? <p><strong>{p.pasted_note}</strong></p> : null}
           {stop?.sentence ? (
             <blockquote className="quote"><p>{stop.sentence}</p><cite>{p.robots_stop}</cite></blockquote>
           ) : null}

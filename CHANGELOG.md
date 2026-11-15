@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- A receipt made from pasted terms says so above its fetch record.
+- An Amazon example made from the Agents section of its terms, pasted, because the page blocks IzinBot.
+
 ## [1.0.3] - 2026-11-15
 
 Fixes from a second outside review of the public site, before submission.
