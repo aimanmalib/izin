@@ -24,6 +24,7 @@
     "readability": "tsx scripts/readability.ts",
     "ukur": "tsx scripts/ukur.ts",
     "remeasure": "tsx scripts/remeasure.ts",
+    "reread": "tsx scripts/reread.ts",
     "g1": "tsx scripts/g1.ts",
     "gallery": "tsx scripts/gallery.ts",
     "prime": "tsx scripts/prime.ts",

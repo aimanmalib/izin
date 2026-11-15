@@ -106,7 +106,10 @@ temperature 0, with thinking off (`reasoning_effort: "none"`). With thinking on,
 reasoning for three of five real policy pages and returned no JSON ([ADR 0012](docs/decisions/0012-g1-reader-thinking-and-guard-mode.md)).
 
 Why Dolphin: reading every word of a long terms page is cheap there, and open weights mean anyone can re-run the reading
-step with the same model. The quote check in [`server/semak/quotes.ts`](server/semak/quotes.ts) (`verifyDocClauses`,
+step with the same model. We did, on 15 Nov 2026 (`npm run reread`, [`bench/runs/reread.json`](bench/runs/reread.json)):
+33 stored policy documents were read again with the same model and prompt at temperature 0. 14 came back with exactly the
+same quotes, and 283 of the 348 stored quotes were returned again. So a reading is repeatable in most of its quotes, not in
+all of them, which is why a receipt keeps the reading it was decided on. The quote check in [`server/semak/quotes.ts`](server/semak/quotes.ts) (`verifyDocClauses`,
 line 69) keeps the reader honest. SERV is the fallback reader if Dolphin fails; the receipt names the model that read.
 
 ## Where SERV Reasoning runs

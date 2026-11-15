@@ -1,5 +1,6 @@
 // Reader cache: (sha256 of the document text, provider, model, prompt version) -> reader output.
-// Entries do not expire: the same text read by the same model and prompt gives the same evidence.
+// Entries do not expire, so one text has one stored reading. A fresh reading by the same model and
+// prompt is close but not always the same (bench/runs/reread.json); the quote check runs either way.
 import { createHash } from "node:crypto";
 import type Database from "better-sqlite3";
 import type { ReaderOutput } from "./types.js";

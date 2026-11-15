@@ -1,0 +1,278 @@
+{
+ "run_at": "2026-11-15T06:22:26.553Z",
+ "reader": "dolphin:deepseek-ai/DeepSeek-V4.1-Flash",
+ "prompt": "reader.v1",
+ "cost_usd": 0.005707,
+ "summary": {
+  "documents": 33,
+  "identical": 14,
+  "stored_quotes": 348,
+  "same_quotes": 283
+ },
+ "rows": [
+  {
+   "url": "https://www.openserv.ai/term-of-services",
+   "chars": 3379,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://www.nike.com/my/help/a/1111-gameon-terms-gs",
+   "chars": 5696,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://www.wayfair.com/terms",
+   "chars": 13444,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://github.com/features/copilot",
+   "chars": 34124,
+   "stored_clauses": 22,
+   "fresh_clauses": 22,
+   "same_quotes": 19,
+   "identical": false
+  },
+  {
+   "url": "https://gokite.ai/terms",
+   "chars": 5225,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://izin.sasateguh.com/trap/terms",
+   "chars": 1246,
+   "stored_clauses": 7,
+   "fresh_clauses": 7,
+   "same_quotes": 7,
+   "identical": true
+  },
+  {
+   "url": "https://gdg.community.dev/participation-terms/",
+   "chars": 4187,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://www.eventbrite.com/help/en-us/articles/251210/eventbrite-terms-of-service/",
+   "chars": 69432,
+   "stored_clauses": 19,
+   "fresh_clauses": 14,
+   "same_quotes": 13,
+   "identical": false
+  },
+  {
+   "url": "https://internshala.com/terms/",
+   "chars": 30227,
+   "stored_clauses": 16,
+   "fresh_clauses": 16,
+   "same_quotes": 16,
+   "identical": true
+  },
+  {
+   "url": "https://zindi.world/terms",
+   "chars": 16079,
+   "stored_clauses": 13,
+   "fresh_clauses": 13,
+   "same_quotes": 13,
+   "identical": true
+  },
+  {
+   "url": "https://www.hackerearth.com/terms-of-service",
+   "chars": 31463,
+   "stored_clauses": 18,
+   "fresh_clauses": 10,
+   "same_quotes": 9,
+   "identical": false
+  },
+  {
+   "url": "https://substack.com/tos",
+   "chars": 30765,
+   "stored_clauses": 20,
+   "fresh_clauses": 21,
+   "same_quotes": 12,
+   "identical": false
+  },
+  {
+   "url": "https://www.uber.com/us/en/legal/general-terms-of-use/",
+   "chars": 93292,
+   "stored_clauses": 23,
+   "fresh_clauses": 22,
+   "same_quotes": 20,
+   "identical": false
+  },
+  {
+   "url": "https://www.eventbrite.com/corporate/legal/legalterms/",
+   "chars": 1678,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://www.trip.com/contents/service-guideline/terms.html?locale=en-XX&curr=USD",
+   "chars": 44514,
+   "stored_clauses": 17,
+   "fresh_clauses": 23,
+   "same_quotes": 16,
+   "identical": false
+  },
+  {
+   "url": "https://www.skyscanner.net/terms-of-service",
+   "chars": 24778,
+   "stored_clauses": 8,
+   "fresh_clauses": 9,
+   "same_quotes": 8,
+   "identical": false
+  },
+  {
+   "url": "https://www.kayak.com/terms-of-use",
+   "chars": 46255,
+   "stored_clauses": 11,
+   "fresh_clauses": 11,
+   "same_quotes": 11,
+   "identical": true
+  },
+  {
+   "url": "https://pages.lazada.com.my/wow/gcp/route/lazada/my/upr_1000345_lazada/channel/my/upr-router/my?hybrid=1&data_prefetch=true&prefetch_replace=1&at_iframe=1&wh_pid=/lazada/channel/my/legal/terms-conditions",
+   "chars": 1071,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://pages.lazada.com.my/wow/i/my/corp/campaign-terms-conditions?hybrid=1",
+   "chars": 25144,
+   "stored_clauses": 8,
+   "fresh_clauses": 7,
+   "same_quotes": 5,
+   "identical": false
+  },
+  {
+   "url": "https://agreementservice.svs.nike.com/my/en_gb/rest/agreement?agreementType=termsOfUse&uxId=com.nike&country=MY&language=en&requestType=redirect",
+   "chars": 77965,
+   "stored_clauses": 14,
+   "fresh_clauses": 13,
+   "same_quotes": 12,
+   "identical": false
+  },
+  {
+   "url": "https://www.nike.com/my/help/a/1111-gameon-terms-gs",
+   "chars": 5353,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://www.wayfair.com/terms",
+   "chars": 13432,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://campaign.aliexpress.com/wow/gcp-plus/ae/tupr?_immersiveMode=true&pha_manifest=upr&disableNav=YES&wh_pid=300000414/pt8AMcBikk",
+   "chars": 13812,
+   "stored_clauses": 0,
+   "fresh_clauses": 0,
+   "same_quotes": 0,
+   "identical": true
+  },
+  {
+   "url": "https://github.com/features/copilot",
+   "chars": 34053,
+   "stored_clauses": 15,
+   "fresh_clauses": 15,
+   "same_quotes": 12,
+   "identical": false
+  },
+  {
+   "url": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+   "chars": 46411,
+   "stored_clauses": 19,
+   "fresh_clauses": 20,
+   "same_quotes": 18,
+   "identical": false
+  },
+  {
+   "url": "https://stripe.com/en-my/legal/restricted-businesses",
+   "chars": 25004,
+   "stored_clauses": 19,
+   "fresh_clauses": 12,
+   "same_quotes": 11,
+   "identical": false
+  },
+  {
+   "url": "https://www.target.com/c/terms-conditions/-/N-4sr7l",
+   "chars": 120905,
+   "stored_clauses": 20,
+   "fresh_clauses": 17,
+   "same_quotes": 17,
+   "identical": false
+  },
+  {
+   "url": "https://www.walmart.com/help/article/walmart-com-terms-of-use/3b75080af40340d6bbd596f116fae5a0",
+   "chars": 96599,
+   "stored_clauses": 22,
+   "fresh_clauses": 19,
+   "same_quotes": 18,
+   "identical": false
+  },
+  {
+   "url": "https://www.booking.com/content/terms.html",
+   "chars": 192997,
+   "stored_clauses": 12,
+   "fresh_clauses": 10,
+   "same_quotes": 9,
+   "identical": false
+  },
+  {
+   "url": "https://www.booking.com/content/terms.html",
+   "chars": 192997,
+   "stored_clauses": 10,
+   "fresh_clauses": 12,
+   "same_quotes": 10,
+   "identical": false
+  },
+  {
+   "url": "https://www.airbnb.com/help/article/2908",
+   "chars": 257802,
+   "stored_clauses": 15,
+   "fresh_clauses": 19,
+   "same_quotes": 14,
+   "identical": false
+  },
+  {
+   "url": "https://www.booking.com/content/terms.html",
+   "chars": 192998,
+   "stored_clauses": 12,
+   "fresh_clauses": 8,
+   "same_quotes": 6,
+   "identical": false
+  },
+  {
+   "url": "https://www.booking.com/content/terms.html",
+   "chars": 192998,
+   "stored_clauses": 8,
+   "fresh_clauses": 11,
+   "same_quotes": 7,
+   "identical": false
+  }
+ ]
+}
