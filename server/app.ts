@@ -10,7 +10,7 @@ import { readingCost, receiptCostNow, repricingOf } from "./belanja/kos.js";
 import { loadBenchConfig } from "./bench/variants.js";
 import { mcpTexts, registerMcp } from "./mcp/server.js";
 import { createRuntime, type Runtime } from "./runtime.js";
-import { loadExamples, siteView } from "./web/site.js";
+import { loadExamplesFile, siteView } from "./web/site.js";
 import { registerStatic } from "./web/static.js";
 
 export const VERSION = "1.0.2";
@@ -61,7 +61,7 @@ export function buildApp(config: IzinConfig, rt: Runtime = createRuntime(config)
     costNow: (r) => receiptCostNow(config, r),
   });
   // Read on each request so a new receipt id in config/examples.json needs no code change.
-  app.get("/api/site", async () => siteView(config, rt.db, loadExamples(opts.examplesPath), payTo !== null));
+  app.get("/api/site", async () => siteView(config, rt.db, loadExamplesFile(opts.examplesPath), payTo !== null));
   registerStatic(app, opts.webDir ?? WEB_DIST, {
     receipt: (id) => {
       const r = rt.service.result(id);

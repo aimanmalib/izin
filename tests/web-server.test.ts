@@ -1,6 +1,7 @@
 // The web app served by the API process: page routes return index.html with no-transform,
 // unknown pages 404 with the same HTML, hashed assets are cached, names cannot leave the folder,
-// /r/<id>.json serves the stored receipt, and /api/site carries config and measured cost.
+// /r/<id>.json serves the stored receipt, and /api/site carries config, measured cost and the
+// sample answer from the examples file.
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -8,8 +9,18 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../server/app.js";
 import { createRuntime } from "../server/runtime.js";
-import { costView, loadExamples } from "../server/web/site.js";
+import { costView, loadExamples, loadExamplesFile } from "../server/web/site.js";
 import { page, policyText, startSites, testConfig, type Running } from "./helpers/sites.js";
+
+const EXAMPLE = { key: "a", site: "https://a.example/", action: "purchase", receipt_id: "abcdefghij" };
+const SAMPLE = {
+  receipt_id: "abcdefghij",
+  site: "a.example",
+  action: "purchase",
+  verdict: "NO_GO",
+  quote: "Automated ordering without human review is not permitted on this site.",
+  source: "a.example/robots.txt",
+};
 
 let dir = "";
 beforeAll(() => {
@@ -18,7 +29,8 @@ beforeAll(() => {
   writeFileSync(join(dir, "index.html"), "<!doctype html><title>t</title><div id=root></div>");
   writeFileSync(join(dir, "assets", "app-1a2b.js"), "console.log(1)");
   writeFileSync(join(dir, "favicon.svg"), "<svg xmlns='http://www.w3.org/2000/svg'/>");
-  writeFileSync(join(dir, "examples.json"), JSON.stringify({ examples: [{ key: "a", site: "https://a.example/", action: "purchase", receipt_id: "abcdefghij" }] }));
+  writeFileSync(join(dir, "examples.json"), JSON.stringify({ examples: [EXAMPLE] }));
+  writeFileSync(join(dir, "with-sample.json"), JSON.stringify({ examples: [EXAMPLE], sample: SAMPLE }));
 });
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
@@ -30,7 +42,7 @@ afterEach(async () => {
   app = s = null;
 });
 
-async function setup() {
+async function setup(examplesFile = "examples.json") {
   const cfg = testConfig();
   s = await startSites((u) => ({
     "shop.example": {
@@ -41,7 +53,7 @@ async function setup() {
   }));
   const rt = createRuntime(cfg, { env: { IZIN_FAKE: "1" }, policy: s.policy, alert: async () => true });
   rt.pipeline.sleep = async () => {};
-  app = buildApp(cfg, rt, { webDir: dir, examplesPath: join(dir, "examples.json") });
+  app = buildApp(cfg, rt, { webDir: dir, examplesPath: join(dir, examplesFile) });
   return { app, rt, url: s.url };
 }
 
@@ -106,7 +118,9 @@ describe("/r/<id>.json and /api/site", () => {
     const { app, rt, url } = await setup();
     const before = (await app.inject({ method: "GET", url: "/api/site" })).json();
     expect(before.cost).toBeNull();
-    expect(before.examples).toEqual([{ key: "a", site: "https://a.example/", action: "purchase", receipt_id: "abcdefghij" }]);
+    expect(before.examples).toEqual([EXAMPLE]);
+    // No sample in the examples file: the page gets null and shows none.
+    expect(before.sample).toBeNull();
     expect(before.action_order).toHaveLength(6);
     expect(before.tiers.free_checks_per_hour).toBe(testConfig().limits.rate_new_checks_per_ip_hour);
     // Two planned agent prices: a saved answer costs less than a fresh reading and decision,
@@ -138,5 +152,52 @@ describe("/r/<id>.json and /api/site", () => {
 
   it("reads the tracked examples file", () => {
     for (const e of loadExamples()) expect(e.site).toMatch(/^https:\/\//);
+  });
+
+  it("carries the sample answer from the examples file to the page, word for word", async () => {
+    const { app } = await setup("with-sample.json");
+    const view = (await app.inject({ method: "GET", url: "/api/site" })).json();
+    expect(view.sample).toEqual(SAMPLE);
+    expect(view.examples).toEqual([EXAMPLE]);
+  });
+
+  it("rejects a sample that does not match its shape", () => {
+    const bad = join(dir, "bad-sample.json");
+    const wrong: Record<string, unknown>[] = [
+      { ...SAMPLE, verdict: "MAYBE" },
+      { ...SAMPLE, action: "fly" },
+      { ...SAMPLE, receipt_id: "NOPE" },
+      { ...SAMPLE, site: "https://a.example/" },
+      { ...SAMPLE, quote: "  " },
+      { ...SAMPLE, source: "" },
+      { ...SAMPLE, note: "extra" },
+      { receipt_id: SAMPLE.receipt_id, site: SAMPLE.site, action: SAMPLE.action, verdict: SAMPLE.verdict, quote: SAMPLE.quote },
+    ];
+    for (const sample of wrong) {
+      writeFileSync(bad, JSON.stringify({ examples: [EXAMPLE], sample }));
+      expect(() => loadExamplesFile(bad), JSON.stringify(sample)).toThrow();
+    }
+    expect(loadExamplesFile(join(dir, "with-sample.json")).sample).toEqual(SAMPLE);
+    expect(loadExamplesFile(join(dir, "examples.json")).sample).toBeUndefined();
+  });
+
+  it("leaves out a sample whose quote is longer than a receipt may carry", async () => {
+    const long = join(dir, "long-sample.json");
+    const max = testConfig().limits.quote_max_chars;
+    writeFileSync(long, JSON.stringify({ examples: [EXAMPLE], sample: { ...SAMPLE, quote: "x".repeat(max + 1) } }));
+    const { app } = await setup("long-sample.json");
+    expect((await app.inject({ method: "GET", url: "/api/site" })).json().sample).toBeNull();
+    // The file is read on each request, so the same server sees the shorter quote.
+    writeFileSync(long, JSON.stringify({ examples: [EXAMPLE], sample: { ...SAMPLE, quote: "x".repeat(max) } }));
+    expect((await app.inject({ method: "GET", url: "/api/site" })).json().sample.quote).toHaveLength(max);
+  });
+
+  it("keeps the tracked sample to one of the one-click examples, within the quote limit", () => {
+    const file = loadExamplesFile();
+    if (!file.sample) return;
+    const example = file.examples.find((e) => e.receipt_id === file.sample!.receipt_id);
+    expect(example?.action).toBe(file.sample.action);
+    expect(new URL(example!.site).hostname.replace(/^www\./, "")).toBe(file.sample.site);
+    expect(file.sample.quote.length).toBeLessThanOrEqual(testConfig().limits.quote_max_chars);
   });
 });

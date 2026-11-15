@@ -5,6 +5,14 @@
     { "key": "booking_buy", "site": "https://booking.com/", "action": "purchase", "receipt_id": "nfra5ziw4b" },
     { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": "kclke25oah" }
   ],
+  "sample": {
+    "receipt_id": "yddnqgirk6",
+    "site": "ebay.com",
+    "action": "purchase",
+    "verdict": "NO_GO",
+    "quote": "Automated scraping, buy-for-me agents, LLM-driven bots, or any end-to-end flow that attempts to place orders without human review is strictly prohibited.",
+    "source": "ebay.com/robots.txt"
+  },
   "prime": [
     { "site": "https://openserv.ai/", "action": "account" },
     { "site": "https://openserv.ai/", "action": "read_page" },

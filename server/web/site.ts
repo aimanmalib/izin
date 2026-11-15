@@ -1,11 +1,14 @@
-// What the web pages need from the server besides receipts: one-click examples (config/examples.json),
-// the web settings from config, and the average cost per check from the stored receipts.
+// What the web pages need from the server besides receipts: one-click examples and the sample
+// answer (config/examples.json), the web settings from config, and the average cost per check
+// from the stored receipts.
 import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { z } from "zod";
 import { readingCost } from "../belanja/kos.js";
-import { ACTIONS, EXAMPLES_PATH, type IzinConfig } from "../config.js";
+import { ACTIONS, EXAMPLES_PATH, VERDICTS, type IzinConfig } from "../config.js";
 import { estimateCost } from "../putus/serv.js";
+
+const receiptId = z.string().regex(/^[a-z2-7]{8,32}$/);
 
 const examplesSchema = z
   .object({
@@ -15,10 +18,23 @@ const examplesSchema = z
           key: z.string().regex(/^[a-z][a-z0-9_]*$/),
           site: z.url(),
           action: z.enum(ACTIONS),
-          receipt_id: z.string().regex(/^[a-z2-7]{8,32}$/).nullable(),
+          receipt_id: receiptId.nullable(),
         })
         .strict(),
     ),
+    // One saved answer shown at the top of the front page: the verdict of a saved receipt and one
+    // of its deciding clauses, copied word for word, with a label for where the clause was read.
+    sample: z
+      .object({
+        receipt_id: receiptId,
+        site: z.string().regex(/^[a-z0-9-]+(\.[a-z0-9-]+)+$/),
+        action: z.enum(ACTIONS),
+        verdict: z.enum(VERDICTS),
+        quote: z.string().regex(/\S/),
+        source: z.string().regex(/\S/),
+      })
+      .strict()
+      .optional(),
     // Checks run ahead of time so their receipts are saved (scripts/prime.ts); not shown as buttons.
     prime: z.array(z.object({ site: z.url(), action: z.enum(ACTIONS) }).strict()).default([]),
   })
@@ -26,6 +42,7 @@ const examplesSchema = z
 
 export type ExamplesFile = z.infer<typeof examplesSchema>;
 export type Examples = ExamplesFile["examples"];
+export type Sample = NonNullable<ExamplesFile["sample"]>;
 
 export function loadExamplesFile(path: string = EXAMPLES_PATH): ExamplesFile {
   if (!existsSync(path)) return { examples: [], prime: [] };
@@ -67,7 +84,12 @@ export function costView(db: Database.Database, cfg: IzinConfig): CostView | nul
   return { checks: rows.length, reader_usd: avg(rows.map((r) => r.reader ?? 0)), decider_usd: avg(decider) };
 }
 
-export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examples, paidLive = false) {
+/** The sample answer for the page, or null: none in the file, or a quote longer than a receipt may carry. */
+function sampleView(cfg: IzinConfig, sample: ExamplesFile["sample"]): Sample | null {
+  return sample && sample.quote.length <= cfg.limits.quote_max_chars ? sample : null;
+}
+
+export function siteView(cfg: IzinConfig, db: Database.Database, file: Pick<ExamplesFile, "examples" | "sample">, paidLive = false) {
   const w = cfg.web;
   const x = cfg.x402;
   return {
@@ -84,7 +106,8 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     market: { paywall_url: cfg.openserv.paywall_url },
     detail_max_chars: cfg.limits.detail_max_chars,
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
-    examples,
+    examples: file.examples,
+    sample: sampleView(cfg, file.sample),
     cost: costView(db, cfg),
     reading_cost: readingCost(db, cfg),
     trap_url: w.trap_url,
