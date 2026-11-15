@@ -2,9 +2,11 @@
 // AAC track (social players expect one). Scenes and captions live in config/video.json; the
 // gallery numbers come from docs/UKUR.md, the verdict from the stored receipt.
 //   npm run video -- --kering                 print the scene plan, no network
-//   npm run video -- --out <file.mp4> [--base https://izin.sasateguh.com]
-// Network use: the stored receipts on the site, one MCP call (answered from a saved receipt), and
-// one robots.txt fetch with the IzinBot user agent. No model is called by this script.
+//   npm run video -- --out <file.mp4> [--base https://izin.sasateguh.com] [--reuse trap,gallery]
+// Network use: the stored receipts on the site, one MCP call (answered from a saved receipt), one
+// robots.txt fetch with the IzinBot user agent, and one live check on the trap page (one decision
+// on SERV). --reuse keeps the named scenes from the last run in the work folder, so a run that fails
+// after the trap scene is finished without a second live check. It stops when new checks are paused.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -16,7 +18,7 @@ import { parseRobots } from "../server/kumpul/robots.js";
 import { FETCHER_TOKEN } from "../server/kumpul/session.js";
 import { loadExamples } from "../server/web/site.js";
 import { baselineNumbers, captions, filterGraph, loadVideoConfig, robotsBlock, speedFactor, totalSeconds, verdictWord, wrap, type ClipFilter } from "./video/plan.js";
-import { recordScenes, type SceneData } from "./video/scenes.js";
+import { recordScenes, type Clip, type SceneData } from "./video/scenes.js";
 
 const cfg = loadConfig();
 const vc = loadVideoConfig();
@@ -26,6 +28,7 @@ const { values } = parseArgs({
     out: { type: "string", default: "data/video/izin-demo.mp4" },
     base: { type: "string", default: cfg.public_origin },
     work: { type: "string", default: "data/video/work" },
+    reuse: { type: "string", default: "" },
   },
 });
 
@@ -38,18 +41,21 @@ const idFor = (key: string) => {
   return id;
 };
 const mainReceipt = idFor(vc.receipts.main);
-const trapReceipt = idFor(vc.receipts.trap);
 
 if (values.kering) {
   const plan = captions(vc, { ...nums, verdict: "(verdict from the receipt)" });
   for (const s of plan) console.log(`${String(s.seconds).padStart(3)} s  ${s.key.padEnd(8)} ${s.caption}`);
-  console.log(`total ${totalSeconds(plan)} s; receipts ${mainReceipt}, ${trapReceipt}; robots ${vc.robots.site}robots.txt`);
+  console.log(`total ${totalSeconds(plan)} s; receipt ${mainReceipt}; one live check on /trap; robots ${vc.robots.site}robots.txt`);
   process.exit(0);
 }
 
 const base = values.base!.replace(/\/$/, "");
 const font = vc.fonts.sans.find((f) => existsSync(f));
 if (!font) throw new Error("no caption font found (config/video.json fonts.sans)");
+
+// The trap scene makes a live check: refuse to record a paused site (its banner would be on screen).
+const health = (await (await fetch(`${base}/api/health`)).json()) as { cache_only?: boolean };
+if (health.cache_only !== false) throw new Error(`${base}/api/health: cache_only is not false, new checks are paused`);
 
 // The stored receipt gives the verdict word for the caption.
 const rec = (await (await fetch(`${base}/api/receipt/${mainReceipt}`)).json()) as { receipt?: { verdict: string } };
@@ -86,7 +92,6 @@ const answer = JSON.stringify(
 const data: SceneData = {
   origin: base,
   mainReceipt,
-  trapReceipt,
   robots: { ...block, readAt, ua: cfg.user_agent, probeUrl, allowed },
   mcp: {
     command: `claude mcp add --transport http izin ${base}/mcp`,
@@ -96,9 +101,21 @@ const data: SceneData = {
 };
 
 const work = resolve(values.work!);
-rmSync(work, { recursive: true, force: true });
-mkdirSync(work, { recursive: true });
-const clips = await recordScenes(vc, data, work);
+const keep = values.reuse!.split(",").map((k) => k.trim()).filter(Boolean);
+const reuse: Record<string, Clip> = {};
+if (keep.length) {
+  const last = JSON.parse(readFileSync(join(work, "clips.json"), "utf8")) as { clips: Clip[]; trap_live: string | null };
+  for (const k of keep) {
+    const c = last.clips.find((x) => x.key === k);
+    if (!c || !existsSync(c.file)) throw new Error(`--reuse ${k}: no clip from the last run in ${work}`);
+    reuse[k] = c;
+  }
+  if (last.trap_live) data.trapLive = last.trap_live;
+} else {
+  rmSync(work, { recursive: true, force: true });
+  mkdirSync(work, { recursive: true });
+}
+const clips = await recordScenes(vc, data, work, reuse);
 
 const filters: ClipFilter[] = clips.map((c, i) => {
   const slot = plan[i]!;
@@ -142,6 +159,7 @@ const report = {
   audio: a?.codec_name ?? null,
   freezes_over_limit: Number(freezeLog.trim()),
   robots_read_at: `${readAt} UTC`,
+  trap_live: data.trapLive ?? null,
   speed: filters.map((f, i) => `${plan[i]!.key}:${speedFactor(f.end - f.start, f.slot)}`).join(" "),
 };
 console.log(JSON.stringify(report));

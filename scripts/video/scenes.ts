@@ -3,16 +3,18 @@
 // data fetched before recording. Third-party pages are never opened in the browser: the robots.txt
 // text comes from one IzinBot fetch made by the caller.
 import { chromium, type Browser, type Page } from "@playwright/test";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { fill, type VideoConfig } from "./plan.js";
 
 export type Clip = { key: string; file: string; start: number; end: number };
 export type SceneData = {
   origin: string;
   mainReceipt: string;
-  trapReceipt: string;
   robots: { lines: string[]; first: number; last: number; readAt: string; ua: string; probeUrl: string; allowed: boolean };
   mcp: { command: string; call: string; answer: string };
+  /** Set by the trap scene: the receipt page the live check opened. */
+  trapLive?: string;
 };
 
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -94,8 +96,10 @@ function endPage(tokens: string, cfg: VideoConfig, d: SceneData, logo: string): 
 
 type Run = (page: Page, mark: () => number) => Promise<{ start: number }>;
 
-/** Record every scene; returns one clip per scene with the part of the recording to keep. */
-export async function recordScenes(cfg: VideoConfig, d: SceneData, outDir: string): Promise<Clip[]> {
+/** Record every scene; returns one clip per scene with the part of the recording to keep. Scenes in
+ * `reuse` (clips from an earlier run in the same folder) are not recorded again, so a failure after
+ * the live trap check never needs a second check. Every clip is listed in clips.json as it lands. */
+export async function recordScenes(cfg: VideoConfig, d: SceneData, outDir: string, reuse: Record<string, Clip> = {}): Promise<Clip[]> {
   const tokens = readFileSync("web/src/styles/tokens.css", "utf8");
   const logo = readFileSync("web/public/logo.svg", "utf8");
   const o = d.origin;
@@ -128,41 +132,39 @@ export async function recordScenes(cfg: VideoConfig, d: SceneData, outDir: strin
       const start = mark();
       await pause(2500);
       await glideTo(page, "#dec", 60, 3500);
-      await pause(1500);
-      await glideTo(page, "#led", 360, 3500);
-      return { start };
-    },
-    receipt: async (page, mark) => {
-      await page.goto(`${o}/r/${d.mainReceipt}`, { waitUntil: "networkidle" });
-      await glideTo(page, "#led", 360, 0);
-      await pause(300);
-      const start = mark();
-      await pause(1200);
-      await glideTo(page, ".prov", 120, 5000);
-      await pause(1500);
-      await glideTo(page, ".receipt-links", 300, 3300);
+      await pause(3000);
+      await glideTo(page, ".prov", 120, 4500);
+      await pause(3000);
       return { start };
     },
     trap: async (page, mark) => {
+      // The one live check in the video: the second trap button always runs a new check (a detail
+      // is never answered from a saved receipt), so the steps on screen are a real run.
       await page.goto(`${o}/trap`, { waitUntil: "networkidle" });
       const start = mark();
       await pause(1500);
-      await glide(page, 200, 1500);
-      await page.goto(`${o}/r/${d.trapReceipt}`, { waitUntil: "networkidle" });
+      await glideTo(page, "#trap-2", 140, 1500);
+      await pause(800);
+      await page.click(cfg.trap.button);
+      await page.waitForURL(/\/r\/[a-z0-9]+/, { timeout: cfg.trap.timeout_s * 1000 });
+      await page.waitForSelector(".receipt-verdict");
+      d.trapLive = page.url();
       await pause(1500);
       await glideTo(page, "details.fold-warn", 160, 2000);
-      await page.evaluate(() => ((document.querySelector("details.fold-warn") as HTMLDetailsElement | null)?.setAttribute("open", "")));
+      await page.evaluate(() => (document.querySelector("details.fold-warn") as HTMLDetailsElement | null)?.setAttribute("open", ""));
       await pause(2000);
-      await glide(page, 60, 3000);
+      await glide(page, 60, 2500);
       return { start };
     },
     gallery: async (page, mark) => {
+      // The top rows only: the matrix comes into view and moves sideways, never down past them.
       await page.goto(`${o}/gallery`, { waitUntil: "networkidle" });
       const start = mark();
       await pause(2000);
-      await glideTo(page, ".matrix-wrap", 20, 2500);
-      await glide(page, 700, 5000);
+      await glideTo(page, ".matrix-wrap", 20, 3000);
+      await pause(2500);
       await glideX(page, ".matrix-wrap", 300, 2500);
+      await pause(2000);
       return { start };
     },
     mcp: async (page, mark) => {
@@ -200,6 +202,11 @@ export async function recordScenes(cfg: VideoConfig, d: SceneData, outDir: strin
   const clips: Clip[] = [];
   try {
     for (const s of cfg.scenes) {
+      if (reuse[s.key]) {
+        clips.push(reuse[s.key]!);
+        console.log(`reused ${s.key}`);
+        continue;
+      }
       const run = runs[s.key];
       if (!run) throw new Error(`no recording for scene ${s.key}`);
       const ctx = await browser.newContext({
@@ -216,6 +223,7 @@ export async function recordScenes(cfg: VideoConfig, d: SceneData, outDir: strin
       await ctx.close();
       const file = await page.video()!.path();
       clips.push({ key: s.key, file, start, end });
+      writeFileSync(join(outDir, "clips.json"), JSON.stringify({ clips, trap_live: d.trapLive ?? null }, null, 2));
       console.log(`recorded ${s.key}: ${(end - start).toFixed(1)} s`);
     }
   } finally {

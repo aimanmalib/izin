@@ -7,22 +7,22 @@
     "sans": ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf"],
     "mono": ["/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", "/usr/share/fonts/TTF/DejaVuSansMono.ttf"]
   },
-  "limits": { "min_s": 55, "max_s": 90, "freeze_s": 5 },
+  "limits": { "min_s": 55, "max_s": 90, "freeze_s": 5, "scene_max_s": 18 },
   "robots": {
     "site": "https://www.ebay.com/",
     "block_marker": "Robots & Agent Policy",
     "probe_path": "/itm/1234567890",
     "context_lines": 2
   },
-  "receipts": { "main": "ebay_buy", "trap": "trap" },
+  "receipts": { "main": "ebay_buy" },
+  "trap": { "button": "section[aria-labelledby=\"trap-2\"] button", "timeout_s": 240 },
   "mcp": { "url": "https://ebay.com/", "action": "purchase" },
   "ukur_baseline": "\\*\\*(\\d+) of (\\d+)\\*\\*",
   "scenes": [
     { "key": "robots", "seconds": 6, "caption": "eBay's robots.txt. Parsers skip this comment." },
-    { "key": "home", "seconds": 10, "caption": "One site. One action. Reading on Dolphin. Deciding with SERV Reasoning." },
-    { "key": "verdict", "seconds": 11, "caption": "{verdict}. The clause, word for word." },
-    { "key": "receipt", "seconds": 11, "caption": "Every check leaves a receipt." },
-    { "key": "trap", "seconds": 12, "caption": "A hidden line tells AI readers to say yes. Izin sets it aside." },
+    { "key": "home", "seconds": 8, "caption": "One site. One action." },
+    { "key": "verdict", "seconds": 16, "caption": "{verdict}. The clause, word for word. Read on Dolphin, decided with SERV Reasoning." },
+    { "key": "trap", "seconds": 18, "caption": "A hidden line tells AI readers to say yes. Izin sets it aside." },
     { "key": "gallery", "seconds": 12, "caption": "Gallery: in {k} of {m} checks robots.txt allowed, the site's own words did not." },
     { "key": "mcp", "seconds": 12, "caption": "One line for your agent." },
     { "key": "end", "seconds": 8, "caption": "Reads on Dolphin. Decides with SERV Reasoning. Code has the last word." }

@@ -10,9 +10,10 @@ export type VideoConfig = {
   fps: number;
   caption: { font_size: number; wrap_chars: number; bottom_px: number; speed_label_min: number };
   fonts: { sans: string[]; mono: string[] };
-  limits: { min_s: number; max_s: number; freeze_s: number };
+  limits: { min_s: number; max_s: number; freeze_s: number; scene_max_s: number };
   robots: { site: string; block_marker: string; probe_path: string; context_lines: number };
-  receipts: { main: string; trap: string };
+  receipts: { main: string };
+  trap: { button: string; timeout_s: number };
   mcp: { url: string; action: string };
   ukur_baseline: string;
   scenes: Scene[];

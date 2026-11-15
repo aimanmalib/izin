@@ -33,7 +33,8 @@ describe("video plan", () => {
     const total = totalSeconds(cfg.scenes);
     expect(total).toBeGreaterThanOrEqual(cfg.limits.min_s);
     expect(total).toBeLessThanOrEqual(cfg.limits.max_s);
-    expect(cfg.scenes.every((s) => s.seconds > 0 && s.seconds <= 15)).toBe(true);
+    expect(cfg.scenes.every((s) => s.seconds > 0 && s.seconds <= cfg.limits.scene_max_s)).toBe(true);
+    expect(cfg.limits.scene_max_s).toBeLessThanOrEqual(20);
   });
 
   it("cuts the robots.txt comment from the marker to the end of that comment", () => {
