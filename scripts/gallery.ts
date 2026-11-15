@@ -1,11 +1,12 @@
 // The gallery run and the H1 live check (PRD 4.11, 2.2). Runs where the database is: on the host
 // inside the app container (`node dist/gallery.js`), or locally with IZIN_FAKE=1 for a dry check.
-//   gallery [--kering] [--sites a.com,b.com] [--undecided] [--stop-at <ISO time>] [--out data/runs/gallery.json]
+//   gallery [--kering] [--sites a.com,b.com] [--undecided | --cells a.com:crawl,b.com:post] [--stop-at <ISO time>] [--out data/runs/gallery.json]
 //   gallery --h1 [--kering] [--out data/runs/h1.json]    10 live sites, one action each, timed
 // --kering prints the plan and the upper-bound cost and makes no request.
 // --undecided runs only the cells whose saved receipt has no decision (the decider was unavailable);
 // cells with a decision keep their receipt. --stop-at starts no new check after that time;
 // --max-spend <usd> starts no new check once this run has spent that much on SERV.
+// --cells runs only the listed host:action cells; every other cell keeps its receipt.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { parseArgs } from "node:util";
@@ -25,6 +26,7 @@ const { values } = parseArgs({
     undecided: { type: "boolean", default: false },
     "stop-at": { type: "string" },
     "max-spend": { type: "string" },
+    cells: { type: "string" },
   },
 });
 
@@ -42,8 +44,10 @@ if (maxSpend !== null && !(maxSpend > 0)) throw new Error(`--max-spend is not an
 if (stopAt !== null && Number.isNaN(stopAt)) throw new Error(`--stop-at is not a time: ${values["stop-at"]}`);
 
 const rt = createRuntime(cfg);
-const undecided = new Set(values.undecided ? undecidedCells(rt.db) : []);
-const skip = values.undecided ? (host: string, action: string) => !undecided.has(`${host} ${action}`) : undefined;
+if (values.undecided && values.cells) throw new Error("--undecided and --cells pick cells in two ways: use one");
+const listed = values.cells ? listedCells(values.cells) : null;
+const only = new Set(listed ?? (values.undecided ? undecidedCells(rt.db) : []));
+const skip = values.undecided || listed ? (host: string, action: string) => !only.has(`${host} ${action}`) : undefined;
 if (skip) sites = sites.filter((s) => actions.some((a) => !skip(s.host, a)));
 const cells = skip ? sites.reduce((n, s) => n + actions.filter((a) => !skip(s.host, a)).length, 0) : sites.length * actions.length;
 const est = estimateRun(cfg, bench, { reads: sites.length, serv_decisions: cells, dolphin_decisions: 0 });
@@ -108,6 +112,15 @@ if (values.h1) {
   });
 }
 rt.db.close();
+
+/** host:action pairs from --cells, checked against the gallery sites and the actions. */
+function listedCells(arg: string): string[] {
+  return arg.split(",").map((c) => {
+    const [host, action] = c.trim().split(":");
+    if (!host || !file.sites.some((s) => s.host === host) || !(ACTIONS as readonly string[]).includes(action ?? "")) throw new Error(`not a gallery cell: ${c}`);
+    return `${host} ${action}`;
+  });
+}
 
 /** Gallery cells whose saved receipt carries no decision (decided_by.flags has decider_unavailable). */
 function undecidedCells(db: typeof rt.db): string[] {
