@@ -25,6 +25,8 @@ users." A parser skips that comment. Izin quotes it.
      -d '{"url":"https://www.ebay.com/","action":"purchase"}'
    ```
 
+4. An agent can also pay for a saved answer per call, over x402 on a testnet. See [Who pays, and how](#who-pays-and-how).
+
 The six actions are `read_page`, `crawl`, `train`, `account`, `purchase` and `post`. Endpoints, limits and error codes are
 on [/docs](https://izin.sasateguh.com/docs).
 
@@ -36,6 +38,34 @@ which route is approved. Sites write that in words: comments in robots.txt and t
 The idea came from a hackathon radar that reads more than 20 sources. On 5 Nov 2026 a coding agent, working under my rules,
 read the robots.txt and terms of 12 candidate sources before any was added. In 5 of them robots.txt allowed the page and
 the terms banned scraping. In 2 the terms could not be read by a script. A robots check alone would have passed all 5.
+
+## Who pays, and how
+
+Izin is for teams that ship agents which buy, book, sign up or post on sites they do not own. Before the agent acts,
+the team wants an answer it can keep: what the site's own words say about that action, quoted, with a receipt.
+
+| Tier | Price | Status |
+|---|---|---|
+| Free | 6 new checks an hour | live |
+| Agent, answer from a saved receipt | USD 0.01 a call | live on the Base Sepolia testnet, paid over x402 |
+| Agent, fresh reading and decision | USD 0.05 a call | planned |
+| Watch | USD 5 a month per 100 sites, re-read nightly | planned |
+
+A decision is saved and reused for 7 days. A fresh decision costs about 1 US cent on SERV (see below); an answer
+from a saved receipt makes no model call, so each repeat lookup lowers the cost of an answer.
+
+The paid route answers HTTP 402 with x402 payment terms. An x402 client signs the payment and retries:
+
+```sh
+curl -si 'https://izin.sasateguh.com/api/paid/check?url=https://www.ebay.com/&action=purchase'
+# HTTP/2 402 with a PAYMENT-REQUIRED header: USD 0.01 in test USDC on Base Sepolia
+```
+
+This is a testnet, so the USDC has no value. The route sells saved answers only, charges nothing when no receipt is
+saved, and is off unless the deployment sets a receiving address
+([ADR 0022](docs/decisions/0022-paid-answer-over-x402-testnet.md)). Checked against the public x402 facilitator on
+15 Nov 2026: a request with no payment gets the terms, and a signed payment from a test wallet with no funds is
+refused for its balance.
 
 ## How a verdict is made
 
@@ -146,6 +176,7 @@ answers, with no site fetched and no model called:
 - The benchmark is small (43 pairs). False GO for the shipped decider in the run: 2 of 20 designed cases, 0 of 10 spot
   checks, 1 of 13 recorded decisions; 0 of 43 after the re-measure with the current ceilings.
 - The public instance has daily and total spending caps. When a cap is reached it serves stored receipts and makes no new model calls.
+- The paid route runs on a testnet and sells saved answers only. Nothing on the site takes real money.
 
 ## Related work
 
