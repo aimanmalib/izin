@@ -264,6 +264,9 @@ npm run build
 IZIN_FAKE=1 npm start          # http://localhost:8080, recorded fixtures, no keys, no network calls to models
 ```
 
+Fixture mode starts with an empty database and a keyword stand-in for both models, so the example links and the gallery
+are empty there and a verdict can differ from the live site.
+
 With keys, copy `.env.example` to `.env`, set `SERV_API_KEY` and `DOLPHIN_API_KEY`, and run `npm start`. Tests:
 `npm test` (unit, no network) and `npm run e2e` (browser). Values such as actions, limits, prices and caps live in
 [`config/izin.json`](config/izin.json); UI text lives in [`lang/en.json`](lang/en.json) and [`lang/ms.json`](lang/ms.json).
