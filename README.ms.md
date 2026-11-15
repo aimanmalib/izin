@@ -2,7 +2,7 @@
 
 <h1 align="center">Izin</h1>
 
-<p align="center"><a href="https://github.com/aimanmalib/izin/releases/latest"><img src="https://img.shields.io/github/v/release/aimanmalib/izin" alt="Latest release"></a> <a href="https://github.com/aimanmalib/izin/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a> <a href="https://izin.sasateguh.com"><img src="https://img.shields.io/badge/demo-live-brightgreen" alt="Live demo"></a></p>
+<p align="center"><a href="https://github.com/aimanmalib/izin/actions/workflows/ci.yml"><img src="https://github.com/aimanmalib/izin/actions/workflows/ci.yml/badge.svg" alt="CI"></a> <a href="https://github.com/aimanmalib/izin/releases/latest"><img src="https://img.shields.io/github/v/release/aimanmalib/izin" alt="Latest release"></a> <a href="https://github.com/aimanmalib/izin/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a> <a href="https://izin.sasateguh.com"><img src="https://img.shields.io/badge/demo-live-brightgreen" alt="Live demo"></a></p>
 
 <p align="center"><b>Ask the site before your agent acts.</b> · <i>Tanya laman itu dahulu sebelum ejen anda bertindak.</i><br>
 <a href="https://izin.sasateguh.com">demo hidup</a> · <a href="https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9">senarai di OpenServ x402 Agent Market</a> · <a href="https://izin.sasateguh.com/docs">API dan MCP</a> · <a href="https://github.com/aimanmalib/izin/releases/latest">video, 87 s</a> · <a href="docs/UKUR.md">ukuran</a> · <a href="README.md#documentation">dokumentasi</a> · <a href="CHANGELOG.md">log perubahan</a> · Dibina di Malaysia oleh <a href="https://aimanmalib.com">Aiman Malib</a></p>
