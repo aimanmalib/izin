@@ -8,7 +8,7 @@ import { benchView, galleryView } from "../server/api/views.js";
 import type { Stance, Verdict } from "../server/config.js";
 import type { CeilingCode } from "../server/putus/siling.js";
 import { baselineCell, baselineCounts, robotsOnly, wordsRestrict, type BaselineReceipt } from "../server/galeri/baseline.js";
-import { baselineSection, replaceSection } from "../server/galeri/ukur.js";
+import { baselineSection, galleryNowCounts, galleryNowSection, replaceSection, type GalleryNowRow } from "../server/galeri/ukur.js";
 import { openDb, ReceiptStore } from "../server/resit/store.js";
 
 const RESTRICT: Stance[] = ["prohibits", "restricts", "requires"];
@@ -152,5 +152,34 @@ describe("UKUR sections", () => {
     expect(second).toContain("Intro.");
     expect(second).toContain("After.");
     expect(second.match(/izin:x:start/g)).toHaveLength(1);
+  });
+});
+
+describe("gallery now section", () => {
+  const row = (o: Partial<GalleryNowRow>): GalleryNowRow => ({ verdict: "ASK", created_at: "2026-01-02T03:04:05.000Z", serv_verdict: "ASK", ceilings: [], flags: [], model: "m-a", ...o });
+  const rows = [
+    row({ verdict: "NO_GO", serv_verdict: "NO_GO", created_at: "2026-01-01T10:00:00.000Z", model: "m-old" }),
+    row({ verdict: "ASK", serv_verdict: "GO", ceilings: ["S11"] }),
+    row({ verdict: "GO", serv_verdict: "GO" }),
+    row({ verdict: "ASK", serv_verdict: null, flags: ["decider_skipped"], model: null }),
+    row({ verdict: "ASK", serv_verdict: "GO", ceilings: ["S8"], model: null }),
+  ];
+
+  it("counts verdicts and how each cell was decided, per receipt day", () => {
+    const { total, days } = galleryNowCounts(rows);
+    expect(total).toMatchObject({ receipts: 5, GO: 1, ASK: 3, NO_GO: 1, answered: 3, by_code: 1, no_answer: 1 });
+    expect(days.map(([d, c]) => [d, c.receipts, c.answered, c.by_code])).toEqual([
+      ["2026-01-01", 1, 1, 0],
+      ["2026-01-02", 4, 2, 1],
+    ]);
+    expect(days[1]![1].models).toEqual({ "m-a": 2 });
+  });
+
+  it("writes the totals and one table row per day", () => {
+    const s = galleryNowSection(rows, "2026-01-03");
+    expect(s).toContain("Pairs with a receipt: **5**. GO 1, ASK 3, NO-GO 1.");
+    expect(s).toContain("valid answer on **3** of them. On 1 the code decided");
+    expect(s).toContain("| 2026-01-01 | 1 | 0 | 0 | 1 | 1 | 0 | 0 | `m-old` (1) |");
+    expect(galleryNowSection([], "2026-01-03")).toContain("No gallery pair has a receipt yet.");
   });
 });

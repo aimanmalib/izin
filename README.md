@@ -100,6 +100,11 @@ and ledgers. That file also lists every counted receipt.
 **Gallery run, 10 Nov 2026:** 24 sites, 144 site and action pairs, 144 receipts. GO 0, ASK 123, NO-GO 21. The SERV credit ran
 out partway through, so 41 of 144 receipts carry a valid decision; the others stay at ASK.
 
+**Gallery now, 15 Nov 2026:** runs on 14 and 15 Nov decided the pairs left without a decision and checked some pairs
+again after ceiling S11, so the gallery shows 144 receipts from three runs. GO 2, ASK 93, NO-GO 49. The decision step
+gave a valid answer on 122. On 18 the code decided without calling it (no clause to weigh, or nothing readable) and kept
+ASK; on 4 the answer cited a clause that is not in the text, so ceiling S8 applied.
+
 **Words against directives** (current gallery receipts): a robots.txt parser alone answers "allowed" for 126 of the 144
 pairs. In **72 of those 126**, a
 quoted clause from the site restricts or forbids the action and Izin answered ASK or NO-GO on that clause.
@@ -128,7 +133,7 @@ answers, with no site fetched and no model called:
 | V0 | 36 of 43 | 0 of 43 | 1 of 43 |
 | V1, ships | 33 of 43 | 0 of 43 | 0 of 43 |
 
-**Reading cost:** 461,384 tokens read on Dolphin over 56 stored readings, USD 0.006055. In the gallery and benchmark runs,
+**Reading cost:** 462,675 tokens read on Dolphin over 57 stored readings, USD 0.006070. In the gallery and benchmark runs,
 100% of reader tokens were served by Dolphin.
 
 ## Limits

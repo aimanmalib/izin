@@ -92,11 +92,11 @@ Counted pairs:
 
 Generated 2026-11-15 from the reader ledger. Definition: [ADR 0011](decisions/0011-reading-cost-line.md).
 
-Tokens read on Dolphin: 461,384 (437,357 in, 24,027 out) over 56 stored readings.
+Tokens read on Dolphin: 462,675 (438,624 in, 24,051 out) over 57 stored readings.
 
-Cost of those readings on Dolphin: USD 0.006055.
+Cost of those readings on Dolphin: USD 0.006070.
 
-The same tokens at the listed price of `gpt-6-luna` (USD 0.13 in, USD 0.65 out per million tokens): USD 0.0725.
+The same tokens at the listed price of `gpt-6-luna` (USD 0.13 in, USD 0.65 out per million tokens): USD 0.0727.
 
 Price sources: [SERV](https://docs.openserv.ai/llms-full.txt), [Dolphin](https://dphn.ai/docs/dphn-api/).
 <!-- izin:reading-cost:end -->
@@ -189,6 +189,22 @@ Receipts where the decision step gave a valid answer: **41 of 144**. The others 
 
 Decider model named on those receipts: `gpt-6-luna-serv-multipath` (41). New checks use the decider in config now, `gpt-6-luna` ([ADR 0017](decisions/0017-shipped-decider-variant.md)), so these receipts name a different model from a check made today.
 <!-- izin:gallery-run:end -->
+
+<!-- izin:gallery-now:start -->
+## Gallery now
+
+Generated 2026-11-15 from the receipts the gallery shows today. Each pair shows its latest gallery receipt, so the runs below add up to one table.
+
+Pairs with a receipt: **144**. GO 2, ASK 93, NO-GO 49.
+
+The decision step gave a valid answer on **122** of them. On 18 the code decided without calling it (no clause to weigh, or nothing readable), and those stay at ASK. On 4 no valid decision came back (ceiling S8: no answer, or an answer citing a clause that is not in the text).
+
+| Receipt day (UTC) | Receipts | GO | ASK | NO-GO | Decision step answered | Decided by code | No valid decision | Decider model |
+|---|---|---|---|---|---|---|---|---|
+| 2026-11-10 | 41 | 0 | 22 | 19 | 41 | 0 | 0 | `gpt-6-luna-serv-multipath` (41) |
+| 2026-11-14 | 81 | 0 | 51 | 30 | 77 | 0 | 4 | `gpt-6-luna` (77) |
+| 2026-11-15 | 22 | 2 | 20 | 0 | 4 | 18 | 0 | `gpt-6-luna` (4) |
+<!-- izin:gallery-now:end -->
 
 <!-- izin:reader:start -->
 ## Reader

@@ -4,6 +4,7 @@
 //   npm run ukur -- --gallery-json gallery.json    same, from a saved /api/gallery response
 //                    [--bench-json bench.json]     and the reading cost from a saved /api/bench response
 //   add --kering to print the sections and write nothing
+// With --db the gallery-now section counts the receipts the gallery shows today.
 // The benchmark, gallery-run, H1 and reader sections are added when their run files exist:
 // bench/results.json, bench/runs/bench.json, bench/runs/remeasure-s11.json, bench/runs/gallery.json, bench/runs/h1.json.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -15,7 +16,7 @@ import { BENCH_DIR, loadConfig } from "../server/config.js";
 import { loadSets } from "../server/bench/sets.js";
 import { loadBenchConfig } from "../server/bench/variants.js";
 import { REMEASURE_FILE, benchSection, galleryRunSection, readerSection, remeasureSection, type BenchReportFile, type RemeasureFile, type GalleryDecided, type GalleryRunFile, type H1File } from "../server/bench/ukur.js";
-import { baselineSection, readingCostSection, replaceSection, type GallerySlice } from "../server/galeri/ukur.js";
+import { baselineSection, galleryNowSection, readingCostSection, replaceSection, type GalleryNowRow, type GallerySlice } from "../server/galeri/ukur.js";
 
 const { values } = parseArgs({
   options: {
@@ -41,6 +42,22 @@ if (values.db) {
 } else {
   console.error("give --db <file> or --gallery-json <file>");
   process.exit(2);
+}
+
+/** The receipts the gallery shows now, one per pair, with how each was decided. */
+function galleryNow(file: string): GalleryNowRow[] {
+  const db = new Database(file, { readonly: true, fileMustExist: true });
+  const rows = db
+    .prepare<[], { verdict: string | null; created_at: string; receipt_json: string }>(
+      "SELECT c.verdict, c.created_at, c.receipt_json FROM gallery g JOIN checks c ON c.id = g.check_id AND c.status = 'done' WHERE c.receipt_json IS NOT NULL",
+    )
+    .all();
+  db.close();
+  type Saved = { decided_by: { serv_verdict: string | null; ceilings: string[]; flags?: string[] }; decider: { model: string | null } };
+  return rows.map((r) => {
+    const s = JSON.parse(r.receipt_json) as Saved;
+    return { verdict: r.verdict, created_at: r.created_at, serv_verdict: s.decided_by.serv_verdict, ceilings: s.decided_by.ceilings, flags: s.decided_by.flags ?? [], model: s.decider.model };
+  });
 }
 
 /** Of the gallery run's receipts, how many got a valid decision (no S8 ceiling): read from the stored receipts. */
@@ -74,6 +91,7 @@ if (report && results) {
 const remeasured = runFile<RemeasureFile>(REMEASURE_FILE);
 if (remeasured) sections.push(["remeasure", remeasureSection(remeasured), "benchmark"]);
 if (galleryRun) sections.push(["gallery-run", galleryRunSection(galleryRun, h1, values.db ? galleryDecided(values.db, galleryRun) : null)]);
+if (values.db) sections.push(galleryRun ? ["gallery-now", galleryNowSection(galleryNow(values.db), at), "gallery-run"] : ["gallery-now", galleryNowSection(galleryNow(values.db), at)]);
 const readerRuns = [
   ...(galleryRun ? [{ name: "Gallery", reader: galleryRun.reader }] : []),
   ...(report ? [{ name: "Benchmark", reader: report.reader }] : []),

@@ -72,3 +72,55 @@ export function readingCostSection(c: ReadingCost | null, at: string): string {
   );
   return lines.join("\n");
 }
+
+/** One gallery cell as stored now: the verdict, the receipt's day, and how the decision was made. */
+export interface GalleryNowRow {
+  verdict: string | null;
+  created_at: string;
+  serv_verdict: string | null;
+  ceilings: string[];
+  flags: string[];
+  model: string | null;
+}
+
+type DayCount = { receipts: number; GO: number; ASK: number; NO_GO: number; answered: number; by_code: number; no_answer: number; models: Record<string, number> };
+
+/** Counts the current gallery cells by verdict and by how they were decided, per UTC day of the receipt. */
+export function galleryNowCounts(rows: GalleryNowRow[]) {
+  const blank = (): DayCount => ({ receipts: 0, GO: 0, ASK: 0, NO_GO: 0, answered: 0, by_code: 0, no_answer: 0, models: {} });
+  const total = blank();
+  const days: Record<string, DayCount> = {};
+  for (const r of rows) {
+    const day = (days[r.created_at.slice(0, 10)] ??= blank());
+    for (const c of [total, day]) {
+      c.receipts++;
+      if (r.verdict === "GO" || r.verdict === "ASK" || r.verdict === "NO_GO") c[r.verdict]++;
+      if (r.serv_verdict && !r.ceilings.includes("S8")) {
+        c.answered++;
+        if (r.model) c.models[r.model] = (c.models[r.model] ?? 0) + 1;
+      } else if (r.flags.includes("decider_skipped")) c.by_code++;
+      else c.no_answer++;
+    }
+  }
+  return { total, days: Object.entries(days).sort(([a], [b]) => a.localeCompare(b)) };
+}
+
+/** The "Gallery now" section: the receipts the gallery shows today, which mixes several runs. */
+export function galleryNowSection(rows: GalleryNowRow[], at: string): string {
+  const { total: t, days } = galleryNowCounts(rows);
+  const lines = ["## Gallery now", "", `Generated ${at} from the receipts the gallery shows today. Each pair shows its latest gallery receipt, so the runs below add up to one table.`, ""];
+  if (!t.receipts) return [...lines, "No gallery pair has a receipt yet."].join("\n");
+  lines.push(
+    `Pairs with a receipt: **${t.receipts}**. GO ${t.GO}, ASK ${t.ASK}, NO-GO ${t.NO_GO}.`,
+    "",
+    `The decision step gave a valid answer on **${t.answered}** of them. On ${t.by_code} the code decided without calling it (no clause to weigh, or nothing readable), and those stay at ASK. On ${t.no_answer} no valid decision came back (ceiling S8: no answer, or an answer citing a clause that is not in the text).`,
+    "",
+    "| Receipt day (UTC) | Receipts | GO | ASK | NO-GO | Decision step answered | Decided by code | No valid decision | Decider model |",
+    "|---|---|---|---|---|---|---|---|---|",
+    ...days.map(([d, c]) => {
+      const models = Object.entries(c.models).map(([m, n]) => `\`${m}\` (${n})`).join(", ") || "none";
+      return `| ${d} | ${c.receipts} | ${c.GO} | ${c.ASK} | ${c.NO_GO} | ${c.answered} | ${c.by_code} | ${c.no_answer} | ${models} |`;
+    }),
+  );
+  return lines.join("\n");
+}
