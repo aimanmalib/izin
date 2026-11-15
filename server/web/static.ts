@@ -79,7 +79,7 @@ export function registerStatic(app: FastifyInstance, dir: string, opts: StaticOp
     return sendFile(reply, join(dir, "assets", req.params.name), "public, max-age=31536000, immutable");
   });
 
-  for (const name of ["favicon.svg", "logo.svg", "logo-512.png", "og.png", "robots.txt"]) {
+  for (const name of ["favicon.svg", "favicon.ico", "apple-touch-icon.png", "logo.svg", "logo-512.png", "og.png", "robots.txt"]) {
     app.get(`/${name}`, async (_req, reply) => sendFile(reply, join(dir, name), "public, max-age=3600"));
   }
 
