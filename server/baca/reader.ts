@@ -1,6 +1,6 @@
 // Reads each collected document with the primary reader (Dolphin) and falls back to SERV when it
 // fails: no credit, server error, timeout, or no valid JSON after one retry. Text a site marked
-// ai-input=no is never sent to any model.
+// ai-input=no is never sent to any model, and neither is a page whose text Izin could not get.
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import type { IzinConfig } from "../config.js";
 import type { Alert } from "../belanja/alerts.js";
@@ -30,7 +30,8 @@ export interface Attempt {
 export interface DocReading {
   doc_id: string;
   status: "read" | "skipped" | "failed";
-  skip_reason?: "ai_input_no";
+  /** "needs_browser": the collector got no readable text from the page, so there is nothing to read. */
+  skip_reason?: "ai_input_no" | "needs_browser";
   output: ReaderOutput | null;
   /** e.g. "dolphin:<model>" or "serv:gpt-6-luna (fallback: no_credit)". */
   reader: string | null;
@@ -107,9 +108,11 @@ async function tryProvider(deps: ReaderDeps, p: ProviderCfg, model: string, doc:
 export async function readDoc(deps: ReaderDeps, doc: PolicyDoc, docId: string): Promise<DocReading> {
   const { cfg, cache, prompt } = deps;
   const base = { doc_id: docId, cached: false, fail_reasons: [] as FailReason[], attempts: [] as Attempt[] };
-  if (!doc.to_model) {
-    return { ...base, status: "skipped", skip_reason: "ai_input_no", output: null, reader: null, cost_usd: 0, fallback_suspected: false };
-  }
+  const skipped = (skip_reason: NonNullable<DocReading["skip_reason"]>): DocReading => ({ ...base, status: "skipped", skip_reason, output: null, reader: null, cost_usd: 0, fallback_suspected: false });
+  if (!doc.to_model) return skipped("ai_input_no");
+  // A page the collector already marked as unreadable (it needs a browser, or its text is shorter than
+  // the minimum) is not sent to a model: no call, no cost. A page cut at the maximum length is still read.
+  if (doc.state === "needs_browser") return skipped("needs_browser");
   const primary = cfg.reader.primary;
   const fallback = cfg.reader.fallback;
   const plan: [ProviderCfg, string][] = [

@@ -74,7 +74,11 @@ export function buildSignals(c: Collected, docs: (DocRef & { id: string })[], re
   for (const r of readings) {
     if (r.status === "read") continue;
     const doc = docs.find((d) => d.id === r.doc_id);
-    if (doc) unreadable.push({ url: doc.url, why: r.status === "skipped" ? (r.skip_reason ?? "skipped") : "reader_failed" });
+    if (!doc) continue;
+    const why = r.status === "skipped" ? (r.skip_reason ?? "skipped") : "reader_failed";
+    // The collector already lists a page that needs a browser, under the URL it asked for: the same line is not added twice.
+    if (why === "needs_browser" && unreadable.some((u) => u.url === doc.url && u.why === why)) continue;
+    unreadable.push({ url: doc.url, why });
   }
   // Stopped at robots.txt: the site's pages were deliberately not read, so the verdict cannot be GO
   // on silence (S5 caps it at ASK); a quoted prohibition can still make it NO_GO.

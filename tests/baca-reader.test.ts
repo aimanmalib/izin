@@ -173,6 +173,17 @@ describe("ai-input=no and cache", () => {
     expect(seen).toHaveLength(0);
   });
 
+  it("never sends a page that needs a browser to a model, and still reads a page cut at the maximum length", async () => {
+    const { deps, seen } = setup(() => ({ stream: chunks(DOLPHIN, GOOD, { usage: [2000, 400] }) }));
+    const stub = await readDoc(deps, doc({ text: "Please enable JavaScript to view.", state: "needs_browser" }), "d1");
+    expect(stub).toMatchObject({ status: "skipped", skip_reason: "needs_browser", output: null, reader: null, cached: false, cost_usd: 0, attempts: [] });
+    expect(seen).toHaveLength(0);
+    const cut = await readDoc(deps, doc({ state: "truncated" }), "d2");
+    expect(cut).toMatchObject({ status: "read", reader: `dolphin:${DOLPHIN}` });
+    expect(cut.cost_usd).toBeGreaterThan(0);
+    expect(seen).toHaveLength(1);
+  });
+
   it("serves a second read of the same text from cache, including a fallback reading", async () => {
     const { deps, seen } = setup((s) => (isDolphin(s) ? { status: 402 } : { status: 200, json: completion(LUNA, GOOD) }));
     await readDoc(deps, doc(), "d1");
