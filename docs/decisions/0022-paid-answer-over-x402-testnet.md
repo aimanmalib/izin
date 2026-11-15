@@ -21,7 +21,8 @@ verdict is made.
   `config/izin.json` (`web.tiers.agent_usd_per_saved_answer`).
 - Payment is x402 version 2, scheme `exact`, in test USDC on Base Sepolia, through the public
   facilitator at `x402.org`. The official packages do the protocol work (`@x402/fastify`,
-  `@x402/core`, `@x402/evm`); Izin adds the route and its config.
+  `@x402/core`, `@x402/evm`); Izin adds the route and its config. They are pinned to exact
+  versions that had been public for at least 14 days when they were added, and so is `viem`.
 - **Testnet only.** The config schema accepts `x402.testnet: true` and nothing else, so a move to
   real money needs a code change and a new decision. Every text about the route says testnet.
 - **Off unless a receiving address is set.** The route is registered only when `x402.enabled` is
