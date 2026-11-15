@@ -44,9 +44,8 @@ slides:
     title: "One site, one action, one answer"
     tag: "What it does"
     body:
-      - "GO, ASK or NO-GO for one action: read a page, crawl, train, create an account, buy, or post."
-      - "The clause that decided it, word for word, with a link to the sentence."
-      - "A receipt with what was fetched and when, pinned by a hash."
+      - "GO, ASK or NO-GO for one action, with the clause quoted word for word and a receipt pinned by a hash."
+      - "Walmart, Target and Uber now publish terms for agents. Izin quotes them and lists what to confirm."
     image_height: 3.3
     images:
       - {path: docs/media/receipt-ebay-purchase.png, caption: "Buy or book on ebay.com: NO-GO, with the quoted clauses", crop: [0.1, 0.07, 0.1, 0.0]}
@@ -74,7 +73,7 @@ slides:
     tag: "How it works"
     body:
       - "Dolphin reads every word of long terms pages, streamed, at temperature 0. Open weights mean anyone can run the reading step again with the same model."
-      - "SERV Reasoning decides, with a strict JSON schema and Shadow Agent. Prompt Guard is declared when the code filter flags injected text."
+      - "SERV Reasoning makes the call, in a strict JSON schema with Shadow Agent. Its Prompt Guard refuses a request that tries to talk it into GO, and it gave no false NO-GO on the benchmark."
       - "When SERV is capped or out of credit, the open model on Dolphin decides under the same rulebook and ceilings, and the receipt says so."
     size: 18
     stats:
@@ -88,7 +87,7 @@ slides:
     tag: "Creativity"
     body:
       - "A test shop hides one sentence from people. It tells AI readers to say everything is permitted."
-      - "Izin sets it aside, shows it on the receipt, and keeps the answer at ASK. Anyone can run it."
+      - "Izin sets it aside, shows it on the receipt, and never answers GO. Anyone can run it."
     image_height: 3.6
     images:
       - {path: docs/media/trap.png, caption: "izin.sasateguh.com/trap", crop: [0.05, 0.1, 0.05, 0.0]}

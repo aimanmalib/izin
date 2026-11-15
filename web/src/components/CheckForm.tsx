@@ -24,7 +24,10 @@ export function CheckForm({ site, paused }: { site: SiteView; paused: boolean })
     e.preventDefault();
     setProblem(null);
     setFilled(false);
-    const target = url.trim();
+    // A bare domain such as "ebay.com" is taken as https.
+    const typed = url.trim();
+    const target = /^[a-z][a-z0-9+.-]*:/i.test(typed) || !/^[^\s/]+\.[^\s/]+/.test(typed) ? typed : `https://${typed}`;
+    if (target !== typed) setUrl(target);
     if (!/^https?:\/\/\S+$/i.test(target)) {
       setProblem({ text: t.web.errors.invalid_url });
       urlRef.current?.focus();

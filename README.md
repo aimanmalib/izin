@@ -18,9 +18,19 @@ The [narrated demo video](https://youtu.be/U0_YkMaHXzA) is 87 seconds and is als
 
 **See a real answer:** [buy or book on ebay.com, NO-GO](https://izin.sasateguh.com/r/yddnqgirk6). eBay's robots.txt
 directives leave the home page open to crawlers, and a comment in the same file says "Checkouts are strictly for human
-users." A parser skips that comment. Izin quotes it.
+users." A parser skips that comment block. Izin quotes the rule written under it, against flows that place orders
+without human review.
 
 [![Izin receipt: buy or book on ebay.com, NO-GO, with the quoted clauses](docs/media/receipt-ebay-purchase.png)](https://izin.sasateguh.com/r/yddnqgirk6)
+
+**Not every answer is no:** [buy or book on walmart.com, ASK](https://izin.sasateguh.com/r/u5ge2ipvmz). Walmart's terms
+have a section for agents. Izin quotes it and lists the two things to confirm first: the agent is expressly authorized
+by the customer, and it meets Walmart's registration and technical requirements.
+
+**Why two models.** The open model on Dolphin reads every word cheaply, and anyone can repeat the reading. SERV Reasoning
+makes the call: it answers in a strict schema that cites clause ids, its Prompt Guard refuses a request that tries to
+talk it into GO (the [trap](https://izin.sasateguh.com/trap) shows this live), and on the benchmark it gave no false
+NO-GO, where the open model deciding alone gave one.
 
 ## Try it in a minute
 
@@ -65,7 +75,7 @@ the team wants an answer it can keep: what the site's own words say about that a
 | Agent, fresh reading and decision | USD 0.05 a call | live on the OpenServ x402 Agent Market, paid in USDC on Base |
 | Watch | USD 5 a month per 100 sites, re-read nightly | planned |
 
-A decision is saved and reused for 7 days. A fresh decision costs about 1 US cent on SERV (see below); an answer
+A decision is saved, and the same question within 24 hours is answered from the saved receipt. A fresh decision costs about 1 US cent on SERV (see below); an answer
 from a saved receipt makes no model call, so each repeat lookup lowers the cost of an answer.
 
 **On OpenServ.** Izin is an OpenServ agent (agent 4961) with one capability, `check`, sold per call on the Agent Market:
@@ -144,7 +154,7 @@ The gallery run of 10 Nov was decided with Multipath on: its receipts, including
 benchmark could not be measured after the credit ran out, and the decider that ships is the configuration the published
 numbers describe ([ADR 0017](docs/decisions/0017-shipped-decider-variant.md)). A fresh decision on SERV costs about 1 US cent
 (USD 0.0122 a decision in the benchmark, estimated at the cost factor calibrated against the SERV console balance,
-[ADR 0019](docs/decisions/0019-serv-cost-from-console-balance.md)). A saved receipt is reused for 7 days and makes no new model call.
+[ADR 0019](docs/decisions/0019-serv-cost-from-console-balance.md)). A saved receipt answers the same question for 24 hours and makes no new model call.
 When SERV rejects a feature combination, the request steps down a ladder (no Shadow Agent, then the base model, then JSON
 checked in code) and the receipt records the rung.
 

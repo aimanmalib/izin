@@ -13,7 +13,7 @@ import { createRuntime, type Runtime } from "./runtime.js";
 import { loadExamples, siteView } from "./web/site.js";
 import { registerStatic } from "./web/static.js";
 
-export const VERSION = "0.1.0";
+export const VERSION = "1.0.1";
 
 export interface AppOpts {
   clientIp?: ClientIp;

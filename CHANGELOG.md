@@ -5,6 +5,21 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-15
+
+Small fixes from a review of the public site, before submission.
+
+### Changed
+
+- A site whose robots.txt comment forbids every automated action is read at most once every 30 days, up from 7.
+- The form takes a bare domain such as `ebay.com` as https.
+- The Walmart purchase check, an ASK with two conditions from Walmart's terms for agents, is a one-click example.
+- The front page says a saved answer is reused for 24 hours, which is what the code does.
+
+### Fixed
+
+- The pattern for text addressed to AI readers matched ordinary phrases such as "such as an airline".
+
 ## [1.0.0] - 2026-11-15
 
 The version submitted to SERV Hackathon 02. Everything after the v0.9.0 feature freeze is a recorded exception to it.
@@ -46,6 +61,7 @@ The feature freeze ([ADR 0018](docs/decisions/0018-feature-freeze-v0.9.0.md)).
   cap the answer at ASK ([ADR 0020](docs/decisions/0020-two-signal-ceilings-and-remeasure.md)).
 - A one-container deploy with rollback, and spending-cap alerts sent once per cap.
 
-[Unreleased]: https://github.com/aimanmalib/izin/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/aimanmalib/izin/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/aimanmalib/izin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/aimanmalib/izin/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/aimanmalib/izin/releases/tag/v0.9.0

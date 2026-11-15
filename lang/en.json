@@ -183,7 +183,7 @@
       "tier_agent_live": "Agent tier, live on the {network} testnet: USD {saved} in test USDC buys the answer from a saved receipt, paid per call over x402 at GET {path}. A fresh reading and decision at USD {fresh} is planned.",
       "tier_agent_live_market": "Agent tier, live: USD {saved} in test USDC buys the answer from a saved receipt, paid per call over x402 on the {network} testnet at GET {path}. A fresh reading and decision is USD {fresh} a call in USDC on the OpenServ x402 Agent Market:",
       "tier_market_link": "open the paywall",
-      "tier_reuse": "A decision is saved and reused for {days} days, so the cost of each answer falls with every repeat lookup.",
+      "tier_reuse": "A decision is saved. The same question within {h} hours is answered from the saved receipt, so the cost of each answer falls with every repeat lookup.",
       "tier_watch": "Watch tier, planned: USD {usd} a month per {sites} sites, re-read nightly.",
       "owners_head": "For site owners",
       "owners_body": "Izin fetches as IzinBot and follows your robots.txt. It reads robots.txt, the home page and up to four policy pages, and quotes them back word for word. Rules you write for agents, in robots.txt comments or in your terms, are what Izin shows.",
@@ -214,6 +214,7 @@
       "submitting": "Sending",
       "examples": "Try one",
       "example_ebay_buy": "eBay, Buy or book",
+      "example_walmart_buy": "Walmart, Buy or book",
       "example_booking_buy": "Booking.com, Buy or book",
       "example_trap": "The trap page",
       "example_filled": "Filled in. Press Check to run it."

@@ -64,7 +64,7 @@
     "ignore (your|my) (instructions|rules|prompt)",
     "\\b(return|answer|respond with|output) \"?(go|no_go|ask)\\b\"?",
     "disregard .{0,40}(instructions|rules|terms)",
-    "(you are|as) an? (ai|llm|language model|assistant)",
+    "\\b(you are|as) an? (ai|llm|language model|assistant)\\b",
     "system prompt",
     "(ai|llm) (agents?|systems?|models?)\\b.{0,40}(must|should|shall) (report|state|say|respond)",
     "report that .{0,80}(permitted|allowed|authorized)"
@@ -141,7 +141,7 @@
     "queue_concurrency": 2,
     "cache_hours": 24,
     "cached_receipt_days": 7,
-    "no_refetch_blocked_days": 7,
+    "no_refetch_blocked_days": 30,
     "rate_new_checks_per_ip_hour": 6,
     "rate_new_checks_per_day": 300
   },

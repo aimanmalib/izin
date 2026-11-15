@@ -183,7 +183,7 @@
       "tier_agent_live": "Tier ejen, hidup di testnet {network}: USD {saved} dalam USDC ujian membeli jawapan dari resit tersimpan, dibayar setiap panggilan melalui x402 di GET {path}. Bacaan dan keputusan baharu pada USD {fresh} masih dirancang.",
       "tier_agent_live_market": "Tier ejen, hidup: USD {saved} dalam USDC ujian membeli jawapan dari resit tersimpan, dibayar setiap panggilan melalui x402 di testnet {network} di GET {path}. Bacaan dan keputusan baharu berharga USD {fresh} satu panggilan dalam USDC di Pasaran Ejen x402 OpenServ:",
       "tier_market_link": "buka paywall",
-      "tier_reuse": "Satu keputusan disimpan dan dipakai semula selama {days} hari, jadi kos setiap jawapan turun dengan setiap carian ulangan.",
+      "tier_reuse": "Satu keputusan disimpan. Soalan yang sama dalam {h} jam dijawab daripada resit yang disimpan, jadi kos setiap jawapan turun dengan setiap carian ulangan.",
       "tier_watch": "Tier pantau, dirancang: USD {usd} sebulan untuk {sites} laman, dibaca semula setiap malam.",
       "owners_head": "Untuk pemilik laman",
       "owners_body": "Izin mengambil halaman sebagai IzinBot dan mematuhi robots.txt anda. Ia membaca robots.txt, halaman utama dan sehingga empat halaman polisi, dan memetiknya semula perkataan demi perkataan. Peraturan yang anda tulis untuk ejen, dalam komen robots.txt atau dalam terma anda, itulah yang Izin paparkan.",
@@ -214,6 +214,7 @@
       "submitting": "Menghantar",
       "examples": "Cuba satu",
       "example_ebay_buy": "eBay, Beli atau tempah",
+      "example_walmart_buy": "Walmart, Beli atau tempah",
       "example_booking_buy": "Booking.com, Beli atau tempah",
       "example_trap": "Halaman perangkap",
       "example_filled": "Sudah diisi. Tekan Semak untuk menjalankannya."
