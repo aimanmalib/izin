@@ -4,6 +4,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { buildApp } from "../server/app.js";
+import { DeciderHttpError } from "../server/putus/serv.js";
 import { parseConfig, type IzinConfig } from "../server/config.js";
 import type { AlertKind } from "../server/belanja/alerts.js";
 import { createRuntime, type Runtime, type RuntimeOpts } from "../server/runtime.js";
@@ -135,10 +136,29 @@ describe("rate limits", () => {
 });
 
 describe("spending caps", () => {
-  const capped = () => {
+  // Without a fallback decider a reached SERV cap refuses new checks; with one, the open model decides them.
+  const capped = (fallback: string | null = null) => {
     const base = testConfig();
-    return parseConfig({ ...base, budget: { ...base.budget, serv_usd_per_day: 0.01, dolphin_usd_per_day: 0.01 } });
+    return parseConfig({ ...base, decider: { ...base.decider, fallback_variant: fallback }, budget: { ...base.budget, serv_usd_per_day: 0.01, dolphin_usd_per_day: 0.01 } });
   };
+
+  it("past the SERV cap with a fallback decider: the check runs on the open model and the receipt says so", async () => {
+    const { rt, post, done, alerts, url } = await setup({ cfg: capped("V0"), clock: { t: Date.parse("2026-11-11T10:00:00Z") } });
+    rt.guard.record({ serv_usd: 0.02, dolphin_usd: 0 });
+    const res = await post({ url: url("shop.example", "/"), action: "crawl" });
+    expect(res.statusCode).toBe(202);
+    await done(res.json().id);
+    const r = rt.service.result(res.json().id)!.receipt!;
+    expect(r.decider.fallback).toBe(true);
+    expect(r.decider.model).toContain("DeepSeek");
+    expect(["GO", "ASK", "NO_GO"]).toContain(r.verdict);
+    expect(alerts).toContain("budget_cap_day"); // the operator still hears about the cap
+    expect((await app!.inject({ method: "GET", url: "/api/health" })).json().cache_only).toBe(false);
+    // Nothing more was booked to SERV, and a reached Dolphin cap still stops new checks.
+    expect(rt.guard.state().day.serv_usd).toBeCloseTo(0.02, 6);
+    rt.guard.record({ serv_usd: 0, dolphin_usd: 0.02 });
+    expect((await post({ url: url("other.example", "/"), action: "crawl" })).statusCode).toBe(503);
+  });
 
   it("past the daily cap: 503 with a recent receipt id, one alert a day, open again the next UTC day (H7)", async () => {
     const clock = { t: Date.parse("2026-11-11T10:00:00Z") };
@@ -154,6 +174,20 @@ describe("spending caps", () => {
     expect((await app!.inject({ method: "GET", url: "/api/health" })).json().cache_only).toBe(true);
     clock.t += 86_400_000;
     expect((await post({ url: url("shop.example", "/"), action: "crawl", detail: "next day" })).statusCode).toBe(202);
+  });
+
+  it("when SERV answers that the credit is gone, the fallback decider answers the same check", async () => {
+    const base = testConfig();
+    const { rt, post, done, alerts, url } = await setup({ cfg: parseConfig({ ...base, decider: { ...base.decider, fallback_variant: "V0" } }) });
+    rt.pipeline.decider.transport = async () => {
+      throw new DeciderHttpError("no_credit", 402);
+    };
+    const res = await post({ url: url("shop.example", "/"), action: "crawl" });
+    await done(res.json().id);
+    const r = rt.service.result(res.json().id)!.receipt!;
+    expect(r.decider.fallback).toBe(true);
+    expect(r.decided_by.flags).not.toContain("decider_unavailable");
+    expect(alerts).toContain("decider_no_credit");
   });
 
   it("the total cap holds across days and build scripts skip only the daily cap", async () => {

@@ -191,7 +191,10 @@ answers, with no site fetched and no model called:
   point for a decision, not advice.
 - The benchmark is small (43 pairs). False GO for the shipped decider in the run: 2 of 20 designed cases, 0 of 10 spot
   checks, 1 of 13 recorded decisions; 0 of 43 after the re-measure with the current ceilings.
-- The public instance has daily and total spending caps. When a cap is reached it serves stored receipts and makes no new model calls.
+- The public instance has daily and total spending caps. When the SERV cap is reached, or SERV answers that the credit is
+  gone, the open model on Dolphin decides instead, under the same rulebook and the same code ceilings, and the receipt says
+  so ([ADR 0024](docs/decisions/0024-open-model-decides-when-serv-is-out.md)). When the Dolphin cap is reached it serves
+  stored receipts only.
 - The paid route on this site runs on a testnet and sells saved answers only. The listing on the OpenServ Agent Market
   is priced in real USDC; it answers through the same API, so a rate limit or the spending cap can refuse a check there too.
 

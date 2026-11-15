@@ -93,7 +93,10 @@ export class CheckService {
     if (guard.state().day.new_checks >= cfg.limits.rate_new_checks_per_day) {
       return { kind: "rate_limited", retry_after_s: secondsToUtcMidnight(this.now()), scope: "day" };
     }
-    if (await guard.exhausted(source)) {
+    // With a fallback decider, a reached SERV cap does not stop new checks: the open model decides them.
+    // The operator is still alerted. A reached Dolphin cap stops them, since nothing could be read.
+    const onFallback = !!this.d.pipeline.fallback && guard.capped(source, "serv") && !guard.capped(source, "dolphin");
+    if ((await guard.exhausted(source)) && !onFallback) {
       const recent = jobs.findRecentDone(req.site, req.action, this.ago(cfg.limits.cached_receipt_days * DAY_MS));
       return { kind: "budget_exhausted", cached_id: recent?.id ?? null };
     }
@@ -116,6 +119,7 @@ export class CheckService {
       source,
       newId: () => id,
       onSpend: (s) => guard.record(s),
+      servCapped: () => guard.capped(source, "serv"),
     };
     const run = this.d.run ?? runCheck;
     this.queue.push({ id, run: () => run(input, deps) });
@@ -139,6 +143,8 @@ export class CheckService {
 
   /** New checks are paused (spending cap reached); saved receipts are still served. A status read, so it never alerts. */
   async cacheOnly(): Promise<boolean> {
-    return this.d.guard.cap("web").kind !== "none";
+    const g = this.d.guard;
+    if (this.d.pipeline.fallback && g.capped("web", "serv") && !g.capped("web", "dolphin")) return false;
+    return g.cap("web").kind !== "none";
   }
 }

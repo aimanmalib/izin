@@ -10,6 +10,7 @@ import type { NetPolicy } from "./kumpul/ssrf.js";
 import { checkEvidence, numberDocs } from "./semak/check.js";
 import { buildSignals, deciderInput, guardFor, relevantClauses, type DocRef } from "./putus/message.js";
 import { decide, type DeciderDeps, type DeciderResult } from "./putus/serv.js";
+import { variantSpend, type Variant } from "./bench/variants.js";
 import { applyCeilings, QUOTE_REQUIRED, type CeilingTexts } from "./putus/siling.js";
 import { buildReceipt, newReceiptId, type FetchedLabels, type Receipt } from "./resit/receipt.js";
 import type { CheckSource, ReceiptStore } from "./resit/store.js";
@@ -33,6 +34,13 @@ export interface PipelineDeps {
   newId?: () => string;
   /** Called once per check with what it cost on each provider (before the receipt is built). */
   onSpend?: (spend: Spend) => void;
+  /**
+   * The decider that answers when SERV has no credit or its spending cap is reached: an open model on
+   * Dolphin under the same rulebook and the same code ceilings (ADR 0024). Absent = no fallback.
+   */
+  fallback?: { variant: Variant; decider: DeciderDeps };
+  /** True when the SERV cap is reached for this check's source, so SERV is not called at all. */
+  servCapped?: () => boolean;
 }
 
 export interface PipelineTexts {
@@ -164,11 +172,24 @@ export function finishCheck(p: PreparedCheck, decider: DeciderResult | null, dep
 /** The shipped decider over a prepared check, then the receipt (what every live check does after reading). */
 export async function decideAndFinish(p: PreparedCheck, deps: PipelineDeps): Promise<Receipt> {
   let decider: DeciderResult | null = null;
+  let spend = spendOf(deps.cfg, p.readings, null);
   if (!p.skip) {
-    decider = await decide({ ...deps.decider, cfg: deps.cfg }, JSON.stringify(p.message), { guard: p.guard });
-    if (decider.failure === "no_credit") await deps.alert("decider_no_credit");
+    const message = JSON.stringify(p.message);
+    const capped = !!deps.fallback && !!deps.servCapped?.();
+    if (!capped) {
+      decider = await decide({ ...deps.decider, cfg: deps.cfg }, message, { guard: p.guard });
+      if (decider.failure === "no_credit") await deps.alert("decider_no_credit");
+      spend = spendOf(deps.cfg, p.readings, decider);
+    }
+    if (deps.fallback && (capped || decider?.failure === "no_credit")) {
+      // SERV features (Shadow Agent, Prompt Guard) do not exist here; the code ceilings still apply in finishCheck.
+      const r = await decide(deps.fallback.decider, message, { guard: false });
+      const cost = variantSpend(deps.cfg, deps.fallback.variant, r);
+      decider = { ...r, cost_usd_estimated: cost.dolphin_usd, fallback: true };
+      spend = { serv_usd: spend.serv_usd, dolphin_usd: spend.dolphin_usd + cost.dolphin_usd };
+    }
   }
-  deps.onSpend?.(spendOf(deps.cfg, p.readings, decider));
+  deps.onSpend?.(spend);
   return finishCheck(p, decider, deps);
 }
 

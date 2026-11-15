@@ -271,6 +271,7 @@
       "read_saved": "Dibaca oleh {model} di {provider} (bacaan tersimpan)",
       "read_none": "Tidak dibaca oleh model",
       "decided_by": "Diputus oleh {model} di SERV Reasoning",
+      "decided_by_fallback": "Diputus oleh {model} di Dolphin, kerana SERV Reasoning kehabisan kredit atau mencapai had",
       "decided_none": "Tiada langkah keputusan",
       "ceilings": "Siling kod yang dikenakan: {codes}",
       "ceilings_none": "Siling kod yang dikenakan: tiada",

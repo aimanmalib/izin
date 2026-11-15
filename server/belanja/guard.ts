@@ -110,6 +110,14 @@ export class BudgetGuard {
     return { kind: "none", provider: null, spent_usd: 0, cap_usd: 0 };
   }
 
+  /** Whether this one provider's total or daily cap is reached for the source (no side effects). */
+  capped(source: CheckSource, provider: (typeof PROVIDERS)[number]): boolean {
+    const b = this.cfg.budget;
+    const s = this.state();
+    if (s.total[`${provider}_usd`] >= b[`${provider}_usd_total`]) return true;
+    return !b.daily_exempt_sources.includes(source) && s.day[`${provider}_usd`] >= b[`${provider}_usd_per_day`];
+  }
+
   /**
    * True when a new check from this source must not start, and the operator is alerted: a daily
    * cap once per UTC day, a total cap once until that cap's value changes in config.

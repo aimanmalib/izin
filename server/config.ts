@@ -154,6 +154,9 @@ export const configSchema = z
       .strict(),
     decider: z
       .object({
+        // Benchmark variant (config/bench.json) that decides when SERV has no credit or its cap is reached;
+        // null turns the fallback off and such checks are refused as before (ADR 0024).
+        fallback_variant: z.string().regex(/^V\d$/).nullable(),
         base_url: z.url(),
         model: z.string().min(1),
         // Feature suffix on the model name; rung (c) of the fallback ladder drops it.

@@ -173,6 +173,7 @@
     "quarantine_max_chars": 600
   },
   "decider": {
+    "fallback_variant": "V0",
     "base_url": "https://inference-api.openserv.ai/v1",
     "model": "gpt-6-luna",
     "suffix": "-serv-multipath",

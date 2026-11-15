@@ -93,6 +93,8 @@ export interface Receipt {
     cost_usd_estimated: number | null;
     ms: number;
     request_id?: string;
+    /** Present when the fallback decider (an open model on Dolphin) answered instead of SERV. */
+    fallback?: true;
   };
   dropped_quotes: number;
   totals: { cost_usd_estimated: number | null; ms: number };
@@ -199,6 +201,7 @@ export function buildReceipt(cfg: IzinConfig, p: ReceiptParts): Receipt {
       cost_usd_estimated: deciderCost,
       ms: d?.ms ?? 0,
       ...(d?.request_id ? { request_id: d.request_id } : {}),
+      ...(d?.fallback ? { fallback: true as const } : {}),
     },
     dropped_quotes: p.evidence.counts.dropped_quotes,
     totals: { cost_usd_estimated: deciderCost === null ? null : round6(reader.cost_usd + deciderCost), ms: p.ms_total },

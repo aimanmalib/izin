@@ -77,6 +77,8 @@ export interface DeciderResult {
   shadow_exhausted: boolean;
   /** Whether serv_prompt_guard was declared on this check's requests. */
   prompt_guard: boolean;
+  /** Set when the fallback decider answered because SERV had no credit or was capped. */
+  fallback?: true;
 }
 
 export interface DeciderDeps {

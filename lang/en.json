@@ -271,6 +271,7 @@
       "read_saved": "Read by {model} on {provider} (saved reading)",
       "read_none": "Not read by a model",
       "decided_by": "Decided by {model} on SERV Reasoning",
+      "decided_by_fallback": "Decided by {model} on Dolphin, because SERV Reasoning was out of credit or capped",
       "decided_none": "No decision step",
       "ceilings": "Code ceilings applied: {codes}",
       "ceilings_none": "Code ceilings applied: none",

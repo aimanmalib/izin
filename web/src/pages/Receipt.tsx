@@ -194,7 +194,7 @@ function ReceiptView({ r, costNow, t }: { r: R; costNow: number | null; t: Strin
           <p>
             {read ? fmt(read.saved ? p.read_saved : p.read_by, { model: read.model, provider: providerName }) : p.read_none}
             {" · "}
-            {r.decider.model ? fmt(p.decided_by, { model: r.decider.model }) : p.decided_none}
+            {r.decider.model ? fmt(r.decider.fallback ? p.decided_by_fallback : p.decided_by, { model: r.decider.model }) : p.decided_none}
             {" · "}
             {r.decided_by.ceilings.length ? fmt(p.ceilings, { codes: r.decided_by.ceilings.join(", ") }) : p.ceilings_none}
           </p>
