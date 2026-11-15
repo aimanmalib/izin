@@ -63,9 +63,10 @@ curl -si 'https://izin.sasateguh.com/api/paid/check?url=https://www.ebay.com/&ac
 
 This is a testnet, so the USDC has no value. The route sells saved answers only, charges nothing when no receipt is
 saved, and is off unless the deployment sets a receiving address
-([ADR 0022](docs/decisions/0022-paid-answer-over-x402-testnet.md)). Checked against the public x402 facilitator on
-15 Nov 2026: a request with no payment gets the terms, and a signed payment from a test wallet with no funds is
-refused for its balance.
+([ADR 0022](docs/decisions/0022-paid-answer-over-x402-testnet.md)). Checked on 15 Nov 2026 through the public x402
+facilitator: a request with no payment gets the terms, a signed payment from a test wallet with no funds is refused
+for its balance, and the first funded payment settled. It paid USD 0.01 in test USDC for the eBay answer above:
+[transaction on Base Sepolia](https://sepolia.basescan.org/tx/0x19a9401d0de99decc8aa8987ecf312f7e67eddea7cb958b5960464abfda272b3).
 
 ## How a verdict is made
 

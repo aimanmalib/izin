@@ -47,5 +47,9 @@ verdict is made.
 - Tests use a stand-in facilitator and a key made for the test (`tests/api-paid.test.ts`): the 402
   terms, a signed payment answered and settled once, no settlement on a miss, and other routes
   untouched.
+- First settled payment on the live route, 15 Nov 2026 04:59 UTC: a test wallet paid USD 0.01 in
+  test USDC for the saved answer on `ebay.com` and `purchase`, and the facilitator settled it on
+  Base Sepolia in transaction
+  `0x19a9401d0de99decc8aa8987ecf312f7e67eddea7cb958b5960464abfda272b3` (block 58984629).
 - Undo: unset the address in the deployment environment (the route disappears and the page says
   "planned" again), or set `x402.enabled` to false.
