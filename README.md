@@ -10,7 +10,19 @@
 Before an AI agent acts on a website, Izin answers GO, ASK or NO-GO for one action and quotes the clause from the site's
 robots.txt and terms.
 
+Built for **SERV Hackathon 02, Dolphin track**: an open model on Dolphin reads, SERV Reasoning decides, and code has the
+last word.
+
 ![Izin checks buying on ebay.com: the robots.txt comment a parser skips, one site and one action, then NO-GO with the clause quoted](docs/media/hero.gif)
+
+| Partner technology | What it does in Izin | Measured |
+|---|---|---|
+| [Dolphin](https://dphn.ai), open-weights `deepseek-ai/DeepSeek-V4.1-Flash` | Reads every policy page and returns the clauses that matter, word for word ([`server/baca/reader.ts`](server/baca/reader.ts)) | 100% of reader tokens in the gallery and benchmark runs; 462,675 tokens read for USD 0.006070 |
+| [SERV Reasoning](https://docs.openserv.ai), `gpt-6-luna` | Decides in a strict JSON schema that cites clause ids, with Shadow Agent; Prompt Guard is declared when the code filter flags injected text ([`server/putus/serv.ts`](server/putus/serv.ts)) | No false NO-GO on the 43 benchmark pairs, and no false GO once the code ceilings apply |
+
+Every verdict is an auditable decision: typed steps, cited clause ids and a receipt pinned by a hash. Details are in
+[Where Dolphin runs](#where-dolphin-runs), [Where SERV Reasoning runs](#where-serv-reasoning-runs) and
+[What we measured](#what-we-measured).
 
 The [narrated demo video](https://youtu.be/u4oSkprOOHU) is 87 seconds and is also attached to the [latest release](https://github.com/aimanmalib/izin/releases/latest).
 
