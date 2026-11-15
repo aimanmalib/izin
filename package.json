@@ -1,6 +1,6 @@
 {
   "name": "izin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "GO / ASK / NO-GO for one AI agent action on one website, with the site's own terms quoted exactly.",
   "license": "MIT",

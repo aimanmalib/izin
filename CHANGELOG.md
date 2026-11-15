@@ -5,6 +5,30 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-11-15
+
+Fixes from a second outside review of the public site, before submission.
+
+### Added
+
+- The front page shows one saved answer and the one-click examples in the first screen.
+- A Google example. Its terms address is a short page that forwards with a meta refresh; Izin now follows one such
+  refresh to the same site, through the usual robots.txt and address checks
+  ([ADR 0025](docs/decisions/0025-decode-compressed-bodies-and-follow-meta-refresh.md)).
+
+### Changed
+
+- An ASK names what stopped it: a site that blocked IzinBot is named with its HTTP status, a terms page that needs a
+  browser is named and is no longer sent to the reader, and a decision that Prompt Guard refused says so
+  ([ADR 0026](docs/decisions/0026-an-ask-names-what-stopped-it.md)).
+- The free allowance is 30 new checks an hour per address. It was 6.
+- The README names the track and the partner technology at the top.
+
+### Fixed
+
+- A page sent as gzip, deflate or br is decoded before it is read. A site that compressed its home page without
+  being asked gave Izin no links to follow.
+
 ## [1.0.2] - 2026-11-15
 
 ### Changed
@@ -70,7 +94,8 @@ The feature freeze ([ADR 0018](docs/decisions/0018-feature-freeze-v0.9.0.md)).
   cap the answer at ASK ([ADR 0020](docs/decisions/0020-two-signal-ceilings-and-remeasure.md)).
 - A one-container deploy with rollback, and spending-cap alerts sent once per cap.
 
-[Unreleased]: https://github.com/aimanmalib/izin/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/aimanmalib/izin/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/aimanmalib/izin/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/aimanmalib/izin/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/aimanmalib/izin/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/aimanmalib/izin/compare/v0.9.0...v1.0.0
