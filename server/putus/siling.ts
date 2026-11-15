@@ -158,7 +158,7 @@ const LINE = /^(https?:\/\/\S+) \((.+)\)$/;
 const firstUrl = (line: string) => /https?:\/\/[^\s,;()]+/.exec(line)?.[0]?.replace(/[.:]+$/, "");
 
 /**
- * One line per URL in "What we could not read". Lines of the form "URL (state)" for the same URL are joined
+ * One line per URL in "What is missing or unread". Lines of the form "URL (state)" for the same URL are joined
  * ("URL (HTTP 403, the page blocked the reader)"); a free-text line about a URL that already has such a line is
  * dropped. `state` turns a stored state code into words (the page uses it for receipts saved before the words).
  */

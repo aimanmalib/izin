@@ -23,6 +23,7 @@
     { "site": "https://reppo.xyz/", "action": "post" },
     { "site": "https://www.google.com/", "action": "purchase" },
     { "site": "https://www.google.com/", "action": "account" },
-    { "site": "https://www.amazon.com/", "action": "purchase" }
+    { "site": "https://www.amazon.com/", "action": "purchase" },
+    { "site": "https://amazon.com/", "action": "purchase" }
   ]
 }

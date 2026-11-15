@@ -240,7 +240,7 @@
       "open": "Buka resit"
     },
     "errors": {
-      "invalid_url": "Masukkan alamat web penuh yang bermula dengan http:// atau https://.",
+      "invalid_url": "Masukkan alamat web, seperti example.com atau https://example.com/page.",
       "invalid_action": "Pilih satu tindakan.",
       "detail_too_long": "Butiran terlalu panjang.",
       "terms_too_long": "Terma yang ditampal terlalu panjang.",
@@ -263,7 +263,7 @@
       "detail": "Butiran yang diberi",
       "reason": "Sebab",
       "conditions": "Syarat",
-      "missing": "Apa yang tidak dapat kami baca",
+      "missing": "Apa yang tiada atau tidak dapat dibaca",
       "decisive": "Klausa penentu",
       "decisive_none": "Tiada klausa yang menentukan ini. Keputusan bersandar pada isyarat di bawah.",
       "open_source": "Buka sumber pada ayat ini",

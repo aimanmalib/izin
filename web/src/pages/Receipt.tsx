@@ -40,7 +40,7 @@ export function costLine(
   return fmt(p.tokens, { rin, rout, din: r.decider.tokens_in, dout: r.decider.tokens_out, cost: costNow === null ? "·" : costNow.toFixed(4), secs });
 }
 
-/** "What we could not read": one line per URL, with stored state codes in words. */
+/** "What is missing or unread": one line per URL, with stored state codes in words. */
 export function missingLines(missing: readonly string[], why: Record<string, string>): string[] {
   return mergeMissing(missing, (s) => why[s] ?? s);
 }

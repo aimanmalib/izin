@@ -240,7 +240,7 @@
       "open": "Open the receipt"
     },
     "errors": {
-      "invalid_url": "Enter a full web address that starts with http:// or https://.",
+      "invalid_url": "Enter a web address, such as example.com or https://example.com/page.",
       "invalid_action": "Choose one action.",
       "detail_too_long": "The detail is too long.",
       "terms_too_long": "The pasted terms are too long.",
@@ -263,7 +263,7 @@
       "detail": "Detail given",
       "reason": "Why",
       "conditions": "Conditions",
-      "missing": "What we could not read",
+      "missing": "What is missing or unread",
       "decisive": "Deciding clauses",
       "decisive_none": "No clause decided this. The verdict rests on the signals below.",
       "open_source": "Open the source at this sentence",
