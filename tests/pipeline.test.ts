@@ -85,7 +85,34 @@ describe("failures never end in GO", () => {
     const { receipt } = await check(openSite(), crawl, (d) => ({ ...d, reader: { ...d.reader, call: async () => Promise.reject(new ReaderError("server_error")) } }));
     expect(receipt.verdict).toBe("ASK");
     expect(receipt.decided_by.flags).toContain("decider_skipped");
-    expect(receipt.missing.join(" ")).toMatch(/reader_failed/);
+    expect(receipt.missing.join(" ")).toMatch(/reading step failed/);
+  });
+
+  it("S11: terms read but no clause at all for a crawl -> ASK, and the decider is never called", async () => {
+    let calls = 0;
+    const counted: DeciderTransport = async () => {
+      calls++;
+      return Promise.reject(new DeciderHttpError("server_error", 503));
+    };
+    const quiet = page(`<h1>Terms</h1><p>${filler}</p><p>${filler}</p>`);
+    const { receipt } = await check(openSite({ "/terms": { body: quiet } }), crawl, (d) => ({ ...d, decider: { ...d.decider, transport: counted } }));
+    expect(calls).toBe(0);
+    expect(receipt.verdict).toBe("ASK");
+    expect(receipt.decided_by).toMatchObject({ serv_verdict: null, flags: ["decider_skipped"] });
+    expect(receipt.decided_by.ceilings).toContain("S11");
+    expect(receipt.reason).toMatch(/\/terms \([\d,]+ characters\)/);
+  });
+
+  it("S11 does not touch read_page: the same quiet terms still go to the decider", async () => {
+    let calls = 0;
+    const counted: DeciderTransport = async () => {
+      calls++;
+      return Promise.reject(new DeciderHttpError("server_error", 503));
+    };
+    const quiet = page(`<h1>Terms</h1><p>${filler}</p><p>${filler}</p>`);
+    const { receipt } = await check(openSite({ "/terms": { body: quiet } }), (r) => ({ url: r.url("open.example", "/"), action: "read_page" }), (d) => ({ ...d, decider: { ...d.decider, transport: counted } }));
+    expect(calls).toBeGreaterThan(0);
+    expect(receipt.decided_by.ceilings).not.toContain("S11");
   });
 
   it("decider fails -> ASK with decider_unavailable", async () => {

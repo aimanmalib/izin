@@ -10,7 +10,7 @@ import type { NetPolicy } from "./kumpul/ssrf.js";
 import { checkEvidence, numberDocs } from "./semak/check.js";
 import { buildSignals, deciderInput, guardFor, relevantClauses, type DocRef } from "./putus/message.js";
 import { decide, type DeciderDeps, type DeciderResult } from "./putus/serv.js";
-import { applyCeilings, type CeilingTexts } from "./putus/siling.js";
+import { applyCeilings, QUOTE_REQUIRED, type CeilingTexts } from "./putus/siling.js";
 import { buildReceipt, newReceiptId, type FetchedLabels, type Receipt } from "./resit/receipt.js";
 import type { CheckSource, ReceiptStore } from "./resit/store.js";
 
@@ -97,7 +97,9 @@ export async function prepareCheck(input: CheckInput, deps: PipelineDeps): Promi
   const signals = buildSignals(collected, docRefs, readings, evidence);
   const relevant = relevantClauses(cfg, input.action, evidence.clauses);
   const message = deciderInput({ action: input.action, action_label: deps.texts.action_labels[input.action], detail, site: collected.site }, signals, relevant);
-  const skip = signals.docs_read === 0 && relevant.length === 0;
+  // Nothing read and no clause, or no clause at all for an action where silence is not permission (S11):
+  // the ceilings already fix the verdict at ASK or below, so no decision is requested and nothing is spent.
+  const skip = relevant.length === 0 && (signals.docs_read === 0 || QUOTE_REQUIRED.includes(input.action));
   return { input, t0, created_at, detail, collected, docs, docRefs, readings, evidence, signals, message, skip, guard: !skip && guardFor(cfg, message) };
 }
 

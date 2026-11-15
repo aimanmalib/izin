@@ -126,6 +126,32 @@ describe("collect", () => {
     expect(out.signals.docs_read).toBe(0);
   });
 
+  it("S5: a common terms path that answers but needs a browser is unreadable, even with robots.txt comments read", async () => {
+    // Shape of a large shop: no terms link the reader can follow, /terms is a script shell, /terms-of-service is 404.
+    const { out, r } = await run(
+      {
+        "shop.example": {
+          "/robots.txt": txt(`${shopComment}\nUser-agent: *\nDisallow: /cart\n`),
+          "/": { body: page("no links") },
+          "/terms": { body: page("<div id=root>Loading</div>") },
+        },
+      },
+      (rr) => ({ url: rr.url("shop.example") }),
+    );
+    expect(out.docs.map((d) => d.kind)).toEqual(["robots_comments"]);
+    expect(out.signals.docs_read).toBe(1);
+    expect(out.signals.unreadable).toEqual([{ url: r.url("shop.example", "/terms"), state: "needs_browser" }]);
+  });
+
+  it("S5: a common path read in full after one that needs a browser leaves nothing unreadable", async () => {
+    const { out } = await run(
+      { "shop.example": { "/robots.txt": txt(""), "/": { body: page("no links") }, "/terms": { body: page("<div id=root>Loading</div>") }, "/terms-of-service": { body: page(policyText("tos")) } } },
+      (rr) => ({ url: rr.url("shop.example") }),
+    );
+    expect(out.docs.map((d) => new URL(d.url).pathname)).toEqual(["/terms-of-service"]);
+    expect(out.signals.unreadable).toEqual([]);
+  });
+
   it("falls back to common paths, at most the configured number of attempts", async () => {
     const { out, r, cfg } = await run(
       { "shop.example": { "/robots.txt": txt(""), "/": { body: page("no links") }, "/terms-of-service": { body: page(policyText("tos")) } } },

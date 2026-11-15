@@ -1,11 +1,16 @@
 // Code ceilings. The final verdict is the strictest of the decider's verdict and every ceiling
 // that applies (NO_GO < ASK < GO). Code can only lower a verdict, never raise it, and GO is only
-// possible when the decider returned a valid GO. Codes S1 to S10 are listed on every receipt.
+// possible when the decider returned a valid GO. Codes S1 to S11 are listed on every receipt.
 import type { Action, Verdict } from "../config.js";
 import type { Confidence, Decision } from "./decision.js";
 import type { DeciderClause, DeciderSignals } from "./message.js";
 
-export type CeilingCode = "S1" | "S2" | "S3" | "S4" | "S5" | "S6" | "S7" | "S8" | "S9" | "S10";
+/** Actions where silence is not permission: a GO needs a clause quoted from a policy document (S11). */
+export const QUOTE_REQUIRED: readonly Action[] = ["crawl", "account", "purchase", "post"];
+/** Document kinds that count as the site's policy for S11: fetched terms, or terms the caller pasted. */
+const POLICY_KINDS: ReadonlySet<string> = new Set(["policy", "pasted"]);
+
+export type CeilingCode = "S1" | "S2" | "S3" | "S4" | "S5" | "S6" | "S7" | "S8" | "S9" | "S10" | "S11";
 export type Flag =
   | "model_disagrees_with_evidence"
   | "unsupported_no_go"
@@ -29,6 +34,11 @@ export interface CeilingTexts {
   ai_text_found: string;
   /** S10 condition; {seconds} is the robots.txt Crawl-delay. */
   crawl_delay_wait: string;
+  /** S11 reason; {read} lists what was read (URL and characters), {chars} is the word after a count. */
+  reason_no_policy_clause: string;
+  read_chars: string;
+  /** S5 missing lines: the plain-language state of each policy page found but not read. */
+  unreadable_why: Record<string, string>;
 }
 
 export interface CeilingInput {
@@ -61,16 +71,31 @@ export interface Cap {
   cap: Verdict;
 }
 
+/** Whether any clause sent to the decider was quoted from a policy document (S11). */
+export function quotesPolicy(s: DeciderSignals, clauses: Pick<DeciderClause, "doc">[]): boolean {
+  const kind = new Map(s.docs.map((d) => [d.id, d.kind as string]));
+  return clauses.some((c) => POLICY_KINDS.has(kind.get(c.doc) ?? ""));
+}
+
 /**
- * Ceilings read from the signals alone, applied after the decision: S9 (text addressed to AI agents was
- * found, so a GO cannot stand) and S10 (a crawl where robots.txt sets a Crawl-delay is GO only with a
- * wait between requests, so it is ASK with that condition). Exported for the re-measure of saved runs.
+ * Ceilings read from the signals and clauses alone, applied after the decision: S9 (text addressed to
+ * AI agents was found, so a GO cannot stand), S10 (a crawl where robots.txt sets a Crawl-delay is GO
+ * only with a wait between requests, so it is ASK with that condition) and S11 (for crawl, account,
+ * purchase and post, a GO with no clause quoted from a policy document rests on silence, so it is ASK;
+ * read_page keeps the K7 default). Exported for the re-measure of saved runs.
  */
-export function signalCeilings(action: Action, s: DeciderSignals): Cap[] {
+export function signalCeilings(action: Action, s: DeciderSignals, clauses: Pick<DeciderClause, "doc">[]): Cap[] {
   const caps: Cap[] = [];
   if (s.addressed_to_ai_found) caps.push({ code: "S9", cap: "ASK" });
   if (action === "crawl" && (s.robots.crawl_delay ?? 0) > 0) caps.push({ code: "S10", cap: "ASK" });
+  if (QUOTE_REQUIRED.includes(action) && !quotesPolicy(s, clauses)) caps.push({ code: "S11", cap: "ASK" });
   return caps;
+}
+
+/** S11 reason: what was read, with its size, and that no clause could be quoted from it. */
+function noClauseReason(s: DeciderSignals, t: CeilingTexts): string {
+  const read = s.docs.map((d) => `${d.url} (${d.chars.toLocaleString("en-US")} ${t.read_chars})`).join(", ");
+  return t.reason_no_policy_clause.replace("{read}", read);
 }
 
 const ORDER: Verdict[] = ["NO_GO", "ASK", "GO"];
@@ -103,7 +128,7 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   if (s.docs_read === 0 || s.unreadable.length) {
     caps.push({ code: "S5", cap: "ASK" });
     if (s.docs_read === 0) addMissing(t.nothing_read);
-    for (const u of s.unreadable) addMissing(`${u.url} (${u.why})`);
+    for (const u of s.unreadable) addMissing(`${u.url} (${t.unreadable_why[u.why] ?? u.why})`);
   }
 
   const known = new Map(input.clauses.map((c) => [c.id, c]));
@@ -112,7 +137,7 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   let decisive = decision?.decisive_clause_ids ?? [];
 
   if (!decision && input.decider === "skipped") {
-    // Nothing was read, so no decision was requested; S5 already caps the verdict at ASK.
+    // Nothing was read, or no clause at all for an S11 action: no decision was requested; S5 or S11 caps at ASK.
     flags.push("decider_skipped");
   } else if (!decision) {
     caps.push({ code: "S8", cap: "ASK" });
@@ -135,7 +160,7 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
   }
   if (input.shadow_exhausted) flags.push("shadow_exhausted");
 
-  const late = signalCeilings(action, s);
+  const late = signalCeilings(action, s, input.clauses);
   caps.push(...late);
   if (late.some((c) => c.code === "S9")) {
     flags.push("addressed_to_ai");
@@ -157,6 +182,8 @@ export function applyCeilings(input: CeilingInput, t: CeilingTexts): Outcome {
 
   let reason = decision?.reason ?? "";
   if (!decision) reason = input.decider === "skipped" ? t.reason_decider_skipped : input.decider === "guard_tripped" ? t.reason_guard_tripped : t.reason_decider_unavailable;
+  const s11 = late.some((c) => c.code === "S11");
+  if (s11 && s.docs_read > 0 && (servVerdict === "GO" || (!decision && input.decider === "skipped"))) reason = noClauseReason(s, t);
   if (final === "NO_GO" && servVerdict !== "NO_GO") reason = caps.some((c) => c.code === "S2") ? t.reason_ai_train : t.reason_robots;
 
   return { serv_verdict: servVerdict, ceilings, final, flags, confidence, reason, conditions, missing, decisive_clause_ids: decisive };

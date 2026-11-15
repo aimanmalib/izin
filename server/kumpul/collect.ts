@@ -208,12 +208,17 @@ async function discoverAndFetch(
   if (policyCount === 0 && !hinted.length) await tryCommonPaths(session, url, docs, policyEntries);
 }
 
-/** Last resort: a few common terms paths; stop at the first readable one. Misses are not "unreadable". */
+/**
+ * Last resort: a few common terms paths; stop at the first readable one. Misses (404) are not
+ * "unreadable", but a page that answered and could not be read (it needs a browser, or it is cut
+ * short) is a policy page found and not read: it is reported unless another path was read in full.
+ */
 async function tryCommonPaths(session: Session, url: URL, docs: PolicyDoc[], policyEntries: LedgerEntry[]): Promise<void> {
   const cfg = session.cfg;
+  const found: LedgerEntry[] = [];
   let attempts = 0;
   for (const path of cfg.discovery.common_paths) {
-    if (attempts >= cfg.limits.common_path_attempts_max || session.left() <= 0) return;
+    if (attempts >= cfg.limits.common_path_attempts_max || session.left() <= 0) break;
     attempts++;
     const got = await session.page(`${url.origin}${path}`, "policy");
     if (!("res" in got) || got.res.state !== "ok") continue;
@@ -223,5 +228,7 @@ async function tryCommonPaths(session: Session, url: URL, docs: PolicyDoc[], pol
       policyEntries.push(got.entry);
       return;
     }
+    if (doc) found.push(got.entry);
   }
+  policyEntries.push(...found);
 }

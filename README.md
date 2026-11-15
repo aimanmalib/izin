@@ -50,7 +50,8 @@ the terms banned scraping. In 2 the terms could not be read by a script. A robot
  2 Decide   SERV Reasoning: a verdict in a strict JSON schema, citing clause ids
       |
  3 Ceilings code: robots.txt, Content Signals, blocks and unread pages cap the verdict;
-      |           a GO that cites nothing, or sits next to a prohibiting clause, becomes ASK;
+      |           a GO next to a prohibiting clause becomes ASK; for crawl, account, purchase
+      |           and post, so does a GO with no clause quoted from the site's terms;
       |           text addressed to AI readers, or a Crawl-delay on a crawl, caps it at ASK
    receipt  what was fetched and when, the quoted clauses with links, the ceilings, a hash
 ```
@@ -131,7 +132,8 @@ fetched and no model called:
 
 - It does not render JavaScript. A terms page that needs a browser is reported as unread, and the answer is ASK.
 - It obeys robots.txt and stops there; a site that blocks IzinBot is reported as blocked.
-- GO means no restriction was found in what was read. Izin reads public text and reports what it says; it is a starting
+- GO means no restriction was found in what was read. For crawl, account, purchase and post it also needs a clause
+  quoted from the site's terms; silence alone is ASK. Izin reads public text and reports what it says; it is a starting
   point for a decision, not advice.
 - The benchmark is small (43 pairs). False GO for the shipped decider in the run: 2 of 20 designed cases, 0 of 10 spot
   checks, 1 of 13 recorded decisions; 0 of 43 after the re-measure with the current ceilings.

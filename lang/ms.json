@@ -68,7 +68,24 @@
     "reason_robots": "robots.txt laman ini melarang URL ini untuk ejen automatik.",
     "reason_ai_train": "robots.txt laman ini memberi isyarat ai-train=no.",
     "ai_text_found": "seseorang perlu membaca halaman yang dipetik dahulu: ia mengandungi teks yang ditujukan kepada ejen AI, yang Izin ketepikan",
-    "crawl_delay_wait": "tunggu {seconds} saat antara permintaan (Crawl-delay robots.txt)"
+    "crawl_delay_wait": "tunggu {seconds} saat antara permintaan (Crawl-delay robots.txt)",
+    "reason_no_policy_clause": "Izin membaca {read} dan tidak menemui klausa yang boleh dipetik untuk tindakan ini. Diam bukan kebenaran, jadi jawapannya ASK.",
+    "read_chars": "aksara",
+    "unreadable_why": {
+      "needs_browser": "halaman memerlukan pelayar untuk memaparkan teksnya",
+      "truncated": "halaman lebih panjang daripada yang Izin baca",
+      "blocked": "halaman menyekat pembaca",
+      "robots_disallow": "robots.txt tidak membenarkan IzinBot membacanya",
+      "timeout": "halaman tidak menjawab dalam masa",
+      "too_large": "halaman terlalu besar untuk diambil",
+      "error": "halaman tidak dapat diambil",
+      "refused": "alamat ini bukan yang Izin ambil",
+      "not_fetched": "halaman tidak diambil",
+      "reader_failed": "langkah membaca gagal",
+      "ai_input_no": "laman ini memberi isyarat ai-input=no",
+      "skipped": "halaman tidak dibaca",
+      "stopped_at_robots_txt": "Izin berhenti di robots.txt"
+    }
   },
   "mcp": {
     "check_title": "Semak satu tindakan ejen di satu laman",
@@ -146,7 +163,7 @@
       "limit_js": "Ia tidak membaca halaman yang memerlukan JavaScript untuk memaparkan teksnya.",
       "limit_robots": "Ia mematuhi robots.txt dan tidak memintas sekatan. Laman yang menyekat pembaca mendapat ASK.",
       "limit_lang": "Ia paling boleh dipercayai untuk dokumen bahasa Inggeris.",
-      "limit_go": "GO bermaksud tiada sekatan ditemui. Ia bukan kebenaran.",
+      "limit_go": "GO bermaksud tiada sekatan ditemui dalam apa yang dibaca. Untuk crawl, account, purchase dan post, ia juga memerlukan klausa yang dipetik daripada terma laman. Ia bukan kebenaran.",
       "limit_change": "Terma berubah. Setiap resit menunjukkan bila ia dibaca."
     },
     "form": {
@@ -322,7 +339,7 @@
       "remeasure_head": "Diukur semula dengan siling semasa",
       "remeasure_line": "{id} (digunakan), jawapan tersimpan larian {date} dengan siling {ceilings} dikenakan dalam kod: {agree} daripada {pairs} pasangan sepadan (sebelum: {agree_before}). GO palsu: {false_go} daripada {pairs} (sebelum: {false_go_before}). NO-GO palsu: {false_no_go} daripada {pairs} (sebelum: {false_no_go_before}).",
       "remeasure_other": "{id}, kaedah sama: {agree} daripada {pairs} sepadan, GO palsu {false_go}, NO-GO palsu {false_no_go}.",
-      "remeasure_note": "Tiada laman diambil semula dan tiada model dipanggil. S9 mengehadkan GO kepada ASK bila halaman mengandungi teks yang ditujukan kepada ejen AI. S10 mengehadkan crawl kepada ASK bila robots.txt menetapkan Crawl-delay.",
+      "remeasure_note": "Tiada laman diambil semula dan tiada model dipanggil. S9 mengehadkan GO kepada ASK bila halaman mengandungi teks yang ditujukan kepada ejen AI. S10 mengehadkan crawl kepada ASK bila robots.txt menetapkan Crawl-delay. S11 mengehadkan GO kepada ASK untuk crawl, account, purchase dan post bila tiada klausa dipetik daripada terma laman.",
       "reading_cost_head": "Kos bacaan",
       "reading_cost_line": "Pembaca telah menggunakan {tokens} token di Dolphin bagi {readings} bacaan tersimpan ({tokens_in} masuk, {tokens_out} keluar). Bacaan itu berkos USD {usd}.",
       "reading_cost_line_one": "Pembaca telah menggunakan {tokens} token di Dolphin bagi {readings} bacaan tersimpan ({tokens_in} masuk, {tokens_out} keluar). Bacaan itu berkos USD {usd}.",

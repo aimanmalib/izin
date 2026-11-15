@@ -1,17 +1,17 @@
 // Re-measure of the saved benchmark run with the current code ceilings, with no network and no model:
 // every saved final verdict (bench/runs/bench.json) meets the ceilings the current code reads from the
 // frozen signals of its pair (bench/evidence/). Saved files are read only; the result is a new file.
-//   npm run remeasure              write bench/runs/remeasure.json
+//   npm run remeasure              write bench/runs/remeasure-s11.json (an earlier re-measure is kept as saved)
 //   npm run remeasure -- --kering  print it and write nothing
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { BENCH_DIR, type Verdict } from "../server/config.js";
 import type { FrozenEvidence } from "../server/bench/run.js";
 import { remeasure, type SavedPair } from "../server/bench/score.js";
-import type { BenchReportFile } from "../server/bench/ukur.js";
+import { REMEASURE_FILE, type BenchReportFile } from "../server/bench/ukur.js";
 import { signalCeilings } from "../server/putus/siling.js";
 
-const { values } = parseArgs({ options: { kering: { type: "boolean", default: false }, out: { type: "string", default: `${BENCH_DIR}runs/remeasure.json` } } });
+const { values } = parseArgs({ options: { kering: { type: "boolean", default: false }, out: { type: "string", default: `${BENCH_DIR}${REMEASURE_FILE}` } } });
 
 const report = JSON.parse(readFileSync(`${BENCH_DIR}runs/bench.json`, "utf8")) as BenchReportFile;
 const evidence = new Map<string, FrozenEvidence>();
@@ -33,7 +33,8 @@ for (const v of report.variants) {
       acceptable: e.also_acceptable as Verdict[],
       final: row.final as Verdict,
       // The run already applied S1 to S8; S9 then only lowered confidence. Capping twice changes nothing.
-      extra: signalCeilings(e.action, e.message.signals),
+      // S11 reads the clauses the decider was sent (frozen with the pair) and the kinds of their documents.
+      extra: signalCeilings(e.action, e.message.signals, e.message.clauses),
     };
   });
   const r = remeasure(pairs);
@@ -49,8 +50,8 @@ for (const v of report.variants) {
 const out = {
   run_at: new Date().toISOString(),
   source: { file: "bench/runs/bench.json", run_at: report.run_at, shipped: report.shipped },
-  method: "saved final verdicts and frozen signals; ceilings S9 and S10 applied in code; no network, no model call",
-  ceilings: ["S9", "S10"],
+  method: "saved final verdicts and frozen signals; ceilings S9, S10 and S11 applied in code; no network, no model call",
+  ceilings: ["S9", "S10", "S11"],
   variants,
 };
 const text = `${JSON.stringify(out, null, 2)}\n`;

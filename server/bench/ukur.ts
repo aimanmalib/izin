@@ -51,6 +51,7 @@ const CEILING: Record<string, string> = {
   S8: "no valid decision came back",
   S9: "text addressed to AI agents was found and set aside",
   S10: "robots.txt sets a Crawl-delay for a crawl",
+  S11: "no clause was quoted from a policy document for crawl, account, purchase or post",
 };
 
 const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : "n/a");
@@ -140,7 +141,10 @@ export function benchSection(results: BenchResults | PricedResults, report: Benc
   return lines.join("\n");
 }
 
-/** Shape of bench/runs/remeasure.json, written by scripts/remeasure.ts. */
+/** The re-measure file in use (under bench/), written by scripts/remeasure.ts; earlier re-measures stay as they were saved. */
+export const REMEASURE_FILE = "runs/remeasure-s11.json";
+
+/** Shape of a re-measure file, written by scripts/remeasure.ts. */
 export interface RemeasureFile {
   run_at: string;
   source: { file: string; run_at: string; shipped: string };
@@ -150,6 +154,7 @@ export interface RemeasureFile {
 }
 
 export const REMEASURE_ADR = "decisions/0020-two-signal-ceilings-and-remeasure.md";
+export const S11_ADR = "decisions/0021-go-needs-a-quoted-policy-clause.md";
 
 /** The re-measure of the saved run with the current ceilings: counts in "N of M" form, read from the file. */
 export function remeasureSection(r: RemeasureFile): string {
@@ -158,7 +163,7 @@ export function remeasureSection(r: RemeasureFile): string {
   const lines = [
     "## Re-measure with the current ceilings",
     "",
-    `Generated from \`bench/runs/remeasure.json\` (${r.run_at}, \`npm run remeasure\`): the saved final verdicts of the run of ${r.source.run_at} with ceilings ${r.ceilings.join(" and ")} applied in code ([ADR 0020](${REMEASURE_ADR})). No site was fetched and no model was called; the saved run and its frozen evidence are unchanged.`,
+    `Generated from \`bench/${REMEASURE_FILE}\` (${r.run_at}, \`npm run remeasure\`): the saved final verdicts of the run of ${r.source.run_at} with ceilings ${r.ceilings.join(", ")} applied in code ([ADR 0020](${REMEASURE_ADR}), [ADR 0021](${S11_ADR})). No site was fetched and no model was called; the saved run and its frozen evidence are unchanged.`,
     "",
     "| Variant | Agree before | Agree after | False GO before | False GO after | False NO-GO before | False NO-GO after |",
     "|---|---|---|---|---|---|---|",

@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import type Database from "better-sqlite3";
 import { z } from "zod";
-import type { RemeasureFile } from "../bench/ukur.js";
+import { REMEASURE_FILE, type RemeasureFile } from "../bench/ukur.js";
 import { ACTIONS, BENCH_DIR, GALLERY_PATH, type Action, type Stance, type Verdict } from "../config.js";
 import { reprice, type ReadingCost, type Repricing } from "../belanja/kos.js";
 import { baselineCell, baselineCounts, type BaselineCell, type BaselineCounts, type BaselineReceipt } from "../galeri/baseline.js";
@@ -95,7 +95,7 @@ export function benchView(dir: string = BENCH_DIR, baseline: BaselineCounts | nu
   const parsed = raw === null ? null : benchResultsSchema.safeParse(raw);
   const rows = pricing ? readJson<{ rows: Parameters<typeof reprice>[1] }>(`${dir}runs/bench.json`)?.rows : undefined;
   const results = parsed?.success ? (pricing && rows ? reprice(parsed.data, rows, pricing) : parsed.data) : null;
-  const re = readJson<RemeasureFile>(`${dir}runs/remeasure.json`);
+  const re = readJson<RemeasureFile>(`${dir}${REMEASURE_FILE}`);
   return {
     readability: readability ? { run_at: readability.run_at, user_agent: readability.user_agent, counts: readability.counts } : null,
     results,

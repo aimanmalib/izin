@@ -1,0 +1,158 @@
+{
+  "run_at": "2026-11-15T00:11:42.087Z",
+  "source": {
+    "file": "bench/runs/bench.json",
+    "run_at": "2026-11-14T11:57:16.553Z",
+    "shipped": "V1"
+  },
+  "method": "saved final verdicts and frozen signals; ceilings S9, S10 and S11 applied in code; no network, no model call",
+  "ceilings": [
+    "S9",
+    "S10",
+    "S11"
+  ],
+  "variants": {
+    "V0": {
+      "label": "Dolphin only, no SERV",
+      "before": {
+        "pairs": 43,
+        "agree": 36,
+        "false_go": 1,
+        "false_no_go": 1
+      },
+      "after": {
+        "pairs": 43,
+        "agree": 36,
+        "false_go": 0,
+        "false_no_go": 1
+      },
+      "by_set": {
+        "A": {
+          "pairs": 13,
+          "agree": 9,
+          "false_go": 0,
+          "false_no_go": 1
+        },
+        "B": {
+          "pairs": 20,
+          "agree": 19,
+          "false_go": 0,
+          "false_no_go": 0
+        },
+        "spot": {
+          "pairs": 10,
+          "agree": 8,
+          "false_go": 0,
+          "false_no_go": 0
+        }
+      },
+      "changed": [
+        {
+          "id": "A09",
+          "before": "GO",
+          "after": "ASK",
+          "ceilings": [
+            "S10",
+            "S11"
+          ],
+          "expected": [
+            "ASK"
+          ]
+        },
+        {
+          "id": "B07",
+          "before": "GO",
+          "after": "ASK",
+          "ceilings": [
+            "S11"
+          ],
+          "expected": [
+            "GO"
+          ]
+        }
+      ]
+    },
+    "V1": {
+      "label": "SERV gpt-6-luna",
+      "before": {
+        "pairs": 43,
+        "agree": 31,
+        "false_go": 3,
+        "false_no_go": 0
+      },
+      "after": {
+        "pairs": 43,
+        "agree": 33,
+        "false_go": 0,
+        "false_no_go": 0
+      },
+      "by_set": {
+        "A": {
+          "pairs": 13,
+          "agree": 9,
+          "false_go": 0,
+          "false_no_go": 0
+        },
+        "B": {
+          "pairs": 20,
+          "agree": 18,
+          "false_go": 0,
+          "false_no_go": 0
+        },
+        "spot": {
+          "pairs": 10,
+          "agree": 6,
+          "false_go": 0,
+          "false_no_go": 0
+        }
+      },
+      "changed": [
+        {
+          "id": "A09",
+          "before": "GO",
+          "after": "ASK",
+          "ceilings": [
+            "S10",
+            "S11"
+          ],
+          "expected": [
+            "ASK"
+          ]
+        },
+        {
+          "id": "B07",
+          "before": "GO",
+          "after": "ASK",
+          "ceilings": [
+            "S11"
+          ],
+          "expected": [
+            "GO"
+          ]
+        },
+        {
+          "id": "B09",
+          "before": "GO",
+          "after": "ASK",
+          "ceilings": [
+            "S9"
+          ],
+          "expected": [
+            "ASK"
+          ]
+        },
+        {
+          "id": "B20",
+          "before": "GO",
+          "after": "ASK",
+          "ceilings": [
+            "S9"
+          ],
+          "expected": [
+            "ASK"
+          ]
+        }
+      ]
+    }
+  }
+}

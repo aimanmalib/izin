@@ -1,4 +1,4 @@
-// Code ceilings S1 to S10: each one, the R6 case, and failures that must never end in GO.
+// Code ceilings S1 to S11: each one, the R6 case, and failures that must never end in GO.
 import { describe, expect, it } from "vitest";
 import type { Action, Verdict } from "../server/config.js";
 import en from "../lang/en.json" with { type: "json" };
@@ -32,7 +32,8 @@ const decision = (verdict: Verdict, ids: string[] = [], over: Partial<Decision> 
 });
 
 function run(over: Partial<CeilingInput> & { action?: Action }) {
-  return applyCeilings({ action: "crawl", signals: signals(), blocked: [], clauses: [], decision: decision("GO"), decider: "ok", ...over }, texts);
+  // One permitting clause quoted from the policy document by default, so S11 stays out of the other cases.
+  return applyCeilings({ action: "crawl", signals: signals(), blocked: [], clauses: [clause("c0", "permits")], decision: decision("GO"), decider: "ok", ...over }, texts);
 }
 
 describe("strictest", () => {
@@ -80,7 +81,7 @@ describe("applyCeilings", () => {
     expect(none.missing).toContain(texts.nothing_read);
     const part = run({ signals: signals({ unreadable: [{ url: "https://shop.example/aup", why: "needs_browser" }] }) });
     expect(part).toMatchObject({ final: "ASK", ceilings: ["S5"] });
-    expect(part.missing).toContain("https://shop.example/aup (needs_browser)");
+    expect(part.missing).toContain(`https://shop.example/aup (${texts.unreadable_why.needs_browser})`);
   });
 
   it("S6: GO against a verified prohibition becomes ASK with a flag", () => {
@@ -140,9 +141,52 @@ describe("applyCeilings", () => {
           const capped = run({ action, signals: sig, clauses: [clause("c1", "prohibits")], decision: decision(v, ["c1"]) }).final;
           expect(strictest(plain, capped)).toBe(capped);
         }
-        for (const cap of signalCeilings(action, sig)) expect(cap.cap).toBe("ASK");
+        for (const cap of signalCeilings(action, sig, [])) expect(cap.cap).toBe("ASK");
       }
     }
+  });
+
+  it("S11: a GO for crawl, account, purchase or post with no clause quoted from a policy document is ASK, and says what was read", () => {
+    // Shape of a large retailer: a 13k-character terms page was read, and no clause could be quoted from it.
+    const s = signals({ docs: [{ id: "d1", url: "https://shop.example/terms", kind: "policy", chars: 13204, truncated: false }] });
+    for (const action of ["crawl", "account", "purchase", "post"] as Action[]) {
+      const o = run({ action, signals: s, clauses: [], decision: decision("GO") });
+      expect(o).toMatchObject({ final: "ASK", serv_verdict: "GO", ceilings: ["S11"] });
+      expect(o.reason).toContain("https://shop.example/terms (13,204 characters)");
+      expect(o.reason).toBe(texts.reason_no_policy_clause.replace("{read}", "https://shop.example/terms (13,204 characters)"));
+    }
+    // A clause from robots.txt comments alone is not a clause from the terms.
+    const robotsOnly = signals({ docs: [{ id: "r1", url: "https://shop.example/robots.txt", kind: "robots_comments", chars: 300, truncated: false }] });
+    const viaRobots = run({ signals: robotsOnly, clauses: [{ ...clause("c1", "permits"), doc: "r1" }], decision: decision("GO", ["c1"]) });
+    expect(viaRobots).toMatchObject({ final: "ASK", ceilings: ["S11"] });
+    // Terms the caller pasted count as the site's terms.
+    const pasted = signals({ docs: [{ id: "p1", url: "https://shop.example/", kind: "pasted", chars: 900, truncated: false }] });
+    expect(run({ signals: pasted, clauses: [{ ...clause("c1", "permits"), doc: "p1" }], decision: decision("GO", ["c1"]) }).final).toBe("GO");
+  });
+
+  it("S11 leaves read_page and train alone, and keeps a GO that quotes a policy clause", () => {
+    for (const action of ["read_page", "train"] as Action[]) {
+      expect(run({ action, clauses: [], decision: decision("GO") })).toMatchObject({ final: "GO", ceilings: [] });
+    }
+    expect(run({ action: "post", clauses: [clause("c1", "permits")], decision: decision("GO", ["c1"]) })).toMatchObject({ final: "GO", ceilings: [] });
+  });
+
+  it("S11 never raises: an ASK or NO_GO keeps its verdict and its reason", () => {
+    const s = signals();
+    const ask = run({ action: "post", signals: s, clauses: [], decision: decision("ASK") });
+    expect(ask).toMatchObject({ final: "ASK", serv_verdict: "ASK", reason: "Model reason." });
+    const no = run({ action: "crawl", signals: signals({}, { disallow_for_agent: true }), clauses: [], decision: decision("NO_GO") });
+    expect(no.final).toBe("NO_GO");
+    for (const v of ["GO", "ASK", "NO_GO"] as Verdict[]) {
+      const capped = run({ action: "purchase", clauses: [], decision: decision(v) }).final;
+      expect(capped).not.toBe("GO");
+    }
+  });
+
+  it("S11 with no clause at all and the decision skipped: ASK, and the reason names what was read", () => {
+    const o = run({ action: "account", clauses: [], decision: null, decider: "skipped" });
+    expect(o).toMatchObject({ final: "ASK", flags: ["decider_skipped"], ceilings: ["S11"] });
+    expect(o.reason).toContain("https://shop.example/terms (2,000 characters)");
   });
 
   it("R6: an ASK citing a general ban and a specific permission stands (code only caps, never raises)", () => {
@@ -154,7 +198,7 @@ describe("applyCeilings", () => {
 
   it("a skipped decision (nothing read) is ASK at best and says why", () => {
     const o = run({ signals: signals({ docs_read: 0, docs: [] }), decision: null, decider: "skipped" });
-    expect(o).toMatchObject({ final: "ASK", flags: ["decider_skipped"], ceilings: ["S5"], reason: texts.reason_decider_skipped });
+    expect(o).toMatchObject({ final: "ASK", flags: ["decider_skipped"], ceilings: ["S5", "S11"], reason: texts.reason_decider_skipped });
   });
 
   it("never returns GO without a valid GO from the decider, whatever else is true", () => {

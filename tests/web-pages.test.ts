@@ -125,7 +125,7 @@ describe("benchmark view", () => {
     mkdirSync(`${d}runs`, { recursive: true });
     const sh = (agree: number, false_go: number) => ({ pairs: 4, agree, false_go, false_no_go: 0 });
     const file = { run_at: "2026-01-03T00:00:00Z", source: { file: "x", run_at: "2026-01-02T03:04:05Z", shipped: "V2" }, method: "m", ceilings: ["S9", "S10"], variants: { V2: { label: "l", before: sh(2, 2), after: sh(4, 0), by_set: {}, changed: [] } } };
-    writeFileSync(`${d}runs/remeasure.json`, JSON.stringify(file));
+    writeFileSync(`${d}runs/remeasure-s11.json`, JSON.stringify(file));
     expect(benchView(d).remeasure).toEqual({ run_at: file.run_at, source_run_at: file.source.run_at, shipped: "V2", ceilings: ["S9", "S10"], variants: [{ id: "V2", before: sh(2, 2), after: sh(4, 0) }] });
   });
 
