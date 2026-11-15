@@ -4,10 +4,11 @@ import type { Action, IzinConfig } from "../config.js";
 import { isPolicyPath, registrableDomain, scoreAnchors } from "./discover.js";
 import { decodeBody, type FetchResult } from "./fetch.js";
 import { extractAnchors, extractText, type Anchor } from "./extract.js";
+import { refreshTarget } from "./refresh.js";
 import { FETCHER_TOKEN, Session } from "./session.js";
 import { defaultPolicy, type NetPolicy } from "./ssrf.js";
 import { robotsStop, type RobotsStop } from "./stop.js";
-import type { Collected, LedgerEntry, LedgerState, PolicyDoc, RobotsSummary } from "./types.js";
+import type { Collected, FetchKind, LedgerEntry, LedgerState, PolicyDoc, RobotsSummary } from "./types.js";
 
 export interface CollectInput {
   url: string;
@@ -42,6 +43,32 @@ function pageText(res: FetchResult): string {
 
 function anchorsOf(res: FetchResult): Anchor[] {
   return res.state === "ok" && isHtml(res) ? extractAnchors(decodeBody(res.body, res.content_type), res.final_url) : [];
+}
+
+type Page = Awaited<ReturnType<Session["page"]>>;
+
+/**
+ * One page through the session. A short HTML page that does nothing but send its visitors on
+ * with a meta refresh gives way to its target, which passes the same checks as any other page
+ * (ADR 0025).
+ * The stub stands, as before, when Izin does not request the target: robots.txt, the request
+ * budget, a refused host or address, or a page already asked for in this check (`seen`).
+ */
+async function openPage(session: Session, url: string, kind: FetchKind, seen: Set<string>): Promise<Page> {
+  const cfg = session.cfg;
+  seen.add(url);
+  let got = await session.page(url, kind);
+  for (let hop = 0; hop < cfg.limits.meta_refresh_hops; hop++) {
+    if (!("res" in got) || got.res.state !== "ok" || !isHtml(got.res)) break;
+    const target = refreshTarget(decodeBody(got.res.body, got.res.content_type), got.res.final_url, cfg);
+    if (!target || seen.has(target) || pageText(got.res).length >= cfg.limits.doc_text_min_chars) break;
+    const next = await session.page(target, kind);
+    if (!("res" in next) || next.res.state === "refused") break;
+    seen.add(target);
+    got.entry.note = "meta refresh";
+    got = next;
+  }
+  return got;
 }
 
 /** Turns a fetched policy page into a document, applying the length rules from config. */
@@ -158,11 +185,14 @@ async function discoverAndFetch(
 ): Promise<void> {
   const cfg = session.cfg;
   const max = cfg.limits.policy_docs_max;
-  const fetched = new Set<string>();
+  const home = `${url.origin}/`;
+  // Every URL asked for in this check. The home page is listed before its turn, so a refresh on
+  // the input page never stands in for it.
+  const fetched = new Set<string>([url.href, home]);
   const sources: { from: "input" | "home"; anchors: Anchor[] }[] = [];
   let policyCount = 0;
 
-  const takePolicy = (got: Awaited<ReturnType<Session["page"]>>) => {
+  const takePolicy = (got: Page) => {
     policyCount++;
     policyEntries.push(got.entry);
     if (!("res" in got)) return;
@@ -174,20 +204,15 @@ async function discoverAndFetch(
   const hasPath = url.pathname !== "/" || url.search !== "";
   if (hasPath) {
     const policyInput = isPolicyPath(url, cfg);
-    const got = await session.page(url.href, policyInput ? "policy" : "input");
-    fetched.add(url.href);
+    const got = await openPage(session, url.href, policyInput ? "policy" : "input", fetched);
     if (policyInput) takePolicy(got);
     if ("res" in got) sources.push({ from: "input", anchors: anchorsOf(got.res) });
   }
 
-  const home = `${url.origin}/`;
-  if (!fetched.has(home)) {
-    const got = await session.page(home, "home");
-    fetched.add(home);
-    if ("res" in got) {
-      if (got.res.state === "blocked") blocked.push({ url: home, kind: "home", status: got.res.status });
-      sources.push({ from: "home", anchors: anchorsOf(got.res) });
-    }
+  const gotHome = await openPage(session, home, "home", fetched);
+  if ("res" in gotHome) {
+    if (gotHome.res.state === "blocked") blocked.push({ url: gotHome.entry.url, kind: "home", status: gotHome.res.status });
+    sources.push({ from: "home", anchors: anchorsOf(gotHome.res) });
   }
 
   // The site's own pointers first (gallery hints, then URLs named in its robots.txt comments,
@@ -201,11 +226,11 @@ async function discoverAndFetch(
 
   for (const candidate of candidates) {
     if (policyCount >= max) break;
-    fetched.add(candidate);
-    takePolicy(await session.page(candidate, "policy"));
+    if (fetched.has(candidate)) continue; // already read as the target of a refresh
+    takePolicy(await openPage(session, candidate, "policy", fetched));
   }
 
-  if (policyCount === 0 && !hinted.length) await tryCommonPaths(session, url, docs, policyEntries);
+  if (policyCount === 0 && !hinted.length) await tryCommonPaths(session, url, docs, policyEntries, fetched);
 }
 
 /**
@@ -213,14 +238,14 @@ async function discoverAndFetch(
  * "unreadable", but a page that answered and could not be read (it needs a browser, or it is cut
  * short) is a policy page found and not read: it is reported unless another path was read in full.
  */
-async function tryCommonPaths(session: Session, url: URL, docs: PolicyDoc[], policyEntries: LedgerEntry[]): Promise<void> {
+async function tryCommonPaths(session: Session, url: URL, docs: PolicyDoc[], policyEntries: LedgerEntry[], fetched: Set<string>): Promise<void> {
   const cfg = session.cfg;
   const found: LedgerEntry[] = [];
   let attempts = 0;
   for (const path of cfg.discovery.common_paths) {
     if (attempts >= cfg.limits.common_path_attempts_max || session.left() <= 0) break;
     attempts++;
-    const got = await session.page(`${url.origin}${path}`, "policy");
+    const got = await openPage(session, `${url.origin}${path}`, "policy", fetched);
     if (!("res" in got) || got.res.state !== "ok") continue;
     const doc = toDoc(got.res, got.entry, cfg, true);
     if (doc?.state === "ok") {

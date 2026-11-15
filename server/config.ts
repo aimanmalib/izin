@@ -120,6 +120,10 @@ export const configSchema = z
         crawl_delay_max_ms: positiveInt,
         doc_text_min_chars: positiveInt,
         doc_text_max_chars: positiveInt,
+        // A short page that sends its visitors on with a meta refresh (ADR 0025): the longest wait
+        // Izin treats as a redirect, and how many such steps it follows. Zero hops turns it off.
+        meta_refresh_max_seconds: z.number().int().nonnegative(),
+        meta_refresh_hops: z.number().int().nonnegative(),
         terms_text_max_chars: positiveInt,
         detail_max_chars: positiveInt,
         quote_min_chars: positiveInt,

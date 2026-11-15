@@ -130,6 +130,8 @@
     "crawl_delay_max_ms": 5000,
     "doc_text_min_chars": 800,
     "doc_text_max_chars": 600000,
+    "meta_refresh_max_seconds": 5,
+    "meta_refresh_hops": 1,
     "terms_text_max_chars": 400000,
     "detail_max_chars": 280,
     "quote_min_chars": 40,
