@@ -287,7 +287,7 @@ your words back to the agent that asked, with a link to the sentence.
 | --- | --- |
 | [docs/UKUR.md](docs/UKUR.md) | Every measurement: benchmark runs, gallery, reading cost, the re-measure and the repeatability run |
 | [docs/decisions/](docs/decisions/) | The decisions, one record each, with what was checked and how to undo it |
-| [docs/deck.pdf](docs/deck.pdf) | The submission slides, built from [`deck/slides.yaml`](deck/slides.yaml) |
+| [docs/deck.pdf](docs/deck.pdf) | The submission slides. The text and numbers are those of [`deck/slides.yaml`](deck/slides.yaml); the layout was made separately as an HTML deck. [`deck/izin.pptx`](deck/izin.pptx) is the plain version built from the same file |
 | [docs/BUILD-LOG.md](docs/BUILD-LOG.md) | One line for each day of work |
 | [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Set up, the gate, and what a change to a verdict needs |

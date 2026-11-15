@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Convert deck/izin.pptx to PDF (docs/deck.pdf) and one PNG per slide (deck/build/), so the slides
-# can be checked as images. LibreOffice runs in a throwaway container; nothing is installed on the host.
+# Convert deck/izin.pptx to PDF and one PNG per slide (both in deck/build/), so the plain slides
+# can be checked as images. docs/deck.pdf is the designed version of the same text and is not
+# written here. LibreOffice runs in a throwaway container; nothing is installed on the host.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -17,5 +18,4 @@ docker run --rm --name izin-deck-render --cpus 1 --network bridge \
     pdftoppm -r 72 -png build/izin.pdf build/slide
     chown -R '"$(id -u):$(id -g)"' build
   '
-cp deck/build/izin.pdf docs/deck.pdf
-ls deck/build/slide-*.png | wc -l | xargs -I{} echo "docs/deck.pdf + {} PNG pages in deck/build/"
+ls deck/build/slide-*.png | wc -l | xargs -I{} echo "deck/build/izin.pdf + {} PNG pages in deck/build/"
