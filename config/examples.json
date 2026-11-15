@@ -3,6 +3,7 @@
     { "key": "ebay_buy", "site": "https://www.ebay.com/", "action": "purchase", "receipt_id": "yddnqgirk6" },
     { "key": "walmart_buy", "site": "https://walmart.com/", "action": "purchase", "receipt_id": "u5ge2ipvmz" },
     { "key": "booking_buy", "site": "https://booking.com/", "action": "purchase", "receipt_id": "nfra5ziw4b" },
+    { "key": "google_crawl", "site": "https://www.google.com/", "action": "crawl", "receipt_id": "x55jmlxgd4" },
     { "key": "trap", "site": "https://izin.sasateguh.com/trap/", "action": "crawl", "receipt_id": "kclke25oah" }
   ],
   "sample": {
@@ -19,6 +20,9 @@
     { "site": "https://openserv.ai/", "action": "post" },
     { "site": "https://dphn.ai/", "action": "account" },
     { "site": "https://gokite.ai/", "action": "read_page" },
-    { "site": "https://reppo.xyz/", "action": "post" }
+    { "site": "https://reppo.xyz/", "action": "post" },
+    { "site": "https://www.google.com/", "action": "purchase" },
+    { "site": "https://www.google.com/", "action": "account" },
+    { "site": "https://www.amazon.com/", "action": "purchase" }
   ]
 }
