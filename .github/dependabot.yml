@@ -1,0 +1,35 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      npm-deps:
+        patterns: ["*"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      # Pinned to releases that had been public for 14 days when added (ADR 0022); moved by hand, with the same rule.
+      - dependency-name: "@x402/*"
+      - dependency-name: "viem"
+
+  # The OpenServ agent is its own small package with its own lock file.
+  - package-ecosystem: npm
+    directory: /openserv
+    schedule:
+      interval: monthly
+    groups:
+      openserv-deps:
+        patterns: ["*"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

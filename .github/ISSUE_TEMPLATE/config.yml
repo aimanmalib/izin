@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security issue
+    url: https://github.com/aimanmalib/izin/security/advisories/new
+    about: Report vulnerabilities privately, not in a public issue.
+  - name: Site owner asking about IzinBot
+    url: https://izin.sasateguh.com/bot
+    about: What IzinBot fetches and how to block it.

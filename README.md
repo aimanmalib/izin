@@ -1,9 +1,16 @@
-# Izin
+<p align="center"><img src="https://raw.githubusercontent.com/aimanmalib/izin/main/brand/logo-512.png" width="112" height="112" alt="Izin"></p>
+
+<h1 align="center">Izin</h1>
+
+<p align="center"><a href="https://github.com/aimanmalib/izin/releases/latest"><img src="https://img.shields.io/github/v/release/aimanmalib/izin" alt="Latest release"></a> <a href="https://github.com/aimanmalib/izin/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a> <a href="https://izin.sasateguh.com"><img src="https://img.shields.io/badge/demo-live-brightgreen" alt="Live demo"></a></p>
+
+<p align="center"><b>Ask the site before your agent acts.</b> · <i>Tanya laman itu dahulu sebelum ejen anda bertindak.</i><br>
+<a href="https://izin.sasateguh.com">live demo</a> · <a href="https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9">OpenServ x402 Agent Market listing</a> · <a href="https://izin.sasateguh.com/docs">API and MCP</a> · <a href="https://github.com/aimanmalib/izin/releases/latest">video, 87 s</a> · <a href="docs/UKUR.md">what we measured</a> · <a href="#documentation">documentation</a> · <a href="CHANGELOG.md">changelog</a> · Built in Malaysia by <a href="https://aimanmalib.com">Aiman Malib</a></p>
 
 Before an AI agent acts on a website, Izin answers GO, ASK or NO-GO for one action and quotes the clause from the site's
 robots.txt and terms.
 
-[Live demo](https://izin.sasateguh.com) · [OpenServ x402 Agent Market listing](https://platform.openserv.ai/workspace/paywall/fb83abb51ca746e5b72e768c2e6076c9) · [API and MCP](https://izin.sasateguh.com/docs) · [What we measured](docs/UKUR.md)
+[Bahasa Melayu: README.ms.md](README.ms.md)
 
 **See a real answer:** [buy or book on ebay.com, NO-GO](https://izin.sasateguh.com/r/yddnqgirk6). eBay's robots.txt
 directives leave the home page open to crawlers, and a comment in the same file says "Checkouts are strictly for human
@@ -240,6 +247,18 @@ blocked. That is a finding, not an error.
 **For site owners:** [/bot](https://izin.sasateguh.com/bot) explains what IzinBot fetches and how to block it. Izin quotes
 your words back to the agent that asked, with a link to the sentence.
 
+## Documentation
+
+| Document | What it holds |
+| --- | --- |
+| [docs/UKUR.md](docs/UKUR.md) | Every measurement: benchmark runs, gallery, reading cost, the re-measure and the repeatability run |
+| [docs/decisions/](docs/decisions/) | The decisions, one record each, with what was checked and how to undo it |
+| [docs/BUILD-LOG.md](docs/BUILD-LOG.md) | One line for each day of work |
+| [CHANGELOG.md](CHANGELOG.md) | What changed in each version |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Set up, the gate, and what a change to a verdict needs |
+| [API and MCP](https://izin.sasateguh.com/docs) | The check API, the MCP tool and the paid route, on the live site |
+| [README.ms.md](README.ms.md) | A short version of this page in Malay |
+
 ## Built for
 
 Built for SERV Hackathon 02 (Dolphin track), November 2026, by [@aimanmalib_](https://x.com/aimanmalib_). Initial commit:
@@ -248,7 +267,7 @@ Built for SERV Hackathon 02 (Dolphin track), November 2026, by [@aimanmalib_](ht
 ## AI disclosure
 
 Built with Claude Code. The code, tests and text in this repository were written by an AI coding agent working under my
-rules. The problem comes from my own work. I decide what ships.
+rules. The problem comes from my own work. I decide what ships. The narration in the demo video is an AI clone of my own voice.
 
 ## Disclaimer
 

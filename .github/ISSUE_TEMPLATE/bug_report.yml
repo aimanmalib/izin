@@ -1,0 +1,32 @@
+name: Bug report
+description: A wrong verdict, a wrong quote, or something in the site, the API or the MCP tool that doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: receipt
+    attributes:
+      label: Receipt link (https://izin.sasateguh.com/r/...), if the report is about an answer
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce (site, action, and how you asked)
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options: [Live demo, API, MCP tool, OpenServ Agent Market listing, Paid testnet route, Running it locally]
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output or logs (remove keys first)
+      render: text
