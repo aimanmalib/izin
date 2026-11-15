@@ -6,8 +6,21 @@ import type { Receipt } from "../resit/receipt.js";
 
 export type RobotsOnly = "allowed" | "disallowed" | "no_robots";
 
+/**
+ * How a pair was decided: "decider" when the decision step gave a valid answer, "code" when the
+ * code decided without calling it (decider_skipped: no clause to weigh, or nothing readable), and
+ * "none" when no valid decision came back (unavailable, or ceiling S8). The receipt still says ASK
+ * for "none"; the gallery shows it as not decided.
+ */
+export type DecidedBy = "decider" | "code" | "none";
+
+export function decidedBy(d: { serv_verdict: string | null; ceilings: readonly string[]; flags: readonly string[] }): DecidedBy {
+  if (d.serv_verdict && !d.ceilings.includes("S8")) return "decider";
+  return d.flags.includes("decider_skipped") ? "code" : "none";
+}
+
 export type BaselineReceipt = Pick<Receipt, "verdict" | "clauses"> & {
-  decided_by: Pick<Receipt["decided_by"], "serv_verdict" | "ceilings">;
+  decided_by: Pick<Receipt["decided_by"], "serv_verdict" | "ceilings" | "flags">;
   signals: Pick<Receipt["signals"], "robots">;
 };
 
@@ -37,6 +50,7 @@ export function wordsRestrict(r: BaselineReceipt, restricting: readonly Stance[]
 export interface BaselineCell {
   robots_only: RobotsOnly;
   words_restrict: boolean;
+  decided: DecidedBy;
 }
 
 export interface BaselineCounts {
@@ -46,19 +60,28 @@ export interface BaselineCounts {
   no_robots: number;
   /** The headline: robots.txt allows, the site's own quoted words restrict or forbid. */
   robots_allowed_words_restrict: number;
+  /** Pairs the decision step answered; of those, robots.txt allows; of those, a quoted clause restricts. */
+  decided: number;
+  decided_allowed: number;
+  decided_allowed_words_restrict: number;
 }
 
 export function baselineCell(r: BaselineReceipt, restricting: readonly Stance[]): BaselineCell {
-  return { robots_only: robotsOnly(r), words_restrict: wordsRestrict(r, restricting) };
+  return { robots_only: robotsOnly(r), words_restrict: wordsRestrict(r, restricting), decided: decidedBy(r.decided_by) };
 }
 
 export function baselineCounts(cells: readonly BaselineCell[]): BaselineCounts {
   const n = (v: RobotsOnly) => cells.filter((c) => c.robots_only === v).length;
+  const decided = cells.filter((c) => c.decided === "decider");
+  const decidedAllowed = decided.filter((c) => c.robots_only === "allowed");
   return {
     pairs: cells.length,
     allowed: n("allowed"),
     disallowed: n("disallowed"),
     no_robots: n("no_robots"),
     robots_allowed_words_restrict: cells.filter((c) => c.words_restrict).length,
+    decided: decided.length,
+    decided_allowed: decidedAllowed.length,
+    decided_allowed_words_restrict: decidedAllowed.filter((c) => c.words_restrict).length,
   };
 }

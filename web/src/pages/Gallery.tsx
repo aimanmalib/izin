@@ -20,6 +20,7 @@ export function GalleryPage({ site }: { site: SiteView }) {
   if (gallery === "failed") return <p className="wrap problem" role="alert">{t.web.errors.network}</p>;
   if (!gallery) return <div className="wrap loading" aria-busy="true" />;
   const anyRun = gallery.sites.some((s) => Object.keys(s.checks).length > 0);
+  const anyUndecided = gallery.sites.some((s) => Object.values(s.checks).some((c) => c?.verdict && c.decided === "none"));
   const reasons = g.reasons as Record<string, string>;
   const groups = g.groups as Record<string, string>;
 
@@ -37,6 +38,12 @@ export function GalleryPage({ site }: { site: SiteView }) {
             <dd>{t.verdicts[v].definition}</dd>
           </div>
         ))}
+        {anyUndecided ? (
+          <div>
+            <dt><span className="not-decided">{g.not_decided}</span></dt>
+            <dd>{g.not_decided_title}</dd>
+          </div>
+        ) : null}
       </dl>
 
       {anyRun ? null : <p className="banner" role="status">{g.none_yet}</p>}
@@ -65,7 +72,17 @@ export function GalleryPage({ site }: { site: SiteView }) {
                     const c = row.checks[a];
                     return (
                       <td key={a} className={c?.words_restrict ? "is-words" : undefined}>
-                        {c?.verdict ? (
+                        {c?.verdict && c.decided === "none" ? (
+                          <a
+                            href={`/r/${c.receipt_id}`}
+                            onClick={linkClick}
+                            className="not-decided"
+                            title={g.not_decided_title}
+                            aria-label={`${row.host}, ${t.actions[a]}: ${g.not_decided}`}
+                          >
+                            {g.not_decided}
+                          </a>
+                        ) : c?.verdict ? (
                           <>
                             <a href={`/r/${c.receipt_id}`} onClick={linkClick} aria-label={`${row.host}, ${t.actions[a]}: ${t.verdicts[c.verdict].label}`}>
                               <VerdictBadge verdict={c.verdict} size="sm" />

@@ -277,6 +277,8 @@
       "site": "Laman",
       "read": "Dibaca",
       "not_run": "belum dijalankan",
+      "not_decided": "belum diputuskan",
+      "not_decided_title": "Tiada keputusan sah yang kembali untuk pasangan ini, jadi ia tidak dikira sebagai keputusan. Resit menunjukkan apa yang dibaca dan sebab ia berakhir dengan ASK.",
       "none_yet": "Galeri belum dijalankan. Laman di bawah akan dibaca apabila ia dijalankan.",
       "legend": "Maksud keputusan",
       "blocked_head": "Laman yang tidak dapat dibaca IzinBot",

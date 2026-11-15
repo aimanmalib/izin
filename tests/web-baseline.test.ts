@@ -13,6 +13,9 @@ const counts = (pairs: number, allowed: number, hit: number) => ({
   disallowed: pairs - allowed,
   no_robots: 0,
   robots_allowed_words_restrict: hit,
+  decided: pairs,
+  decided_allowed: allowed,
+  decided_allowed_words_restrict: hit,
 });
 
 function render(lang: Lang, b: ReturnType<typeof counts>): string {

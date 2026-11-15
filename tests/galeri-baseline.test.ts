@@ -7,7 +7,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { benchView, galleryView } from "../server/api/views.js";
 import type { Stance, Verdict } from "../server/config.js";
 import type { CeilingCode } from "../server/putus/siling.js";
-import { baselineCell, baselineCounts, robotsOnly, wordsRestrict, type BaselineReceipt } from "../server/galeri/baseline.js";
+import { baselineCell, baselineCounts, decidedBy, robotsOnly, wordsRestrict, type BaselineReceipt } from "../server/galeri/baseline.js";
 import { baselineSection, galleryNowCounts, galleryNowSection, replaceSection, type GalleryNowRow } from "../server/galeri/ukur.js";
 import { openDb, ReceiptStore } from "../server/resit/store.js";
 
@@ -19,11 +19,12 @@ function receipt(o: {
   verdict: Verdict;
   serv?: Verdict | null;
   ceilings?: CeilingCode[];
+  flags?: string[];
   clauses?: [string, boolean][];
 }): BaselineReceipt {
   return {
     verdict: o.verdict,
-    decided_by: { serv_verdict: o.serv === undefined ? o.verdict : o.serv, ceilings: o.ceilings ?? [] },
+    decided_by: { serv_verdict: o.serv === undefined ? o.verdict : o.serv, ceilings: o.ceilings ?? [], flags: (o.flags ?? []) as BaselineReceipt["decided_by"]["flags"] },
     signals: { robots: { fetched: o.fetched ?? true, disallow_for_agent: o.disallowed ?? false, crawl_delay: null, content_signal: {} } },
     clauses: (o.clauses ?? []).map(([stance, decisive], i) => ({
       id: `c${i}`,
@@ -92,7 +93,53 @@ describe("headline count: robots allows, the site's words restrict", () => {
       receipt({ verdict: "NO_GO", disallowed: true, clauses: [["prohibits", true]] }),
       receipt({ verdict: "ASK", fetched: false }),
     ].map((r) => baselineCell(r, RESTRICT));
-    expect(baselineCounts(cells)).toEqual({ pairs: 5, allowed: 3, disallowed: 1, no_robots: 1, robots_allowed_words_restrict: 1 });
+    expect(baselineCounts(cells)).toEqual({
+      pairs: 5, allowed: 3, disallowed: 1, no_robots: 1, robots_allowed_words_restrict: 1, decided: 5, decided_allowed: 3, decided_allowed_words_restrict: 1,
+    });
+  });
+});
+
+describe("how a pair was decided", () => {
+  const by = (o: Parameters<typeof receipt>[0]) => decidedBy(receipt(o).decided_by);
+  it("is decider when the decision step gave a valid answer", () => {
+    expect(by({ verdict: "NO_GO" })).toBe("decider");
+    expect(by({ verdict: "ASK", serv: "GO", ceilings: ["S5"] })).toBe("decider");
+  });
+  it("is code when the code decided without calling the decision step", () => {
+    expect(by({ verdict: "ASK", serv: null, ceilings: ["S11"], flags: ["decider_skipped"] })).toBe("code");
+  });
+  it("is none when no valid decision came back (unavailable, or ceiling S8)", () => {
+    expect(by({ verdict: "ASK", serv: null, flags: ["decider_unavailable"] })).toBe("none");
+    expect(by({ verdict: "ASK", serv: "GO", ceilings: ["S8"] })).toBe("none");
+  });
+  it("counts only pairs the decision step answered in the decided line", () => {
+    const cells = [
+      receipt({ verdict: "NO_GO", clauses: [["prohibits", true]] }),
+      receipt({ verdict: "ASK", serv: null, flags: ["decider_unavailable"] }),
+      receipt({ verdict: "ASK", serv: null, ceilings: ["S11"], flags: ["decider_skipped"] }),
+      receipt({ verdict: "NO_GO", disallowed: true, clauses: [["prohibits", true]] }),
+    ].map((r) => baselineCell(r, RESTRICT));
+    expect(cells.map((c) => c.decided)).toEqual(["decider", "none", "code", "decider"]);
+    expect(baselineCounts(cells)).toMatchObject({ pairs: 4, allowed: 3, decided: 2, decided_allowed: 1, decided_allowed_words_restrict: 1 });
+  });
+  it("marks each gallery cell and writes the decided line into UKUR", () => {
+    const dir = mkdtempSync(join(tmpdir(), "izin-decided-"));
+    const path = join(dir, "gallery.json");
+    writeFileSync(path, JSON.stringify({ sites: [{ host: "shop.example", group: "shopping" }], blocked_reader: [] }));
+    const db = new ReceiptStore(openDb(":memory:")).db;
+    const put = (id: string, action: string, r: BaselineReceipt) => {
+      db.prepare(`INSERT INTO checks (id, created_at, site, url, action, source, status, verdict, receipt_json) VALUES (?, '2026-11-10', 'shop.example', 'https://shop.example/', ?, 'gallery', 'done', ?, ?)`).run(id, action, r.verdict, JSON.stringify(r));
+      db.prepare("INSERT INTO gallery (site, action, check_id, updated_at) VALUES ('shop.example', ?, ?, '2026-11-10')").run(action, id);
+    };
+    put("aaaaaaaaaa", "purchase", receipt({ verdict: "NO_GO", clauses: [["prohibits", true]] }));
+    put("bbbbbbbbbb", "crawl", receipt({ verdict: "ASK", serv: null, flags: ["decider_unavailable"] }));
+    put("cccccccccc", "post", receipt({ verdict: "ASK", serv: null, ceilings: ["S11"], flags: ["decider_skipped"] }));
+    const v = galleryView(db, RESTRICT, path);
+    rmSync(dir, { recursive: true, force: true });
+    const c = v.sites[0]!.checks;
+    expect([c.purchase?.decided, c.crawl?.decided, c.post?.decided]).toEqual(["decider", "none", "code"]);
+    expect(c.crawl?.verdict).toBe("ASK");
+    expect(baselineSection(v, "https://izin.example", "2026-11-10")).toContain("Pairs the decision step answered with a valid decision: **1** of 3. robots.txt allows the URL in 1 of them, and in **1 of 1**");
   });
 });
 
@@ -123,7 +170,9 @@ describe("gallery and bench views", () => {
     expect(v.sites[0]!.checks.crawl).toMatchObject({ robots_only: "disallowed", words_restrict: false });
     expect(v.sites[1]!.checks.post).toMatchObject({ robots_only: "allowed", words_restrict: false });
     expect(v.sites[1]!.checks.train?.robots_only).toBeUndefined();
-    expect(v.baseline).toEqual({ pairs: 3, allowed: 2, disallowed: 1, no_robots: 0, robots_allowed_words_restrict: 1 });
+    expect(v.baseline).toEqual({
+      pairs: 3, allowed: 2, disallowed: 1, no_robots: 0, robots_allowed_words_restrict: 1, decided: 3, decided_allowed: 2, decided_allowed_words_restrict: 1,
+    });
   });
 
   it("bench carries the baseline only once a pair has a receipt", () => {

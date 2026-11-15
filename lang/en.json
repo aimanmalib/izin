@@ -277,6 +277,8 @@
       "site": "Site",
       "read": "Read",
       "not_run": "not run yet",
+      "not_decided": "not decided",
+      "not_decided_title": "No valid decision came back for this pair, so it is not counted as a verdict. The receipt shows what was read and why it ends in ASK.",
       "none_yet": "The gallery has not been run yet. The sites below will be read once it is.",
       "legend": "What the verdicts mean",
       "blocked_head": "Sites IzinBot could not read",

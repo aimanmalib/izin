@@ -1,7 +1,7 @@
 // Writes generated sections of docs/UKUR.md. Each section sits between two marker comments and is
 // replaced whole on every run, so the numbers in the file always come from the latest data.
 import type { Action } from "../config.js";
-import type { BaselineCounts } from "./baseline.js";
+import { decidedBy, type BaselineCounts } from "./baseline.js";
 import type { GalleryCell } from "../api/views.js";
 import type { ReadingCost } from "../belanja/kos.js";
 
@@ -44,6 +44,8 @@ export function baselineSection(g: GallerySlice, origin: string, at: string): st
     `Pairs where robots.txt allows the URL but a quoted clause from the site (a robots.txt comment or the terms) restricts or forbids the action, and Izin answered ASK or NO-GO on that clause: **${b.robots_allowed_words_restrict} of ${b.allowed}**.`,
     "",
     "An ASK that comes only from a block, an unreadable page, an unavailable decision step, or a code ceiling that lowered the decision step's GO is not counted.",
+    "",
+    `Pairs the decision step answered with a valid decision: **${b.decided}** of ${b.pairs}. robots.txt allows the URL in ${b.decided_allowed} of them, and in **${b.decided_allowed_words_restrict} of ${b.decided_allowed}** a quoted clause restricts or forbids the action. The gallery shows a pair with no valid decision as not decided.`,
   );
   const counted = g.sites.flatMap((s) =>
     Object.entries(s.checks)
@@ -95,10 +97,11 @@ export function galleryNowCounts(rows: GalleryNowRow[]) {
     for (const c of [total, day]) {
       c.receipts++;
       if (r.verdict === "GO" || r.verdict === "ASK" || r.verdict === "NO_GO") c[r.verdict]++;
-      if (r.serv_verdict && !r.ceilings.includes("S8")) {
+      const how = decidedBy(r);
+      if (how === "decider") {
         c.answered++;
         if (r.model) c.models[r.model] = (c.models[r.model] ?? 0) + 1;
-      } else if (r.flags.includes("decider_skipped")) c.by_code++;
+      } else if (how === "code") c.by_code++;
       else c.no_answer++;
     }
   }

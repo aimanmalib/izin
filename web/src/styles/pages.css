@@ -37,7 +37,9 @@
 .matrix a { text-decoration: none; display: inline-block; border-radius: var(--pill); }
 .matrix a:hover .verdict { box-shadow: 0 0 0 2px currentColor; }
 .matrix-date { color: var(--ink-faint); font-size: 0.82rem; }
-.matrix .robots-only { display: block; margin-top: 0.3rem; font: 400 0.7rem/1.2 var(--mono); color: var(--ink-faint); }
+.matrix .robots-only { display: block; margin-top: 0.3rem; font: 400 0.7rem/1.2 var(--mono); color: var(--ink-faint); white-space: normal; max-width: 12ch; }
+.not-decided { display: inline-block; padding: 0.15rem 0.5rem; border: 1px dashed var(--rule); border-radius: var(--pill); font-size: 0.75rem; color: var(--ink-faint); }
+.matrix .not-decided:hover { color: var(--ink); border-color: currentColor; }
 .matrix td.is-words { box-shadow: inset 3px 0 0 var(--accent); background: var(--accent-soft); }
 
 /* Robots-only baseline: one large count, then the sentence that defines it */
