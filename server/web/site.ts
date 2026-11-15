@@ -67,8 +67,9 @@ export function costView(db: Database.Database, cfg: IzinConfig): CostView | nul
   return { checks: rows.length, reader_usd: avg(rows.map((r) => r.reader ?? 0)), decider_usd: avg(decider) };
 }
 
-export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examples) {
+export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examples, paidLive = false) {
   const w = cfg.web;
+  const x = cfg.x402;
   return {
     origin: cfg.public_origin,
     repo_url: w.repo_url,
@@ -77,6 +78,8 @@ export function siteView(cfg: IzinConfig, db: Database.Database, examples: Examp
     poll_ms: w.poll_ms,
     step_ms: w.step_ms,
     tiers: { free_checks_per_hour: cfg.limits.rate_new_checks_per_ip_hour, reuse_days: cfg.limits.cached_receipt_days, ...w.tiers },
+    // The paid route (x402 on a test network): live only when the server registered it.
+    paid: { live: paidLive, path: x.path, network: x.network, network_name: x.network_name, price_usd: w.tiers.agent_usd_per_saved_answer },
     detail_max_chars: cfg.limits.detail_max_chars,
     terms_text_max_chars: cfg.limits.terms_text_max_chars,
     examples,

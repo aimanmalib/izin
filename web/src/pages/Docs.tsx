@@ -17,6 +17,9 @@ export function DocsPage({ site }: { site: SiteView }) {
     ["GET /api/gallery", d.gallery],
     ["GET /api/bench", d.bench],
     ["GET /api/health", d.health],
+    ...(site.paid.live
+      ? ([[`GET ${site.paid.path}?url=…&action=…`, fmt(d.paid, { network: site.paid.network_name, usd: site.paid.price_usd })]] as [string, string][])
+      : []),
   ];
 
   return (
@@ -56,6 +59,7 @@ export function DocsPage({ site }: { site: SiteView }) {
         <h2 id="err-h">{d.errors_head}</h2>
         <ul className="defs">
           <li>{d.e400}</li>
+          {site.paid.live ? <li>{d.e402}</li> : null}
           <li>{d.e429}</li>
           <li>{d.e503}</li>
         </ul>

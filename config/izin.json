@@ -207,6 +207,16 @@
     "step_ms": [2500, 9000, 1500, 4000, 800],
     "tiers": { "agent_usd_per_saved_answer": 0.01, "agent_usd_per_fresh_check": 0.05, "watch_usd_per_month": 5, "watch_sites": 100 }
   },
+  "x402": {
+    "enabled": true,
+    "path": "/api/paid/check",
+    "network": "eip155:84532",
+    "network_name": "Base Sepolia",
+    "testnet": true,
+    "facilitator_url": "https://x402.org/facilitator",
+    "pay_to_env": "IZIN_X402_PAY_TO",
+    "max_timeout_s": 60
+  },
   "baseline": { "restricting_stances": ["prohibits", "restricts", "requires"] },
   "reading_cost": {
     "compare_model": "gpt-6-luna",

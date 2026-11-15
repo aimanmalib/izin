@@ -65,6 +65,22 @@ export class CheckJobs {
     );
   }
 
+  /**
+   * The newest finished receipt for the site and action that rests on the site's own pages: no caller
+   * detail, agent token or pasted terms, and not a benchmark run on frozen evidence. Any age.
+   */
+  findLatestPlain(site: string, action: Action): JobRow | null {
+    return (
+      this.db
+        .prepare<[string, string], JobRow>(
+          `SELECT id, status, created_at FROM checks
+           WHERE site = ? AND action = ? AND status = 'done' AND detail IS NULL AND agent IS NULL AND pasted = 0 AND source != 'bench'
+           ORDER BY created_at DESC LIMIT 1`,
+        )
+        .get(site, action) ?? null
+    );
+  }
+
   /** Finished receipts for the site since `since`, newest first, with the JSON for inspection. */
   recentReceipts(site: string, since: Date): { id: string; action: Action; created_at: string; receipt_json: string }[] {
     return this.db

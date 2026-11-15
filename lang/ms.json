@@ -111,6 +111,11 @@
     "budget": "Semakan baharu dihentikan kerana had belanja dicapai.",
     "budget_cached": "Semakan baharu dihentikan kerana had belanja dicapai. Resit terkini untuk laman dan tindakan ini: {url}"
   },
+  "paid": {
+    "description": "Jawapan Izin tersimpan yang terbaharu untuk satu laman dan satu tindakan: keputusan, sebab, klausa penentu dan pautan resit. Dibayar setiap panggilan dengan USDC ujian di {network} (testnet).",
+    "unpaid": "Jawapan ini berharga USD {usd}, dibayar dengan USDC ujian di {network} (testnet) melalui x402. Klien x402 membaca pengepala PAYMENT-REQUIRED, menandatangan dan mencuba semula. API percuma di POST /api/check dihadkan kadarnya.",
+    "no_saved": "Tiada resit tersimpan untuk laman dan tindakan ini, jadi tiada caj dikenakan. Jalankan semakan dahulu dengan POST /api/check."
+  },
   "web": {
     "meta": {
       "title": "Izin: GO, ASK atau NO-GO sebelum ejen anda bertindak",
@@ -156,6 +161,7 @@
       "costs_none": "Belum ada semakan yang diukur. Angka akan muncul di sini selepas semakan dijalankan.",
       "tier_free": "Percuma: {n} semakan sejam.",
       "tier_agent": "Tier ejen, dirancang: USD {saved} untuk jawapan dari resit tersimpan dan USD {fresh} untuk bacaan dan keputusan baharu, dibayar setiap panggilan.",
+      "tier_agent_live": "Tier ejen, hidup di testnet {network}: USD {saved} dalam USDC ujian membeli jawapan dari resit tersimpan, dibayar setiap panggilan melalui x402 di GET {path}. Bacaan dan keputusan baharu pada USD {fresh} masih dirancang.",
       "tier_reuse": "Satu keputusan disimpan dan dipakai semula selama {days} hari, jadi kos setiap jawapan turun dengan setiap carian ulangan.",
       "tier_watch": "Tier pantau, dirancang: USD {usd} sebulan untuk {sites} laman, dibaca semula setiap malam.",
       "owners_head": "Untuk pemilik laman",
@@ -387,8 +393,10 @@
       "gallery": "Matriks galeri dan laman yang tidak dapat dibaca IzinBot, bersama sebabnya.",
       "bench": "Kiraan kebolehbacaan dan keputusan penanda aras.",
       "health": "Versi, model yang digunakan, bahagian token pembaca di Dolphin dan baki bajet.",
+      "paid": "Berbayar, di testnet {network}. Menjawab 402 bersama syarat bayaran x402. Dengan bayaran sah USD {usd} dalam USDC ujian ia memulangkan resit tersimpan terbaharu bagi laman dan tindakan itu dalam bentuk ringkas. Tiada resit tersimpan menjawab 404 dan tiada caj dikenakan. Pertanyaan: url, action.",
       "errors_head": "Ralat dan had",
       "e400": "400: alamat atau tindakan tidak sah, atau alamat menghala ke tempat yang tidak diambil Izin.",
+      "e402": "402: laluan berbayar meminta bayaran. Pengepala PAYMENT-REQUIRED membawa syaratnya. Ini testnet, jadi USDC itu tiada nilai.",
       "e429": "429: terlalu banyak semakan baharu. Retry-After memberitahu bila boleh cuba lagi.",
       "e503": "503: semakan baharu dihentikan sementara oleh had belanja. cached_id menunjuk ke resit terkini bagi laman dan tindakan yang sama jika ada.",
       "limits": "Semakan baharu: {hour} sejam bagi setiap alamat dan {day} sehari secara keseluruhan. Membaca resit yang disimpan tidak dihadkan. Laman dan tindakan yang sama tanpa butiran dalam {h} jam memulangkan resit yang disimpan.",

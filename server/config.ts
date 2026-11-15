@@ -214,6 +214,21 @@ export const configSchema = z
           }),
       })
       .strict(),
+    // Paid answers over x402 (ADR 0022). Testnet only: the schema refuses any other value, so a move to
+    // real money is a reviewed change and not a config edit. The receiving address comes from the
+    // environment variable named here; without it the paid route does not exist.
+    x402: z
+      .object({
+        enabled: z.boolean(),
+        path: z.string().regex(/^\/api\/[a-z/]+$/),
+        network: z.string().regex(/^eip155:\d+$/),
+        network_name: z.string().min(2),
+        testnet: z.literal(true),
+        facilitator_url: z.url(),
+        pay_to_env: z.string().regex(/^[A-Z][A-Z0-9_]*$/),
+        max_timeout_s: z.number().int().min(10).max(600),
+      })
+      .strict(),
     // Robots-only baseline: which quoted stances count as "the site's words restrict" (ADR 0010).
     baseline: z.object({ restricting_stances: z.array(z.enum(STANCES)).min(1) }).strict(),
     // Reading cost line: Dolphin tokens from the ledger priced again at a listed SERV model (ADR 0011).

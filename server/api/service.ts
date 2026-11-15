@@ -131,6 +131,12 @@ export class CheckService {
     return receipt ? { status: "done", receipt } : { status: "error" };
   }
 
+  /** The newest saved receipt for the site and action, read from the store with no fetch and no model call; null when none. */
+  savedReceipt(req: CheckRequest): Receipt | null {
+    const row = this.d.jobs.findLatestPlain(req.site, req.action);
+    return row ? (this.d.store.getReceipt(row.id) ?? null) : null;
+  }
+
   /** New checks are paused (spending cap reached); saved receipts are still served. A status read, so it never alerts. */
   async cacheOnly(): Promise<boolean> {
     return this.d.guard.cap("web").kind !== "none";
