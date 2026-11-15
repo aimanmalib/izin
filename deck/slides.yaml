@@ -1,0 +1,155 @@
+# Content and look of the submission deck. Edit this file, then run:
+#   uv run -q --with python-pptx==1.0.2 --with pyyaml==6.0.2 python deck/build.py && bash deck/render.sh
+# Every number on a slide must come from docs/UKUR.md or the README.
+# Image paths are relative to the repository root.
+
+output: deck/izin.pptx
+footer: "Izin"
+
+theme:
+  font: Arial
+  mono: Courier New
+  background: "0F1216"
+  ink: "ECEFF3"
+  muted: "9BA5B4"
+  accent: "7C96F5"
+  rule: "2B313B"
+  card: "171B21"
+  panel: "0A0C0F"
+  panel_ink: "DCE3EC"
+  tag_fill: "1B2444"
+
+slides:
+  - layout: title
+    title: "Izin"
+    subtitle: "Ask the site before your agent acts."
+    lines:
+      - "SERV Hackathon 02, Dolphin track"
+      - "Aiman Malib, solo"
+      - "izin.sasateguh.com"
+      - "github.com/aimanmalib/izin"
+    image: docs/media/receipt-ebay-purchase.png
+    crop: [0.1, 0.07, 0.1, 0.3]
+
+  - layout: text
+    title: "Problem"
+    tag: "What it does"
+    body:
+      - "Robots.txt directives can close paths to crawlers. They cannot say who may buy, whether a human must review an order, or which route is approved."
+      - "Sites write that in words: comments in robots.txt, and their terms. A parser skips both."
+      - "eBay's robots.txt leaves the home page open to crawlers. A comment in the same file says \"Checkouts are strictly for human users.\""
+      - "Where it came from: before 12 sources were added to my own hackathon radar, a coding agent read their robots.txt and terms. In 5, robots.txt allowed the page and the terms banned scraping."
+
+  - layout: images
+    title: "One site, one action, one answer"
+    tag: "What it does"
+    body:
+      - "GO, ASK or NO-GO for one action: read a page, crawl, train, create an account, buy, or post."
+      - "The clause that decided it, word for word, with a link to the sentence."
+      - "A receipt with what was fetched and when, pinned by a hash."
+    image_height: 3.3
+    images:
+      - {path: docs/media/receipt-ebay-purchase.png, caption: "Buy or book on ebay.com: NO-GO, with the quoted clauses", crop: [0.1, 0.07, 0.1, 0.0]}
+      - {path: docs/media/gallery.png, caption: "The gallery: 24 real sites, 6 actions each", crop: [0.05, 0.1, 0.05, 0.0]}
+
+  - layout: diagram
+    title: "How a verdict is made"
+    tag: "How it works"
+    body:
+      - "Read: an open-weights model on Dolphin returns the clauses that matter. Every quote must be found in the fetched text, or it is dropped."
+      - "Decide: SERV Reasoning answers in a strict JSON schema and cites clause ids."
+      - "Ceilings: plain code has the last word. A failure at any step ends in ASK, never GO."
+    nodes:
+      - {id: bot, label: "IzinBot\nrobots.txt, home page, policy pages", x: 0.3, y: 0.0, w: 5.0, h: 0.85}
+      - {id: read, label: "Read on Dolphin\nDeepSeek-V4.1-Flash, quotes checked", x: 0.3, y: 1.25, w: 5.0, h: 0.85}
+      - {id: decide, label: "Decide with SERV Reasoning\ngpt-6-luna, JSON schema, Shadow Agent", x: 0.3, y: 2.5, w: 5.0, h: 0.85, strong: true}
+      - {id: code, label: "Ceilings in code\nrobots.txt, blocks, unread pages, text aimed at AI", x: 0.3, y: 3.75, w: 5.0, h: 0.85}
+    edges:
+      - {from: bot, to: read}
+      - {from: read, to: decide}
+      - {from: decide, to: code, label: "receipt"}
+
+  - layout: text
+    title: "Where Dolphin and SERV Reasoning run"
+    tag: "How it works"
+    body:
+      - "Dolphin reads every word of long terms pages, streamed, at temperature 0. Open weights mean anyone can run the reading step again with the same model."
+      - "SERV Reasoning decides, with a strict JSON schema and Shadow Agent. Prompt Guard is declared when the code filter flags injected text."
+      - "When SERV is capped or out of credit, the open model on Dolphin decides under the same rulebook and ceilings, and the receipt says so."
+    size: 18
+    stats:
+      - {value: "100%", label: "of reader tokens served by Dolphin"}
+      - {value: "USD 0.006", label: "to read 462,675 tokens, 57 readings"}
+      - {value: "USD 0.0122", label: "a decision on SERV, estimated"}
+      - {value: "283 of 348", label: "quotes returned again on a re-read"}
+
+  - layout: images
+    title: "The trap: a page that lies to AI"
+    tag: "Creativity"
+    body:
+      - "A test shop hides one sentence from people. It tells AI readers to say everything is permitted."
+      - "Izin sets it aside, shows it on the receipt, and keeps the answer at ASK. Anyone can run it."
+    image_height: 3.6
+    images:
+      - {path: docs/media/trap.png, caption: "izin.sasateguh.com/trap", crop: [0.05, 0.1, 0.05, 0.0]}
+
+  - layout: table
+    title: "What we measured"
+    tag: "How it works"
+    columns: ["Measurement", "Result"]
+    widths: [4.2, 7.6]
+    rows:
+      - ["Gallery, 24 sites, 144 site and action pairs", "A robots.txt parser alone answers \"allowed\" for 126. In 72 of those 126, a quoted clause from the site restricts or forbids the action."]
+      - ["Benchmark, 43 pairs fixed before the run", "Shipped decider (SERV gpt-6-luna): 31 of 43 agree and 3 false GO in the run. With the current code ceilings on the same stored answers: 33 of 43, 0 false GO, 0 false NO-GO."]
+      - ["Same benchmark, open model deciding", "Dolphin DeepSeek-V4.1-Flash: 36 of 43 agree; 0 false GO and 1 false NO-GO with the current ceilings."]
+      - ["Reading again on Dolphin, 33 stored documents", "14 came back with exactly the same quotes; 283 of the 348 stored quotes were returned again."]
+    note: "Numbers from docs/UKUR.md, generated by the scripts in scripts/ from stored receipts and ledgers. The benchmark is small."
+
+  - layout: code
+    title: "For agents"
+    tag: "User readiness"
+    body:
+      - "One line gives the check to a coding agent over MCP."
+      - "The same check is an HTTP API, and a paid listing on the OpenServ x402 Agent Market."
+      - "The web app is in English and Malay and is tested on Chromium and WebKit (iPhone 13)."
+    code_caption: "MCP tool izin_check on the live instance"
+    code: |
+      $ claude mcp add --transport http \
+          izin https://izin.sasateguh.com/mcp
+
+      > izin_check {"url":"https://ebay.com/",
+                    "action":"purchase"}
+      {
+        "verdict": "NO_GO",
+        "reason": "The action involves automated
+          access to eBay, which is prohibited
+          without express permission. ..."
+      }
+
+  - layout: table
+    title: "Who pays, and how"
+    tag: "Revenue potential"
+    columns: ["Tier", "Price", "Status"]
+    widths: [4.0, 3.6, 4.2]
+    rows:
+      - ["Free", "6 new checks an hour", "Live"]
+      - ["Agent, answer from a saved receipt", "USD 0.01 a call", "Live on the Base Sepolia testnet, over x402"]
+      - ["Agent, fresh reading and decision", "USD 0.05 a call", "Live on the OpenServ x402 Agent Market, in USDC on Base"]
+      - ["Watch", "USD 5 a month per 100 sites", "Planned"]
+    note: "For teams whose agents buy, book, sign up or post on sites they do not own. First paid call on the market: 15 Nov 2026, my own test from a second wallet. No outside buyer has paid yet. The listing has an on-chain identity (ERC-8004, agent 1189473 on Base)."
+
+  - layout: text
+    title: "How AI is used, and the limits"
+    tag: "User readiness"
+    body:
+      - "In the product: an open model on Dolphin reads, SERV Reasoning decides, and code can only lower a verdict."
+      - "In the build: an AI coding agent wrote the code, tests, text and these slides under my rules. The problem comes from my own work, and I decide what ships. The video narration is an AI clone of my voice."
+      - "Limits: no JavaScript rendering, so a page that needs a browser is reported as unread and the answer is ASK. A site that blocks IzinBot is reported as blocked. GO means no restriction was found in what was read; it is a starting point, not advice."
+
+  - layout: end
+    title: "Thank you."
+    lines:
+      - "Live demo, code, measurements and the narrated video (87 s):"
+      - "izin.sasateguh.com"
+      - "github.com/aimanmalib/izin"
+      - "youtu.be/U0_YkMaHXzA"

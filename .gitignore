@@ -32,3 +32,4 @@ deploy/CURRENT_TAG
 deploy/PREVIOUS_TAG
 deploy/HANTAR_TAG
 deploy/.uptime-state
+deck/build/
