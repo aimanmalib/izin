@@ -142,7 +142,7 @@
     "cache_hours": 24,
     "cached_receipt_days": 7,
     "no_refetch_blocked_days": 30,
-    "rate_new_checks_per_ip_hour": 6,
+    "rate_new_checks_per_ip_hour": 30,
     "rate_new_checks_per_day": 300
   },
   "reader": {

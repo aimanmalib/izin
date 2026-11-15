@@ -131,7 +131,7 @@ slides:
     columns: ["Tier", "Price", "Status"]
     widths: [4.0, 3.6, 4.2]
     rows:
-      - ["Free", "6 new checks an hour", "Live"]
+      - ["Free", "30 new checks an hour", "Live"]
       - ["Agent, answer from a saved receipt", "USD 0.01 a call", "Live on the Base Sepolia testnet, over x402"]
       - ["Agent, fresh reading and decision", "USD 0.05 a call", "Live on the OpenServ x402 Agent Market, in USDC on Base"]
       - ["Watch", "USD 5 a month per 100 sites", "Planned"]

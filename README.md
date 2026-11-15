@@ -70,7 +70,7 @@ the team wants an answer it can keep: what the site's own words say about that a
 
 | Tier | Price | Status |
 |---|---|---|
-| Free | 6 new checks an hour | live |
+| Free | 30 new checks an hour | live |
 | Agent, answer from a saved receipt | USD 0.01 a call | live on the Base Sepolia testnet, paid over x402 |
 | Agent, fresh reading and decision | USD 0.05 a call | live on the OpenServ x402 Agent Market, paid in USDC on Base |
 | Watch | USD 5 a month per 100 sites, re-read nightly | planned |

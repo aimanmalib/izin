@@ -111,7 +111,7 @@ describe("cache", () => {
 });
 
 describe("rate limits", () => {
-  it("allows 6 new checks an hour per address, then 429 with Retry-After; cache hits are not limited", async () => {
+  it("allows the configured number of new checks an hour per address, then 429 with Retry-After; cache hits are not limited", async () => {
     const { cfg, post, url } = await setup();
     const n = cfg.limits.rate_new_checks_per_ip_hour;
     for (let i = 0; i < n; i++) expect((await post({ url: url("shop.example", "/"), action: "crawl", detail: `run ${i}` })).statusCode).toBe(202);
