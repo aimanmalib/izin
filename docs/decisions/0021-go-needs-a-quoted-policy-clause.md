@@ -42,9 +42,11 @@ The README also said that a GO citing nothing becomes ASK, and the code did not 
 As in ADR 0020, the benchmark is not run again. `npm run remeasure` applies S9, S10 and S11 to the
 saved final verdicts and the frozen evidence of each pair and writes a new file,
 `bench/runs/remeasure-s11.json`; the earlier `bench/runs/remeasure.json` is kept as it was saved.
-`docs/UKUR.md`, `/bench` and `/trap` read the new file. S11 removes the last false GO of each
-variant and lowers one designed case whose expected answer is GO (B07) to ASK, so agreement drops
-by one for the shipped variant. The numbers are in `docs/UKUR.md`.
+`docs/UKUR.md`, `/bench` and `/trap` read the new file. The benchmark had no false GO left after
+S9 and S10 (`bench/runs/remeasure.json`), so S11 adds no new correction there: it carries A09 with
+S10, and it lowers one designed case whose expected answer is GO (B07) to ASK, so agreement drops
+by one for each variant. Where S11 matters is the gallery: it closes the GO answers that
+rested on no clause from a policy document. The numbers are in `docs/UKUR.md`.
 
 ## Consequences
 
